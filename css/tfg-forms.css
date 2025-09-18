@@ -1,0 +1,265 @@
+/* ============================================================================
+ *  TFG Global Form Styles
+ *  Usage Examples in notes that follow functions
+ *
+ * ========================================================================== */
+
+.tfg-form-wrapper-wide {
+    width: 100%;
+    max-width: 100%;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+/* === TFG Form Base Styles === */
+.tfg-form-wrapper {
+    background: #ffffff;
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 18px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft drop shadow */
+    font-family: 'Urbanist', sans-serif; /* Matches your .tfg-font-base */
+}
+
+/* === Form Box Width === */
+.tfg-input-wide {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+
+/* === Form Labels === */
+.tfg-form label {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: block;
+    color: #111827;
+}
+
+/* === Text Inputs & Textarea === */
+.tfg-form input[type="text"],
+.tfg-form input[type="email"],
+.tfg-form input[type="url"],
+.tfg-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    font-family: 'Urbanist', sans-serif;
+}
+
+/* === Checkboxes === */
+.tfg-form input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* === Field Wrapper === */
+.tfg-form .tfg-field {
+    margin-bottom: 18px;
+}
+
+/* === Submit Button === */
+.tfg-submit {
+    background-color: #005eff;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Urbanist', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.tfg-submit:hover {
+    background-color: #0046cc;
+}
+
+/* === GDPR / Helper Notes === */
+.tfg-note {
+    font-size: 0.85em;
+    color: #1C0D5A;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.tfg-note-small {
+    font-size: 0.75em;
+    text-align: center;
+    color: #1C0D5A;
+    margin-top: 16px;
+}
+
+.tfg-info-box {
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 20px auto;
+    max-width: 600px;
+    
+    /*display: block;*/
+    
+}
+
+.tfg-info-box p {
+    text-align: center !important;
+    color: #1C0D5A;; /* your Kadence color, if needed */
+}
+
+.recaptcha-flex {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* === GDPR Agreement Box === */
+.tfg-gdpr-box {
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-left: 4px solid #2563eb; /* Blue highlight */
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+
+.tfg-gdpr-box label {
+    display: flex;
+    align-items: flex-start;
+    font-weight: 600;
+    color: #111827;
+    font-size: 15px;
+}
+
+.tfg-gdpr-box input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: 4px;
+}
+
+.tfg-gdpr-box .tfg-note {
+    font-size: 0.85em;
+    margin-top: 8px;
+    color: #1C0D5A;
+    line-height: 1.4;
+}
+
+/* test */
+.tfg-alt-gdpr-box {
+    background-color: #1c86ee;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+
+.tfg-alt-gdpr-box label {
+    display: flex;
+    align-items: flex-start;
+    font-weight: 600;
+    color: #111827;
+    font-size: 15px;
+}
+
+.tfg-alt-gdpr-box input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: 4px;
+}
+
+.tfg-alt-gdpr-box:hover {
+    background-color:  #2563eb;/* hover color */
+    cursor: pointer;
+}
+
+.tfg-gdpr-box .tfg-note {
+    font-size: 0.85em;
+    margin-top: 8px;
+    color: #1C0D5A;
+    line-height: 1.4;
+}
+
+/* alternative formatting for sidebar */
+.tfg-gdpr-consent-box label {
+    font-weight: 500;
+    color: #111827;
+    font-size: 14px !important; /* Reduce size and override others */
+    line-height: 1.4;
+}
+
+.tfg-gdpr-consent-box input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: 4px;
+    }
+
+.tfg-gdpr-consent-box:hover {
+    background-color: #1c86ee; /* hover color */
+    cursor: pointer;
+}    
+
+.tfg-gdpr-consent-box {
+    background-color: #f0f4ff;
+    border: 1px solid #d1d5db;
+    border-left: 4px solid #2563eb;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+    font-family: inherit;
+}
+
+.tfg-gdpr-consent-box .tfg-note {
+    font-size: 0.85em;
+    margin-top: 8px;
+    color: #1C0D5A;
+    line-height: 1.4;
+}
+
+
+/* === Field Required === */
+.tfg-required {
+    color: #dc2626; /* Tailwind's red-600 */
+    margin-left: 2px;
+    font-weight: 700;
+}
+
+/*
+Usage Examples in PHP/HTML
+🔹 Wrap the entire form
+<div class="tfg-form-wrapper">
+    <form method="POST" class="tfg-form">
+        <!-- Form fields here -->
+    </form>
+</div>
+🔹 Group each field
+<div class="tfg-field">
+    <label for="contact_name">Contact Name *</label>
+    <input type="text" name="contact_name" id="contact_name" required>
+</div>
+🔹 Checkboxes
+<div class="tfg-field">
+    <label><input type="checkbox" name="programs[]" value="Graduate"> Graduate</label>
+    <label><input type="checkbox" name="programs[]" value="Online"> Online</label>
+</div>
+🔹 GDPR note
+<div class="tfg-field">
+    <label><input type="checkbox" name="gdpr_agreement" required> GDPR Agreement *</label>
+    <p class="tfg-note">
+        By checking this box, you confirm that you consent to receiving emails from us, and that you have read and agree to our TERMS OF USE.
+    </p>
+</div>
+🔹 Footer note
+<p class="tfg-note-small">
+    Please whitelist 'takeflightglobal.com' on your email app.
+</p>
+*/

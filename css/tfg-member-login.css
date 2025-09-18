@@ -1,0 +1,100 @@
+/* Styling for the member-login row */
+
+
+/* Fonts */
+.tfg-id-input,
+.tfg-password-input,
+.tfg-login-button {
+    font-family: 'Urbanist', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Flex container for inline layout */
+        .tfg-login-row {
+            display: flex;
+            align-items: flex-end; /* ⬅️ Aligns all children to bottom */
+            flex-wrap: nowrap;
+            gap: 8px;
+            width: 100%;
+            }
+
+        .child-1 { flex: 0 0 40%; }
+        .child-2 { flex: 0 0 40%; }
+        .child-3 { flex: 0 0 20%; }
+
+        /* Input styles */
+        .tfg-id-input,
+        .tfg-password-input {
+            width: 100%;
+            padding: 1em 1em;
+            font-size: 1em;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+        }
+
+        .tfg-id-input,
+        .tfg-password-input,
+        .tfg-login-button {
+            height: 40px;
+            box-sizing: border-box;
+        }
+
+        /* Password field wrapper */
+        .tfg-password-wrapper {
+            position: relative;
+            display: flex;
+            }
+
+        .tfg-toggle-password {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: -30px;
+            padding: 0;
+        }
+
+        /* Button styling */
+        .tfg-login-button {
+            width: 55%;
+            border-radius: 25px;
+            background-color: #0E94FF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .tfg-login-row {
+                flex-wrap: wrap;
+            }
+
+            .child-1,
+            .child-2,
+            .child-3 {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+
+            .tfg-toggle-password {
+                margin-left: -35px;
+            }
+        }
+
+        .tfg-stub-summary {
+        background-color: #f0f4fa;
+        border: 1px solid #d9e2ef;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 32px;
+        max-width: 640px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        font-size: 17px;
+        line-height: 1.6;
+        }
+
+        .tfg-stub-summary p {
+        margin: 8px 0;
+        }

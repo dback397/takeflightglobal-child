@@ -1,0 +1,14 @@
+<?php
+// SAFEMODE: disable admin guard
+return;
+
+
+class TFG_Admin_Guard {
+
+    public static function register_hooks(): void {
+        if (is_admin()) {
+            // Screen object is ready; redirects still allowed.
+            add_action('current_screen', [self::class, 'restrict_admin_pages'], 20);
+        }
+    }
+}

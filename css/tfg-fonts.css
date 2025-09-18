@@ -1,0 +1,121 @@
+/* ============================================================================
+ *  TFG Global Font Styles
+ *  Usage Examples:
+ *    echo '<div class="tfg-h3">Visa Tips</div>';
+ *    echo '<div class="tfg-h6">Last updated: July 2025</div>';
+ *    <h2 class="tfg-h2">Top Destinations</h2>
+ *    <p class="tfg-font-base">Explore our curated student programs...</p>
+ * ========================================================================== */
+
+/* === Imports === */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Urbanist:wght@300;400;500;700&display=swap');
+
+/* === Base Font (Urbanist) === */
+.tfg-font-base {
+    font-family: 'Urbanist', system-ui, sans-serif;
+    font-size: 1.0625rem; /* 17px */
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+
+/* === Font Utilities === */
+.tfg-font-bold {
+    font-weight: 700;
+}
+
+.tfg-font-light {
+    font-weight: 300;
+}
+
+.tfg-font-small {
+    font-size: 0.875rem; /* 14px */
+}
+
+.tfg-font-medium {
+    font-size: 0.95rem; /* 16px */
+}
+
+.tfg-font-large {
+    font-size: 1.375rem; /* 22px */
+}
+
+/* === Headings (Manrope) === */
+.tfg-font-heading {
+    font-family: 'Manrope', system-ui, sans-serif;
+    line-height: 1.2;
+}
+
+/* === Custom Heading Classes === */
+.tfg-h1 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 5rem;        /* 80px */
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.tfg-h2 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 2.625rem;    /* 42px */
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tfg-h3 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 1.9375rem;   /* 31px */
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.tfg-h4 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 1.375rem;    /* 22px */
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.tfg-h5 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 1.25rem;     /* 20px */
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.tfg-h6 {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 1.125rem;    /* 18px */
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+/* === Responsive Font Scaling === */
+@media (max-width: 1024px) {
+    .tfg-h1 { font-size: 3.5rem; }  /* 56px */
+    .tfg-h2 { font-size: 2rem; }    /* 32px */
+    .tfg-h3 { font-size: 1.5rem; }  /* 24px */
+    .tfg-h4 { font-size: 1.25rem; } /* 20px */
+    .tfg-h5 { font-size: 1.125rem; }
+    .tfg-h6 { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+    .tfg-h1 { font-size: 2.625rem; } /* 42px */
+    .tfg-h2 { font-size: 1.625rem; } /* 26px */
+    .tfg-h3 { font-size: 1.25rem; }  /* 20px */
+    .tfg-h4 { font-size: 1.125rem; }
+    .tfg-h5, .tfg-h6 { font-size: 1rem; }
+}
+
+/* === Utility Spacing & Alignment === */
+.tfg-mb-sm { margin-bottom: 0.5rem; }
+.tfg-mb-md { margin-bottom: 1rem; }
+.tfg-mb-lg { margin-bottom: 2rem; }
+
+.tfg-mt-sm { margin-top: 0.5rem; }
+.tfg-mt-md { margin-top: 1rem; }
+.tfg-mt-lg { margin-top: 2rem; }
+
+.tfg-text-center { text-align: center; }
+.tfg-text-left { text-align: left; }
+.tfg-text-right { text-align: right; }
