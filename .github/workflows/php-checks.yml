@@ -1,13 +1,35 @@
-name: PHP Checks
-on: [push, pull_request]
+name: PHP Checks (Minimal)
+
+on:
+  push:
+    paths: ["**.php", "**.css", "**.js"]
+  pull_request:
+    paths: ["**.php", "**.css", "**.js"]
+  workflow_dispatch:
+
+concurrency:
+  group: php-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
+  php-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+
       - name: PHP syntax check
         run: |
-          find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+          set -e
+          mapfile -t FILES < <(git ls-files '*.php')
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "No PHP files to lint."
+            exit 0
+          fi
+          for f in "${FILES[@]}"; do
+            php -l "$f"
+          done
+
