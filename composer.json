@@ -1,0 +1,23 @@
+{
+  "name": "dback/takeflightglobal-child",
+  "description": "Take Flight Global Child Theme",
+  "type": "wordpress-theme",
+  "license": "proprietary",
+  "autoload": {
+    "psr-4": {
+      "TFG\\": "app/"
+    }
+  },
+  "authors": [
+    {
+      "name": "dback397",
+      "email": "dback@verizon.net"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

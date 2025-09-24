@@ -1,14 +1,1 @@
-# OS junk
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Logs / temp
-*.log
-*.tmp
-*.bak
-
-# Frontend build (add/remove if you use them)
-node_modules/
-dist/
+# (paste the above rules here)
