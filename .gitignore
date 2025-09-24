@@ -1,1 +1,3 @@
 # (paste the above rules here)
+/vendor/
+/stubs/
