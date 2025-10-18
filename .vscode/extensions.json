@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "continue.continue",
+    "bmewburn.vscode-intelephense-client",
+    "xdebug.php-pack",
+    "junstyle.php-cs-fixer",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "humao.rest-client",
+    "christian-kohler.path-intellisense"
+  ]
+}

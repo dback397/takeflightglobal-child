@@ -15,8 +15,6 @@ if (!defined('ABSPATH')) {
  *  Safe defaults (guarded)
  *  ---------------------------------------------------------------- */
 \defined('TFG_SAFEMODE')        || \define('TFG_SAFEMODE', false);
-\defined('TFG_PLUGIN_PATH')     || \define('TFG_PLUGIN_PATH', WP_CONTENT_DIR . '/plugins');
-\defined('KADENCE_VERSION')     || \define('KADENCE_VERSION', '0.0.0');
 \defined('WP_ENV')              || \define('WP_ENV', 'development');
 \defined('WP_ENVIRONMENT')      || \define('WP_ENVIRONMENT', 'local');
 \defined('TFG_VERSION')         || \define('TFG_VERSION', '1.0.0');

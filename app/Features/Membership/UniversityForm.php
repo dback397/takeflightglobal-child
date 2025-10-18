@@ -24,7 +24,7 @@ final class UniversityForm
     public static function init(): void
     {
         \add_shortcode('tfg_university_profile_display', [self::class, 'render_university_profile_display_form']);
-        \add_action('init', [self::class, 'handle_university_form_submission']);
+        \add_action('init', [self::class, 'handleUniversityFormSubmission']);
         // \add_action('init', [self::class, 'handle_new_profile_submission']); // for new submissions
     }
 

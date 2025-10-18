@@ -1,0 +1,15 @@
+ignore:
+  - node_modules
+  - vendor
+  - wp-admin
+  - wp-includes
+  - .git
+  - .DS_Store
+  - *.log
+  - *.zip
+  - *.tar.gz
+  - .env
+  - .env.*
+  - /storage/
+  - /cache/
+  - /uploads/*

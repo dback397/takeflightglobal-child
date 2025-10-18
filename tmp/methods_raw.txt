@@ -1,0 +1,75 @@
+app\UI\Shortcodes.php:25:    private function register_hooks(): void
+app\UI\Shortcodes.php:36:    public static function register_link_button_cpt(): void
+app\UI\Shortcodes.php:60:    public function render_matrix_buttons(): string
+app\UI\Shortcodes.php:113:    public function render_program_link_codes(): string
+app\UI\Shortcodes.php:159:    public static function list_program_link_codes(): string
+app\UI\Shortcodes.php:188:    public function update_brochure_urls(): string
+app\Core\Assets.php:25:    private static function enqueue_style(string $handle, string $relPath): void
+app\Core\Assets.php:32:    public static function enqueue_public_assets(): void
+app\Core\Assets.php:125:    public static function enqueue_admin_assets(string $hook): void
+app\Core\FormRouter.php:60:    public static function post_string(string $key): ?string
+app\UI\ErrorModal.php:18:    private static function key_for_user(): string
+app\UI\ErrorModal.php:27:    public static function inject_modal_to_footer(): void
+app\UI\ErrorModal.php:39:    public static function register_code_shortcode(): void
+app\UI\ErrorModal.php:47:    public static function log_messages_debug(): void
+app\UI\ErrorModal.php:75:    public static function get_error_messages(): array
+app\UI\ErrorModal.php:101:    public static function render_shortcode($atts = []): string
+app\UI\ErrorModal.php:124:    public static function show_r($code, int $seconds = 30, ?string $redirect_url = null): void
+app\Core\Prefill.php:86:    public static function prefill_programs($value, $field_id = null, $form_data = null)
+app\UI\ProfileButtons.php:20:    private function register_hooks(): void
+app\UI\ProfileButtons.php:25:    public function render_institution_program_buttons(): string
+app\Core\Utils.php:49:    public static function normalize_member_id($id): string
+app\Core\Utils.php:55:    public static function normalize_token(?string $v): ?string
+app\Core\Utils.php:61:    public static function normalize_signature(?string $v): ?string
+app\Core\Utils.php:67:    public static function normalize_email(?string $v): ?string
+app\Core\Mailer.php:116:    public static function send_legacy($to, $subject, $template_slug, $data = [], $headers = [])
+app\Core\Mailer.php:122:    public static function render_template($slug, $data = [])
+app\Core\RestAPI.php:24:    public static function register_routes(): void
+app\Core\RestAPI.php:70:    public static function check_token_permission(): bool
+app\Core\RestAPI.php:82:    public static function restore_access(WP_REST_Request $request)
+app\Core\RestAPI.php:120:    public static function get_verification_code(WP_REST_Request $request)
+app\Features\Newsletter\NewsletterSubscription.php:24:    public static function render_newsletter_signup_form($atts = [], $content = null, $tag = ''): string
+app\Features\Newsletter\NewsletterSubscription.php:111:    public static function handle_newsletter_signup(): void
+app\Features\Newsletter\NewsletterSubscription.php:319:    private static function direct_create_magic_token(string $email, int $verif_id = 0, int $seq_id = 0, string $seq_code = '', int $ttl = 900): array
+app\Features\Newsletter\NewsletterSubscription.php:374:    private static function redirect_success(): void
+app\Features\Newsletter\NewsletterSubscription.php:384:    private static function redirect_with_error(string $msg): void
+app\Features\Newsletter\NewsletterSubscription.php:395:    public static function insert_recaptcha(): string
+app\Core\ThemeSetup.php:17:    private function register_hooks(): void
+app\Core\ThemeSetup.php:23:    public function enqueue_assets(): void
+app\Core\ThemeSetup.php:55:    public function custom_footer_text(): void
+app\Core\Recaptcha.php:23:    public static function get_keys(): array
+app\Features\Newsletter\SubscriberConfirm.php:27:    protected static function error_html(string $msg): string
+app\Features\Newsletter\SubscriberConfirm.php:32:    protected static function success_html(string $email): string
+app\Features\Newsletter\SubscriberConfirm.php:39:    public static function render_shortcode($atts = []): string
+app\Features\Newsletter\SubscriberConfirm.php:48:    public static function maybe_handle_confirm(): void
+app\Features\Newsletter\SubscriberConfirm.php:77:    protected static function confirm_core(
+app\Features\Membership\UniversityForm.php:15: * private static function get_profile_by_member_id($member_id)
+app\Features\Membership\UniversityForm.php:16: * private static function get_user_profile($user_id)
+app\Features\Membership\UniversityForm.php:17: * private static function handle_form_submission()
+app\Features\Membership\UniversityForm.php:18: * public static function render_university_interest_form()
+app\Features\Membership\UniversityForm.php:19: * public static function render_university_profile_display_form()
+app\Features\MagicLogin\ResetTokenCPT.php:20:    public static function register_cpt(): void
+app\Features\MagicLogin\ResetTokenCPT.php:61:    public static function register_acf_fields(): void
+app\Features\MagicLogin\DebugTools.php:61:    public static function direct_create_magic_token(string $email, ?string $seq_code, ?string $seq_id, int $expires_in = 900)
+app\Features\Membership\MemberDashboard.php:244:    public static function render_dashboard(): string { return self::renderDashboard(); }
+app\Features\Membership\MemberDashboard.php:246:    public static function render_edit_form($atts): string { return self::renderEditForm($atts); }
+app\Features\Membership\MemberDashboard.php:248:    public static function unsubscribe_trigger(): void { self::unsubscribeTrigger(); }
+app\Features\Membership\MemberDashboard.php:250:    public static function logout_trigger(): void { self::logoutTrigger(); }
+app\Features\Membership\MemberDashboard.php:252:    public static function get_member_profile_by_id(string $member_id) { return self::getMemberProfileById($member_id); }
+app\Features\Membership\MemberFormUtilities.php:211:    public static function validate_recaptcha(): bool
+app\Features\Membership\MemberFormUtilities.php:237:    public static function tfg_handle_form_submission(): void
+app\Features\Membership\MemberFormUtilities.php:255:    public static function init_member_forms(): void { self::init(); }
+app\Features\Membership\MemberFormUtilities.php:257:    public static function submit_button(string $label = 'Submit'): string { return self::submitButton($label); }
+app\Features\Membership\MemberFormUtilities.php:259:    public static function get_user_profile($user_id): ?int { return self::getUserProfile($user_id); }
+app\Features\Membership\MemberFormUtilities.php:261:    public static function render_gdpr_agreement(int $post_id = 0): string { return self::renderGdprAgreement($post_id); }
+app\Features\Membership\MemberFormUtilities.php:263:    public static function whitelist_note(): string { return self::whitelistNote(); }
+app\Features\Membership\MemberFormUtilities.php:265:    public static function insert_recaptcha(): string { return self::insertRecaptcha(); }
+app\Features\Membership\MemberFormUtilities.php:267:    public static function render_password_setup_form(int $post_id): string { return self::renderPasswordSetupForm($post_id); }
+app\Features\Membership\MemberFormUtilities.php:269:    public static function handle_generic_password_submission(): void { self::handleGenericPasswordSubmission(); }
+app\Features\Membership\MemberProfileDisplay.php:162:    /** @deprecated */ public static function render_profile_summary(int $id): string  { return self::renderProfileSummary($id); }
+app\Features\Membership\MemberProfileDisplay.php:163:    /** @deprecated */ public static function render_profile_columns(int $id): string  { return self::renderProfileColumns($id); }
+app\Features\Membership\MemberFormHandlers.php:76:    public static function init_legacy(): void { self::init(); }
+app\Features\Membership\MemberStubManager.php:326:    public static function render_stub_form($atts): string
+app\Features\Membership\MemberStubManager.php:332:    public static function handle_stub_submission(): void
+app\Features\Membership\MemberStubManager.php:338:    public static function get_prefix_for_type(string $post_type): string
+app\Features\Membership\MemberStubManager.php:344:    public static function generate_member_id(string $prefix = 'MBR', int $width = 5): string

@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "PHP: Lint (phpcs)", "type": "shell", "command": "vendor/bin/phpcs", "group": "build" },
+    { "label": "PHP: Fix (phpcbf)", "type": "shell", "command": "vendor/bin/phpcbf", "group": "build" },
+    { "label": "PHP: Format (php-cs-fixer)", "type": "shell", "command": "vendor/bin/php-cs-fixer fix --allow-risky=yes" }
+  ]
+}
+
