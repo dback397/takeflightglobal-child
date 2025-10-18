@@ -13,3 +13,12 @@
   "cursor.experimental.codebaseIndexing": true,
   "search.useGlobalIgnoreFiles": true
 }
+{
+  "terminal.integrated.profiles.windows": {
+    "Git Bash": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["--login"]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Git Bash"
+}
