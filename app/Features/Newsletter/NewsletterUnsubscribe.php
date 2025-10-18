@@ -11,7 +11,7 @@ final class NewsletterUnsubscribe
     public static function init(): void
     {
         \add_shortcode('tfg_unsubscribe_form', [self::class, 'render_unsubscribe_form']);
-        \add_action('init', [self::class, 'handle_unsubscribe_request']);
+        \add_action('init', [self::class, 'handleUnsubscribeRequest']);
     }
 
     // === 1) Render unsubscribe form ===
