@@ -5,6 +5,7 @@ namespace TFG\Features\MagicLogin;
 use TFG\Core\FormRouter;
 use TFG\Core\Utils;
 use TFG\Core\Cookies;
+use TFG\Core\RedirectHelper;
 use TFG\Features\Newsletter\SubscriberUtilities;
 
 /**
@@ -124,10 +125,18 @@ final class MagicLogin
         if (!$isVerified) {
             \error_log('[Magic Login] Email not verified: ' . $email);
 
+            // Use RedirectHelper to prevent loops
+            $signup_url = \apply_filters('tfg_magic_login_signup_url', \home_url('/newsletter-signup'));
+            
+            if (RedirectHelper::isOnPage('/newsletter-signup') || RedirectHelper::isOnPage('/subscribe')) {
+                \error_log('[Magic Login] Redirect loop prevented: already on signup/subscribe page');
+                return;
+            }
+
             // Prefill cookie for signup form
             Cookies::setUiCookie('tfg_prefill_email', $email, 600);
 
-            $signup_url = \apply_filters('tfg_magic_login_signup_url', \home_url('/newsletter-signup'));
+            \error_log('[Magic Login] Redirecting unverified user to: ' . $signup_url);
             if (!\headers_sent()) {
                 \nocache_headers();
                 \wp_safe_redirect($signup_url);

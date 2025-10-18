@@ -5,6 +5,7 @@ namespace TFG\Features\Membership;
 use TFG\Core\Cookies;
 use TFG\Core\Utils;
 use TFG\Core\FormRouter;
+use TFG\Core\RedirectHelper;
 // use TFG\Core\Mailer; // optional if you email the member ID
 
 /**
@@ -28,12 +29,35 @@ final class MemberLogin
 
         // Keep logged-in members out of the login page
         \add_action('template_redirect', function () {
+            // Don't interfere with WordPress admin login or wp-login.php
+            if (\is_admin() || \is_user_logged_in() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false) {
+                \error_log('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php');
+                return;
+            }
+            
+            // Additional safety check for WordPress core login
+            if (\defined('DOING_AJAX') && DOING_AJAX) {
+                return;
+            }
+            
+            if (\defined('REST_REQUEST') && REST_REQUEST) {
+                return;
+            }
+            
             if (\is_page('member-login')) {
+                \error_log('[TFG MemberLogin] On member-login page, checking for member cookie');
                 $member_id = Cookies::getMemberId();
                 if (!empty($member_id) && !\headers_sent()) {
-                    \nocache_headers();
-                    \wp_safe_redirect(\site_url('/member-dashboard/'));
-                    exit;
+                    // Use RedirectHelper to prevent loops
+                    $dashboard_url = \site_url('/member-dashboard/');
+                    
+                    if (RedirectHelper::isOnPage('/member-dashboard')) {
+                        \error_log('[TFG MemberLogin] Redirect loop prevented: already on dashboard');
+                        return;
+                    }
+                    
+                    \error_log('[TFG MemberLogin] Redirecting logged-in member to dashboard');
+                    RedirectHelper::safeRedirect($dashboard_url);
                 }
             }
         });
@@ -46,9 +70,16 @@ final class MemberLogin
     public static function renderLoginForm(): string
     {
         if (Cookies::getMemberId() && !\headers_sent()) {
-            \nocache_headers();
-            \wp_safe_redirect(\site_url('/member-dashboard/'));
-            exit;
+            // Use RedirectHelper to prevent loops
+            $dashboard_url = \site_url('/member-dashboard/');
+            
+            if (RedirectHelper::isOnPage('/member-dashboard')) {
+                \error_log('[TFG MemberLogin] Redirect loop prevented in renderLoginForm: already on dashboard');
+                return '<p>You are already logged in and on the dashboard.</p>';
+            }
+            
+            \error_log('[TFG MemberLogin] Redirecting logged-in member to dashboard from form');
+            RedirectHelper::safeRedirect($dashboard_url);
         }
 
         $is_member_ui = (bool) Cookies::getMemberId();
@@ -98,6 +129,11 @@ final class MemberLogin
 
     public static function handleLogin(): void
     {
+        // Don't interfere with WordPress admin login
+        if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-admin') !== false) {
+            return;
+        }
+        
         if (!FormRouter::matches('member_login')) return;
         if (empty($_POST['tfg_member_login_submit'])) return;
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_login')) {

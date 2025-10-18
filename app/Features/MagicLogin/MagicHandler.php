@@ -63,6 +63,11 @@ final class MagicHandler
 
     public static function handleMagicLink(): void
     {
+        // Don't interfere with WordPress admin login or wp-login.php
+        if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false) {
+            return;
+        }
+        
         if (empty($_GET['token']) || empty($_GET['sig']) || empty($_GET['email'])) {
             return;
         }

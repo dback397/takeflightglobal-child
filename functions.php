@@ -21,6 +21,10 @@ if (!defined('ABSPATH')) {
 \defined('TFG_THEME_PATH')      || \define('TFG_THEME_PATH', __DIR__);
 \defined('TFG_DISABLE_TFG_INIT')|| \define('TFG_DISABLE_TFG_INIT', false); // silence undefined warnings
 
+// Security constants
+\defined('TFG_HMAC_SECRET')     || \define('TFG_HMAC_SECRET', \defined('AUTH_SALT') ? AUTH_SALT : 'tfg-default-hmac-secret-' . \wp_generate_password(32, false));
+\defined('MEMBER_PASSWORD_DEFAULT') || \define('MEMBER_PASSWORD_DEFAULT', 'password123');
+
 /** -----------------------------------------------------------------
  *  ACF admin visibility (optional)
  *  ---------------------------------------------------------------- */

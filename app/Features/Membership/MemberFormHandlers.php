@@ -3,6 +3,7 @@
 namespace TFG\Features\Membership;
 
 use TFG\Core\Cookies;
+use TFG\Core\RedirectHelper;
 use TFG\UI\ErrorModal;
 
 final class MemberFormHandlers
@@ -14,10 +15,22 @@ final class MemberFormHandlers
 
     public static function routeSubmission(): void
     {
+        // Don't interfere with WordPress admin login
+        if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-admin') !== false) {
+            return;
+        }
+        
         if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
 
         // Require subscription cookie (server-trust; UI cookie ignored)
         if (!Cookies::isSubscribed()) {
+            // Use RedirectHelper to prevent loops
+            if (RedirectHelper::isOnPage('/subscribe')) {
+                \error_log('[TFG FormHandlers] Redirect loop prevented: already on subscribe page');
+                return;
+            }
+            
+            \error_log('[TFG FormHandlers] No subscription cookie found, redirecting to subscribe');
             // Show modal code 104 then redirect to /subscribe
             ErrorModal::show_r('104', 20, \home_url('/subscribe'));
             return;

@@ -65,14 +65,26 @@ final class Cookies
     public static function isSubscribed(?string $email = null): bool
     {
         $server = $_COOKIE[self::SUB_OK] ?? '';
-        if (!$server) return false;
+        if (!$server) {
+            \error_log('[TFG Cookies] No subscription cookie found (subscribed_ok)');
+            return false;
+        }
 
         if ($email) {
             $email = Utils::normalizeEmail($email);
-            if (!$email) return false;
-            return \hash_equals(self::subscriberHmac($email), $server);
+            if (!$email) {
+                \error_log('[TFG Cookies] Invalid email provided for subscription check');
+                return false;
+            }
+            $expected_hmac = self::subscriberHmac($email);
+            $is_valid = \hash_equals($expected_hmac, $server);
+            if (!$is_valid) {
+                \error_log('[TFG Cookies] Subscription cookie HMAC mismatch for email: ' . $email);
+            }
+            return $is_valid;
         }
 
+        \error_log('[TFG Cookies] Subscription cookie exists but no email provided for validation');
         return false;
     }
 
@@ -119,16 +131,28 @@ final class Cookies
     public static function isMember(?string $member_id = null, string $email = ''): bool
     {
         $server = $_COOKIE[self::MEM_OK] ?? '';
-        if (!$server) return false;
+        if (!$server) {
+            \error_log('[TFG Cookies] No member cookie found (member_ok)');
+            return false;
+        }
 
         if ($member_id) {
             $member_id = Utils::normalizeMemberId($member_id);
-            if (!$member_id) return false;
+            if (!$member_id) {
+                \error_log('[TFG Cookies] Invalid member ID provided for member check');
+                return false;
+            }
 
             $email = $email ? Utils::normalizeEmail($email) : '';
-            return \hash_equals(self::memberHmac($member_id, $email), $server);
+            $expected_hmac = self::memberHmac($member_id, $email);
+            $is_valid = \hash_equals($expected_hmac, $server);
+            if (!$is_valid) {
+                \error_log('[TFG Cookies] Member cookie HMAC mismatch for member_id: ' . $member_id . ', email: ' . $email);
+            }
+            return $is_valid;
         }
 
+        \error_log('[TFG Cookies] Member cookie exists but no member_id provided for validation');
         return false;
     }
 
