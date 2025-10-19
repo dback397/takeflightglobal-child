@@ -20,7 +20,7 @@ final class ReCAPTCHA
      *
      * @return array{site:string,secret:string}
      */
-    public static function get_keys(): array
+    public static function getKeys(): array
     {
         return [
             'site'   => \defined('RECAPTCHA_SITE_KEY')   ? (string) \RECAPTCHA_SITE_KEY   : '',
@@ -41,7 +41,7 @@ final class ReCAPTCHA
             return false;
         }
 
-        $keys   = self::get_keys();
+        $keys   = self::getKeys();
         $secret = $keys['secret'];
         if ($secret === '') {
             // Fail closed if not configured
