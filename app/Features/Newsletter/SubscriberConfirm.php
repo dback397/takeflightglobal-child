@@ -20,32 +20,32 @@ final class SubscriberConfirm
 {
     public static function init(): void
     {
-        \add_shortcode('tfg_confirm_subscription', [self::class, 'render_shortcode']);
-        \add_action('template_redirect', [self::class, 'maybe_handle_confirm'], 0);
+        \add_shortcode('tfg_confirm_subscription', [self::class, 'renderShortcode']);
+        \add_action('template_redirect', [self::class, 'maybeHandleConfirm'], 0);
     }
 
-    protected static function error_html(string $msg): string
+    protected static function errorHtml(string $msg): string
     {
         return '<div class="notice notice-error"><p>' . \esc_html($msg) . '</p></div>';
     }
 
-    protected static function success_html(string $email): string
+    protected static function successHtml(string $email): string
     {
         return '<div class="notice notice-success"><p>✅ Subscription confirmed for <strong>' .
             \esc_html($email) .
             '</strong>.</p></div>';
     }
 
-    public static function render_shortcode($atts = []): string
+    public static function renderShortcode($atts = []): string
     {
         $email = isset($_GET['email']) ? \sanitize_email((string) $_GET['email']) : '';
         if ($email !== '' && isset($_GET['ok']) && $_GET['ok'] === '1') {
-            return self::success_html($email);
+            return self::successHtml($email);
         }
-        return self::error_html('Missing or invalid confirmation parameters.');
+        return self::errorHtml('Missing or invalid confirmation parameters.');
     }
 
-    public static function maybe_handle_confirm(): void
+    public static function maybeHandleConfirm(): void
     {
         if (\is_admin() || (defined('REST_REQUEST') && REST_REQUEST) || (defined('DOING_AJAX') && DOING_AJAX)) {
             return;
@@ -61,7 +61,7 @@ final class SubscriberConfirm
             return;
         }
 
-        $core = self::confirm_core($token, $email, $sig, $seq_code, $magic_id);
+        $core = self::confirmCore($token, $email, $sig, $seq_code, $magic_id);
         if (!$core['ok']) {
             return;
         }
@@ -74,7 +74,7 @@ final class SubscriberConfirm
         exit;
     }
 
-    protected static function confirm_core(
+    protected static function confirmCore(
         string $token,
         string $email,
         string $signature,
