@@ -56,10 +56,6 @@ final class DebugTools
         return ['post_id' => (int)$post_id, 'token' => $token, 'url' => $url, 'expires' => (int)$exp];
     }
 
-    /* ---- Legacy alias (optional; remove when no longer referenced) ---- */
-    /** @deprecated Use DebugTools::directCreateMagicToken() */
-    public static function direct_create_magic_token(string $email, ?string $seq_code, ?string $seq_id, int $expires_in = 900)
-    {
-        return self::directCreateMagicToken($email, $seq_code, $seq_id, $expires_in);
-    }
+
+
 }
