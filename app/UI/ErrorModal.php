@@ -10,12 +10,12 @@ final class ErrorModal
     public static function init(): void
     {
         \add_shortcode('tfg_error_modal', [self::class, 'render_shortcode']);
-        self::register_code_shortcode();
+        self::registerCodeShortcode();
         \add_action('wp_footer', [self::class, 'inject_modal_to_footer']);
     }
 
     /** Build a per-visitor transient key to avoid collisions across users. */
-    private static function key_for_user(): string
+    private static function keyForUser(): string
     {
         $parts = [
             $_SERVER['REMOTE_ADDR']     ?? '',
@@ -24,19 +24,19 @@ final class ErrorModal
         return 'tfg_magic_error_' . \md5(\implode('|', $parts));
     }
 
-    public static function inject_modal_to_footer(): void
+    public static function injectModalToFooter(): void
     {
-        $t_key = self::key_for_user();
+        $t_key = self::keyForUser();
         $code  = \get_transient($t_key);
         if ($code) {
             \delete_transient($t_key);
-            echo self::render_shortcode(['code' => $code]); // inert HTML; JS fills content
+            echo self::renderShortcode(['code' => $code]); // inert HTML; JS fills content
         } else {
-            echo self::render_shortcode(['code' => null]);
+            echo self::renderShortcode(['code' => null]);
         }
     }
 
-    public static function register_code_shortcode(): void
+    public static function registerCodeShortcode(): void
     {
         \add_shortcode('tfg_error_code', function ($atts) {
             $atts = \shortcode_atts(['code' => null], $atts);
@@ -44,7 +44,7 @@ final class ErrorModal
         });
     }
 
-    public static function log_messages_debug(): void
+    public static function logMessagesDebug(): void
     {
         if (!\is_user_logged_in()) return;
 
@@ -98,7 +98,7 @@ final class ErrorModal
         return $messages;
     }
 
-    public static function render_shortcode($atts = []): string
+    public static function renderShortcode($atts = []): string
     {
         $atts = \shortcode_atts(['code' => null], $atts);
 
@@ -127,7 +127,7 @@ final class ErrorModal
 
         $redirect_url = $redirect_url ?: \home_url('/');
 
-        \set_transient(self::key_for_user(), $code, \max(5, $seconds));
+        \set_transient(self::keyForUser(), $code, \max(5, $seconds));
 
         if (!\headers_sent()) {
             \nocache_headers();
