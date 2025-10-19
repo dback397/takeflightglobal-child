@@ -16,8 +16,8 @@ final class ThemeSetup
 
     private function register_hooks(): void
     {
-        \add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
-        \add_action('wp_footer',          [$this, 'custom_footer_text']);
+        \add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
+        \add_action('wp_footer',          [$this, 'customFooterText']);
     }
 
     public function enqueueAssets(): void

@@ -5,19 +5,19 @@ final class AdminProcesses
 {
     public static function init(): void
     {
-        \add_action('init', [self::class, 'tfg_message_loader']);
-        \add_shortcode('test_error_modals', [self::class, 'tfg_test_error_modals']);
-        \add_shortcode('load_table', [self::class, 'load_cpt_table']);
-        \add_shortcode('debug_verification_token', [self::class, 'debug_verification_token_shortcode']);
-        \add_shortcode('debug_magic_token', [self::class, 'debug_magic_token_shortcode']);
-        \add_action('wp_dashboard_setup', [self::class, 'register_dashboard_widget']);
-        \add_action('admin_menu', [self::class, 'register_member_id_menu']);
+        \add_action('init', [self::class, 'tfgMessageLoader']);
+        \add_shortcode('test_error_modals', [self::class, 'tfgTestErrorModals']);
+        \add_shortcode('load_table', [self::class, 'loadCptTable']);
+        \add_shortcode('debug_verification_token', [self::class, 'debugVerificationTokenShortcode']);
+        \add_shortcode('debug_magic_token', [self::class, 'debugMagicTokenShortcode']);
+        \add_action('wp_dashboard_setup', [self::class, 'registerDashboardWidget']);
+        \add_action('admin_menu', [self::class, 'registerMemberIdMenu']);
     }
 
     public static function initMemberIdTracker(): void
     {
         \error_log('[TFG] 🔧 init_member_id_tracker() running');
-        \add_action('admin_menu', [self::class, 'register_member_id_menu']);
+        \add_action('admin_menu', [self::class, 'registerMemberIdMenu']);
     }
 
     /* ---------------- Dashboard widget ---------------- */
@@ -27,7 +27,7 @@ final class AdminProcesses
         \wp_add_dashboard_widget(
             'tfg_member_id_tracker_widget',
             'Member ID Counters',
-            [self::class, 'render_dashboard_widget']
+            [self::class, 'renderDashboardWidget']
         );
     }
 
@@ -99,7 +99,7 @@ final class AdminProcesses
             'Member ID Tracker',
             'manage_options',
             'tfg_member_id_tracker',
-            [self::class, 'render_member_id_page'],
+            [self::class, 'renderMemberIdPage'],
             'dashicons-admin-network',
             57
         );
@@ -289,7 +289,7 @@ final class AdminProcesses
         return (string) \ob_get_clean();
     }
 
-    public static function load_cpt_table($atts): string
+    public static function loadCptTable($atts): string
     {
         self::checkAccessPermission('manage_options');
 

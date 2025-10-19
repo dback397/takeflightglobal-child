@@ -16,8 +16,8 @@ final class NewsletterSubscription
 {
     public static function init(): void
     {
-        \add_shortcode('tfg_newsletter_form', [self::class, 'render_newsletter_signup_form']);
-        \add_action('init', [self::class, 'handle_newsletter_signup'], 99);
+        \add_shortcode('tfg_newsletter_form', [self::class, 'renderNewsletterSignupForm']);
+        \add_action('init', [self::class, 'handleNewsletterSignup'], 99);
     }
 
     // === 1) Render the newsletter signup form ===

@@ -10,8 +10,8 @@ final class ResetTokenCPT
 {
     public static function init(): void
     {
-        \add_action('init',     [__CLASS__, 'register_cpt']);
-        \add_action('acf/init', [__CLASS__, 'register_acf_fields']);
+        \add_action('init',     [__CLASS__, 'registerCpt']);
+        \add_action('acf/init', [__CLASS__, 'registerAcfFields']);
     }
 
     /**
