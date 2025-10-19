@@ -12,11 +12,27 @@
   "php.validate.executablePath": "php",
   "cursor.experimental.codebaseIndexing": true,
   "search.useGlobalIgnoreFiles": true,
+
   "terminal.integrated.profiles.windows": {
     "Git Bash": {
-      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
-      "args": ["--login"]
+      "path": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin\\bash.exe",
+      "args": ["--login", "-i"],
+      "icon": "terminal-bash"
+    },
+    "PowerShell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "icon": "terminal-cmd"
+    },
+    "Python": {
+      "path": "C:\\Users\\dback\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "args": ["-i"],
+      "icon": "python"
     }
   },
-  "terminal.integrated.defaultProfile.windows": "Git Bash"
+
+  "terminal.integrated.automationShell.windows": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin\\bash.exe"
 }
