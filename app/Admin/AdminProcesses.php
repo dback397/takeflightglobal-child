@@ -14,7 +14,7 @@ final class AdminProcesses
         \add_action('admin_menu', [self::class, 'register_member_id_menu']);
     }
 
-    public static function init_member_id_tracker(): void
+    public static function initMemberIdTracker(): void
     {
         \error_log('[TFG] 🔧 init_member_id_tracker() running');
         \add_action('admin_menu', [self::class, 'register_member_id_menu']);
@@ -22,7 +22,7 @@ final class AdminProcesses
 
     /* ---------------- Dashboard widget ---------------- */
 
-    public static function register_dashboard_widget(): void
+    public static function registerDashboardWidget(): void
     {
         \wp_add_dashboard_widget(
             'tfg_member_id_tracker_widget',
@@ -31,7 +31,7 @@ final class AdminProcesses
         );
     }
 
-    public static function check_access_permission($capability = 'manage_options'): bool
+    public static function checkAccessPermission($capability = 'manage_options'): bool
     {
         if (!\current_user_can($capability)) {
             $uri   = isset($_SERVER['REQUEST_URI']) ? \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])) : '';
@@ -43,7 +43,7 @@ final class AdminProcesses
         return true;
     }
 
-    public static function render_dashboard_widget(): void
+    public static function renderDashboardWidget(): void
     {
         if (isset($_GET['set_member_id'])) {
             echo '<div class="notice notice-success inline"><p>' . \esc_html__('Member ID counters updated successfully.', 'tfg') . '</p></div>';
@@ -86,7 +86,7 @@ final class AdminProcesses
 
     /* ---------------- Admin menu + page ---------------- */
 
-    public static function register_member_id_menu(): void
+    public static function registerMemberIdMenu(): void
     {
         \error_log('[TFG] 🧩 register_member_id_menu() running');
 
@@ -107,9 +107,9 @@ final class AdminProcesses
         \error_log('[TFG] ✅ Menu page added: Member ID Tracker');
     }
 
-    public static function render_member_id_page(): void
+    public static function renderMemberIdPage(): void
     {
-        self::check_access_permission('manage_options');
+        self::checkAccessPermission('manage_options');
 
         if (
             isset($_POST['tfg_set_member_id'], $_POST['member_type'], $_POST['new_value']) &&
@@ -181,12 +181,12 @@ final class AdminProcesses
 
     /* ---------------- Message seeding ---------------- */
 
-    public static function tfg_message_loader(): void
+    public static function tfgMessageLoader(): void
     {
         if (isset($_GET['seed_messages']) && $_GET['seed_messages'] === '1') {
-            self::check_access_permission('manage_options');
+            self::checkAccessPermission('manage_options');
             if (!\get_option('tfg_messages_seeded')) {
-                self::tfg_add_error_messages_from_array();
+                self::tfgAddErrorMessagesFromArray();
                 \update_option('tfg_messages_seeded', true);
                 \error_log('✅ Message seed executed and option saved.');
             } else {
@@ -195,7 +195,7 @@ final class AdminProcesses
         }
     }
 
-    public static function tfg_add_error_messages_from_array(): void
+    public static function tfgAddErrorMessagesFromArray(): void
     {
         $modal_messages = [
             ['msg_class'=>'ERROR','msg_code'=>'101','title'=>'Invalid Email','message'=>'Please enter a valid email address to receive your login link.','dashicon'=>'no-alt','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Invalid format submitted in the magic login form.'],
@@ -256,9 +256,9 @@ final class AdminProcesses
 
     /* ---------------- Shortcodes ---------------- */
 
-    public static function tfg_test_error_modals(): string
+    public static function tfgTestErrorModals(): string
     {
-        self::check_access_permission('manage_options');
+        self::checkAccessPermission('manage_options');
 
         $query = new \WP_Query([
             'post_type'      => 'messages',
@@ -291,7 +291,7 @@ final class AdminProcesses
 
     public static function load_cpt_table($atts): string
     {
-        self::check_access_permission('manage_options');
+        self::checkAccessPermission('manage_options');
 
         $atts = \shortcode_atts([
             'post_type' => '',
@@ -336,9 +336,9 @@ final class AdminProcesses
         return (string) \ob_get_clean();
     }
 
-    public static function debug_magic_token_shortcode($atts): string
+    public static function debugMagicTokenShortcode($atts): string
     {
-        self::check_access_permission('manage_options');
+        self::checkAccessPermission('manage_options');
 
         $atts    = \shortcode_atts(['id' => 0], $atts);
         $post_id = (int) $atts['id'];
@@ -357,9 +357,9 @@ final class AdminProcesses
         return '<pre>' . \esc_html(\print_r($fields, true)) . '</pre>';
     }
 
-    public static function debug_verification_token_shortcode($atts): string
+    public static function debugVerificationTokenShortcode($atts): string
     {
-        self::check_access_permission('manage_options');
+        self::checkAccessPermission('manage_options');
 
         $atts    = \shortcode_atts(['id' => 0], $atts);
         $post_id = (int) $atts['id'];
