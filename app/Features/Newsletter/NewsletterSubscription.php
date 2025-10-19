@@ -21,7 +21,7 @@ final class NewsletterSubscription
     }
 
     // === 1) Render the newsletter signup form ===
-    public static function render_newsletter_signup_form($atts = [], $content = null, $tag = ''): string
+    public static function renderNewsletterSignupForm($atts = [], $content = null, $tag = ''): string
     {
         $atts = \shortcode_atts([
             'prefill_email' => '',
@@ -108,7 +108,7 @@ final class NewsletterSubscription
     }
 
     // === 2) Handle the POST ===
-    public static function handle_newsletter_signup(): void
+    public static function handleNewsletterSignup(): void
     {
         // --- ROUTE GUARD (hardened) ---
         $is_post = (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST');
