@@ -18,10 +18,10 @@ final class RestAPI
 
     public static function init(): void
     {
-        \add_action('rest_api_init', [__CLASS__, 'register_routes']);
+        \add_action('rest_api_init', [__CLASS__, 'registerRoutes']);
     }
 
-    public static function register_routes(): void
+    public static function registerRoutes(): void
     {
         // Restore access probe
         register_rest_route(self::NS, '/restore-access', [
@@ -67,7 +67,7 @@ final class RestAPI
 
     /* -------------------- Permission helpers -------------------- */
 
-    public static function check_token_permission(): bool
+    public static function checkTokenPermission(): bool
     {
         if (!defined('TFG_VERIFICATION_API_TOKEN') || !TFG_VERIFICATION_API_TOKEN) {
             error_log('[TFG REST] TFG_VERIFICATION_API_TOKEN not defined.');
@@ -79,7 +79,7 @@ final class RestAPI
 
     /* -------------------- Endpoints -------------------- */
 
-    public static function restore_access(WP_REST_Request $request)
+    public static function restoreAccess(WP_REST_Request $request)
     {
         $email = Utils::normalizeEmail(wp_unslash($request->get_param('email') ?? ''));
         if (!$email) {
@@ -117,7 +117,7 @@ final class RestAPI
         return self::response(['success' => false, 'message' => 'No matching subscriber found.'], 404);
     }
 
-    public static function get_verification_code(WP_REST_Request $request)
+    public static function getVerificationCode(WP_REST_Request $request)
     {
         $email   = \TFG\Core\Utils::normalizeEmail(wp_unslash($request->get_param('subscriber_email') ?? ''));
         $name    = sanitize_text_field(wp_unslash($request->get_param('subscriber_name') ?? ''));
