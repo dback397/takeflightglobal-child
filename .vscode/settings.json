@@ -11,9 +11,7 @@
   "intelephense.files.maxSize": 5000000,
   "php.validate.executablePath": "php",
   "cursor.experimental.codebaseIndexing": true,
-  "search.useGlobalIgnoreFiles": true
-}
-{
+  "search.useGlobalIgnoreFiles": true,
   "terminal.integrated.profiles.windows": {
     "Git Bash": {
       "path": "C:\\Program Files\\Git\\bin\\bash.exe",
