@@ -14,15 +14,15 @@ final class ProfileButtons
 {
     public static function init(): void
     {
-        (new self())->register_hooks();
+        (new self())->registerHooks();
     }
 
-    private function register_hooks(): void
+    private function registerHooks(): void
     {
-        \add_shortcode('tfge_matrix_buttons', [$this, 'render_institution_program_buttons']);
+        \add_shortcode('tfge_matrix_buttons', [$this, 'renderInstitutionProgramButtons']);
     }
 
-    public function render_institution_program_buttons(): string
+    public function renderInstitutionProgramButtons(): string
     {
         // Require ACF and correct context
         if (!\function_exists('get_field')) {

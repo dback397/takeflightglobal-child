@@ -4,7 +4,7 @@ namespace TFG\UI;
 
 /**
  * Shortcodes & Link Button CPT
- * 
+ *
  * - Registers `link_button` CPT
  * - Provides shortcodes:
  *   [tfge_matrix_buttons]
@@ -17,23 +17,23 @@ final class Shortcodes
     public static function init(): void
     {
         \add_action('init', function () {
-            self::register_link_button_cpt();
+            self::registerLinkButtonCpt();
             (new self())->register_hooks();
         });
     }
 
     private function register_hooks(): void
     {
-        \add_shortcode('tfge_matrix_buttons',         [$this, 'render_matrix_buttons']);
-        \add_shortcode('tfge_program_link_codes',     [$this, 'render_program_link_codes']);
-        \add_shortcode('tfge_list_program_link_codes',[__CLASS__, 'list_program_link_codes']);
-        \add_shortcode('tfge_update_brochures',       [$this, 'update_brochure_urls']);
+        \add_shortcode('tfge_matrix_buttons',         [$this, 'renderMatrixButtons']);
+        \add_shortcode('tfge_program_link_codes',     [$this, 'renderProgramLinkCodes']);
+        \add_shortcode('tfge_list_program_link_codes',[__CLASS__, 'listProgramLinkCodes']);
+        \add_shortcode('tfge_update_brochures',       [$this, 'updateBrochureUrls']);
     }
 
     /* ==============================
        CPT: link_button
        ============================== */
-    public static function register_link_button_cpt(): void
+    public static function registerLinkButtonCpt(): void
     {
         \register_post_type('link_button', [
             'labels' => [
@@ -57,7 +57,7 @@ final class Shortcodes
        [tfge_matrix_buttons]
        Renders buttons for current institution via ACF 'institution_code'
        ============================== */
-    public function render_matrix_buttons(): string
+    public function renderMatrixButtons(): string
     {
         if (!\function_exists('get_field')) {
             return '';
@@ -110,7 +110,7 @@ final class Shortcodes
     /* ==============================
        [tfge_program_link_codes]
        ============================== */
-    public function render_program_link_codes(): string
+    public function renderProgramLinkCodes(): string
     {
         if (!\function_exists('get_field')) {
             return '<p><em>ACF is not active.</em></p>';
@@ -156,7 +156,7 @@ final class Shortcodes
     /* ==============================
        [tfge_list_program_link_codes] (legacy)
        ============================== */
-    public static function list_program_link_codes(): string
+    public static function listProgramLinkCodes(): string
     {
         $programs = \get_posts([
             'post_type'        => 'program',
@@ -185,7 +185,7 @@ final class Shortcodes
     /* ==============================
        [tfge_update_brochures]
        ============================== */
-    public function update_brochure_urls(): string
+    public function updateBrochureUrls(): string
     {
         if (!\current_user_can('manage_options')) {
             \error_log('[Update Brochure URLs] Unauthorized access attempt.');
