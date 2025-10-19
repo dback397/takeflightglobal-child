@@ -19,7 +19,7 @@ final class VerificationToken
 
     public static function init(): void
     {
-        \add_action('rest_api_init', [self::class, 'register_rest_routes']);
+        \add_action('rest_api_init', [self::class, 'registerRestRoutes']);
 
         // Delay CPT check until after init
         \add_action('init', function () {

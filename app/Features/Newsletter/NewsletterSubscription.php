@@ -9,7 +9,7 @@ use TFG\Features\MagicLogin\MagicUtilities;
 use TFG\Features\MagicLogin\VerificationToken;
 
 // Optional aliases if you expose either/both reCAPTCHA helpers in Core:
-use TFG\Core\ReCAPTCHA as ReCAPTCHAClass;
+use TFG\Core\ReCAPTCHA;
 
 
 final class NewsletterSubscription
@@ -93,7 +93,7 @@ final class NewsletterSubscription
 
                 <input type="hidden" name="source" value="newsletter_form">
 
-                <?php echo self::insert_recaptcha(); ?>
+                <?php echo self::insertRecaptcha(); ?>
 
                 <button type="submit"
                         name="submit_newsletter_signup"
@@ -130,7 +130,7 @@ final class NewsletterSubscription
         // ── NONCE ─────────────────────────────────────────────────────────────
         $nonce = isset($_POST['_wpnonce']) ? \sanitize_text_field(\wp_unslash($_POST['_wpnonce'])) : '';
         if (!$nonce || !\wp_verify_nonce($nonce, 'tfg_newsletter_signup')) {
-            self::redirect_with_error('Security check failed.');
+            self::redirectWithError('Security check failed.');
         }
 
         // ── INTAKE / NORMALIZE ───────────────────────────────────────────────
@@ -178,18 +178,14 @@ final class NewsletterSubscription
 
         // ── BASIC VALIDATION ─────────────────────────────────────────────────
         if (!$email || !\is_email($email) || !$gdpr_ok || !$vcode) {
-            self::redirect_with_error('Missing required fields.');
+            self::redirectWithError('Missing required fields.');
         }
 
         // ── reCAPTCHA (optional) ─────────────────────────────────────────────
         $recap_ok = true;
-        if (\class_exists(RecaptchaClass::class) && \method_exists(RecaptchaClass::class, 'verify')) {
-            $recap_ok = (bool) RecaptchaClass::verify($_POST['g-recaptcha-response'] ?? '');
-        } elseif (\class_exists(ReCAPTCHAClass::class) && \method_exists(ReCAPTCHAClass::class, 'verify')) {
-            $recap_ok = (bool) ReCAPTCHAClass::verify($_POST['g-recaptcha-response'] ?? '');
-        }
+        $recap_ok = (bool) ReCAPTCHA::verify($_POST['g-recaptcha-response'] ?? '');
         if (!$recap_ok) {
-            self::redirect_with_error('reCAPTCHA validation failed.');
+            self::redirectWithError('reCAPTCHA validation failed.');
         }
 
         // ── ALREADY SUBSCRIBED? ──────────────────────────────────────────────
@@ -207,19 +203,19 @@ final class NewsletterSubscription
         ]);
         if ($existing) {
             \error_log("[TFG NL] ℹ️ Already subscribed: {$email}");
-            self::redirect_success();
+            self::redirectSuccess();
         }
 
         // ── BURN VERIFICATION TOKEN + GET SEQUENCE ───────────────────────────
         if (!\class_exists(VerificationToken::class) || !\method_exists(VerificationToken::class, 'find_by_code')) {
-            self::redirect_with_error('Verification service unavailable.');
+            self::redirectWithError('Verification service unavailable.');
         }
         \error_log('[TFG NL] enter handle_newsletter_signup');
 
         $verif = VerificationToken::markUsed($vcode, $vcode, $email, ['check_expiry' => false]);
         if (\is_wp_error($verif)) {
             \error_log('[TFG NL] ❌ mark_used: ' . $verif->get_error_message());
-            self::redirect_with_error('Invalid or expired verification code.');
+            self::redirectWithError('Invalid or expired verification code.');
         }
         \error_log('[TFG NL] ✅ mark_used OK; vt_post_id=' . ($verif['post_id'] ?? 0) . ' seq=' . ($verif['sequence_code'] ?? 'n/a'));
 
@@ -252,7 +248,7 @@ final class NewsletterSubscription
             ], true);
 
             if (\is_wp_error($insert) || !$insert) {
-                self::redirect_with_error('Could not create subscriber.');
+                self::redirectWithError('Could not create subscriber.');
             }
             $sub_id = (int) $insert;
         } else {
@@ -294,7 +290,7 @@ final class NewsletterSubscription
         $magic_expires = \is_array($magic) ? (int)   ($magic['expires'] ?? 0)  : 0;
 
         if ($magic_url === '' || $magic_post_id === 0) {
-            self::redirect_with_error('Could not create confirmation link.');
+            self::redirectWithError('Could not create confirmation link.');
         }
 
         // Store breadcrumbs (optional but useful for audits/support)
@@ -313,12 +309,12 @@ final class NewsletterSubscription
         }
 
         // ── DONE ─────────────────────────────────────────────────────────────
-        self::redirect_success();
+        self::redirectSuccess();
     }
 
-    private static function direct_create_magic_token(string $email, int $verif_id = 0, int $seq_id = 0, string $seq_code = '', int $ttl = 900): array
+    private static function directCreateMagicToken(string $email, int $verif_id = 0, int $seq_id = 0, string $seq_code = '', int $ttl = 900): array
     {
-        \error_log('[TFG NL] direct_create_magic_token start');
+        \error_log('[TFG NL] directCreateMagicToken start');
 
         // CPT is registered by MU-plugin, but double-check
         if (!\post_type_exists('magic_tokens')) {
@@ -363,7 +359,7 @@ final class NewsletterSubscription
 
         $url = \add_query_arg('tfg_magic', \rawurlencode($token), \site_url('/'));
 
-        \error_log('[TFG NL] direct_create_magic_token end; post_id=' . (int) $post_id);
+        \error_log('[TFG NL] directCreateMagicToken end; post_id=' . (int) $post_id);
         return [
             'post_id' => (int) $post_id,
             'url'     => $url,
@@ -371,7 +367,7 @@ final class NewsletterSubscription
         ];
     }
 
-    private static function redirect_success(): void
+    private static function redirectSuccess(): void
     {
         if (!\headers_sent()) {
             \nocache_headers();
@@ -381,7 +377,7 @@ final class NewsletterSubscription
         \error_log("[TFG NL] Redirect Success: headers already sent");
     }
 
-    private static function redirect_with_error(string $msg): void
+    private static function redirectWithError(string $msg): void
     {
         if (!\headers_sent()) {
             \nocache_headers();
@@ -392,18 +388,12 @@ final class NewsletterSubscription
     }
 
     // === 3) Helper: reCAPTCHA insertion (supports either class name) ===
-    public static function insert_recaptcha(): string
+    public static function insertRecaptcha(): string
     {
         \ob_start();
         $site_key = '';
-
-        if (\class_exists(ReCAPTCHAClass::class) && \method_exists(ReCAPTCHAClass::class, 'get_keys')) {
-            $keys = ReCAPTCHAClass::get_keys();
-            $site_key = (string) ($keys['site'] ?? '');
-        } elseif (\class_exists(RecaptchaClass::class) && \method_exists(RecaptchaClass::class, 'get_keys')) {
-            $keys = RecaptchaClass::get_keys();
-            $site_key = (string) ($keys['site'] ?? '');
-        }
+        $keys = ReCAPTCHA::get_keys();
+        $site_key = (string) ($keys['site'] ?? '');
 
         if ($site_key !== '') {
             ?>

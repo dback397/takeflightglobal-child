@@ -21,11 +21,11 @@ class Prefill
         }
 
         // Use **named** WPForms dynamic filters (reliable across versions)
-        \add_filter('wpforms_field_value_tfg_acf_programs', [self::class, 'prefill_programs'], 10, 3);
-        \add_filter('wpforms_field_value_tfg_acf_gdpr',     [self::class, 'prefill_gdpr'],     10, 3);
+        \add_filter('wpforms_field_value_tfg_acf_programs', [self::class, 'prefillPrograms'], 10, 3);
+        \add_filter('wpforms_field_value_tfg_acf_gdpr',     [self::class, 'prefillGdpr'],     10, 3);
 
         // Checkbox default ticking for one form
-        \add_filter('wpforms_frontend_form_data', [self::class, 'prefill_checkboxes'], 10, 3);
+        \add_filter('wpforms_frontend_form_data', [self::class, 'prefillCheckboxes'], 10, 3);
     }
 
     /* ---------- Core helpers ---------- */
@@ -111,7 +111,7 @@ class Prefill
      * Tick choices on a checkbox field (by label match) based on ACF 'programs' array.
      * Hook: wpforms_frontend_form_data (runs before render)
      */
-    public static function prefillCheckboxes($form_data, $fields, $form_id)
+    public static function prefillCheckboxes($form_data, $fields=null, $form_id=null)
     {
         // Structure guards
         if (!\is_array($form_data) || empty($form_data['id'])) {
@@ -151,6 +151,3 @@ class Prefill
         return $form_data;
     }
 }
-
-// Legacy alias for back-compat
-\class_alias(\TFG\Core\Prefill::class, 'TFG_Prefill');
