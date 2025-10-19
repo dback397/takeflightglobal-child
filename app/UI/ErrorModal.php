@@ -121,7 +121,7 @@ final class ErrorModal
     }
 
     /** Store the code transient for this visitor and redirect. */
-    public static function show_r($code, int $seconds = 30, ?string $redirect_url = null): void
+    public static function showR($code, int $seconds = 30, ?string $redirect_url = null): void
     {
         if (empty($code)) return;
 
