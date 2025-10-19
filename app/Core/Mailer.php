@@ -112,17 +112,7 @@ final class Mailer
     }
 
     /* ---- Legacy compatibility (remove when all references updated) ---- */
-    /** @deprecated Use TFG\Core\Mailer::send() */
-    public static function send_legacy($to, $subject, $template_slug, $data = [], $headers = [])
-    {
-        return self::send((string)$to, (string)$subject, (string)$template_slug, (array)$data, (array)$headers);
-    }
 
-    /** @deprecated Use renderTemplate() */
-    public static function render_template($slug, $data = [])
-    {
-        return self::renderTemplate((string)$slug, (array)$data);
-    }
 }
 
 /* Legacy class alias for transition */
