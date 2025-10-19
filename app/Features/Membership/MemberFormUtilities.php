@@ -250,24 +250,7 @@ final class MemberFormUtilities
         // ... your form processing logic here ...
     }
 
-    /* -------- Legacy aliases (optional, remove when all calls migrated) -------- */
-    /** @deprecated */
-    public static function init_member_forms(): void { self::init(); }
-    /** @deprecated */
-    public static function submit_button(string $label = 'Submit'): string { return self::submitButton($label); }
-    /** @deprecated */
-    public static function get_user_profile($user_id): ?int { return self::getUserProfile($user_id); }
-    /** @deprecated */
-    public static function render_gdpr_agreement(int $post_id = 0): string { return self::renderGdprAgreement($post_id); }
-    /** @deprecated */
-    public static function whitelist_note(): string { return self::whitelistNote(); }
-    /** @deprecated */
-    public static function insert_recaptcha(): string { return self::insertRecaptcha(); }
-    /** @deprecated */
-    public static function render_password_setup_form(int $post_id): string { return self::renderPasswordSetupForm($post_id); }
-    /** @deprecated */
-    public static function handle_generic_password_submission(): void { self::handleGenericPasswordSubmission(); }
-}
+    }
 
 /* ---- Legacy class alias for transition ---- */
 \class_alias(\TFG\Features\Membership\MemberFormUtilities::class, 'TFG_Member_Form_Utilities');
