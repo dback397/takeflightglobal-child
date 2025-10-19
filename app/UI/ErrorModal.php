@@ -9,9 +9,9 @@ final class ErrorModal
      */
     public static function init(): void
     {
-        \add_shortcode('tfg_error_modal', [self::class, 'render_shortcode']);
+        \add_shortcode('tfg_error_modal', [self::class, 'renderShortcode']);
         self::registerCodeShortcode();
-        \add_action('wp_footer', [self::class, 'inject_modal_to_footer']);
+        \add_action('wp_footer', [self::class, 'injectModalToFooter']);
     }
 
     /** Build a per-visitor transient key to avoid collisions across users. */
@@ -68,11 +68,11 @@ final class ErrorModal
     public static function show($code): string
     {
         if (empty($code)) return '';
-        return \do_shortcode('[tfg_error_modal code="' . \esc_attr($code) . '"]');
+        return \do_shortcode('[tfgErrorModal code="' . \esc_attr($code) . '"]');
     }
 
     /** @return array<string,array{title:string,message:string,text_color:string,body_color:string,dashicon:string}> */
-    public static function get_error_messages(): array
+    public static function getErrorMessages(): array
     {
         $posts = \get_posts([
             'post_type'        => 'messages',
