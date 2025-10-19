@@ -20,7 +20,7 @@ final class ThemeSetup
         \add_action('wp_footer',          [$this, 'custom_footer_text']);
     }
 
-    public function enqueue_assets(): void
+    public function enqueueAssets(): void
     {
         // Front-end only; skip wp-admin, feeds, REST
         if (\is_admin() || \is_feed() || (defined('REST_REQUEST') && REST_REQUEST)) {
@@ -52,7 +52,7 @@ final class ThemeSetup
         );
     }
 
-    public function custom_footer_text(): void
+    public function customFooterText(): void
     {
         $year = \gmdate('Y');
         echo '<p style="text-align:center;font-size:0.8em;">' .
