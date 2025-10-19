@@ -81,7 +81,7 @@ final class MemberFormUtilities
         if (!\class_exists(ReCaptcha::class)) {
             return '';
         }
-        $keys = ReCaptcha::get_keys();
+        $keys = ReCaptcha::getKeys();
         if (empty($keys['site'])) {
             return '';
         }
@@ -208,7 +208,7 @@ final class MemberFormUtilities
     /* ---------- reCAPTCHA helpers ---------- */
 
     /** Simple wrapper; keeps callsite stable. */
-    public static function validate_recaptcha(): bool
+    public static function validateRecaptcha(): bool
     {
         $token = \sanitize_text_field($_POST['g-recaptcha-response'] ?? '');
 
@@ -234,12 +234,12 @@ final class MemberFormUtilities
     }
 
     /** Example generic handler (unused by default, kept for reference). */
-    public static function tfg_handle_form_submission(): void
+    public static function tfgHandleFormSubmission(): void
     {
         if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
 
         // reCAPTCHA (optional)
-        if (!self::validate_recaptcha()) {
+        if (!self::validateRecaptcha()) {
             echo 'reCAPTCHA failed. Please try again.';
             return;
         }
