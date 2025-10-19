@@ -83,7 +83,7 @@ class Prefill
     /* ---------- Specific dynamic value helpers ---------- */
 
     // For WPForms field with Dynamic Population: Filter = tfg_acf_programs
-    public static function prefill_programs($value, $field_id = null, $form_data = null)
+    public static function prefillPrograms($value, $field_id = null, $form_data = null)
     {
         $post_id = self::currentPostId();
         if (!$post_id || !self::canReadPost($post_id)) {
