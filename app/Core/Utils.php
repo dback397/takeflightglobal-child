@@ -43,29 +43,4 @@ final class Utils
         return \is_email($v) ? $v : null;
     }
 
-    /* ===== Legacy snake_case aliases (safe during migration) ===== */
-
-    /** @deprecated Use normalizeMemberId() */
-    public static function normalize_member_id($id): string
-    {
-        return self::normalizeMemberId($id);
-    }
-
-    /** @deprecated Use normalizeToken() */
-    public static function normalize_token(?string $v): ?string
-    {
-        return self::normalizeToken($v);
-    }
-
-    /** @deprecated Use normalizeSignature() */
-    public static function normalize_signature(?string $v): ?string
-    {
-        return self::normalizeSignature($v);
-    }
-
-    /** @deprecated Use normalizeEmail() */
-    public static function normalize_email(?string $v): ?string
-    {
-        return self::normalizeEmail($v);
-    }
 }
