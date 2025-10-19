@@ -239,18 +239,7 @@ final class MemberDashboard
         return $results[0] ?? null;
     }
 
-    /* --------- Legacy aliases for shortcodes (optional) --------- */
-    /** @deprecated */
-    public static function render_dashboard(): string { return self::renderDashboard(); }
-    /** @deprecated */
-    public static function render_edit_form($atts): string { return self::renderEditForm($atts); }
-    /** @deprecated */
-    public static function unsubscribe_trigger(): void { self::unsubscribeTrigger(); }
-    /** @deprecated */
-    public static function logout_trigger(): void { self::logoutTrigger(); }
-    /** @deprecated */
-    public static function get_member_profile_by_id(string $member_id) { return self::getMemberProfileById($member_id); }
-}
+    }
 
 /* ---- Legacy class alias for transition ---- */
 \class_alias(\TFG\Features\Membership\MemberDashboard::class, 'TFG_Member_Dashboard');
