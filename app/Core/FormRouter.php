@@ -54,13 +54,6 @@ final class FormRouter
         return ($val === '') ? null : $val;
     }
 
-    /* ---------- Legacy snake_case alias methods (temporary) ---------- */
-
-    /** @deprecated Use postString() */
-    public static function post_string(string $key): ?string
-    {
-        return self::postString($key);
-    }
 }
 
 /* ---- Legacy class alias (remove once all references are updated) ---- */
