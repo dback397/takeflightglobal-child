@@ -17,7 +17,7 @@ final class ResetTokenCPT
     /**
      * Register the "reset_tokens" custom post type.
      */
-    public static function register_cpt(): void
+    public static function registerCpt(): void
     {
         $caps = [
             'edit_post'              => 'manage_options',
@@ -58,7 +58,7 @@ final class ResetTokenCPT
     /**
      * Register ACF field group for reset_tokens CPT.
      */
-    public static function register_acf_fields(): void
+    public static function registerAcfFields(): void
     {
         if (!\function_exists('acf_add_local_field_group')) {
             return;
