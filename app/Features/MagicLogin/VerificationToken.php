@@ -25,8 +25,8 @@ final class VerificationToken
         \add_action('init', function () {
             if (!\post_type_exists('verification_tokens')) {
                 \error_log('[TFG Init] ❌ verification_tokens CPT not registered.');
-            } else {
-                \error_log('[TFG Init] ✅ verification_tokens CPT found.');
+        //    } else {
+        //        \error_log('[TFG Init] ✅ verification_tokens CPT found.');
             }
         }, 30);
     }

@@ -35,7 +35,6 @@ if (!defined('ABSPATH')) {
  *  Paths / Versions
  * --------------------------------------------------------------------- */
 \defined('TFG_PLUGIN_PATH')       || \define('TFG_PLUGIN_PATH', WP_CONTENT_DIR . '/mu-plugins/tfg/');
-\defined('KADENCE_VERSION')       || \define('KADENCE_VERSION', '1.0.0'); // fallback if theme constant undefined
 
 /** ------------------------------------------------------------------------
  *  API / Security Tokens

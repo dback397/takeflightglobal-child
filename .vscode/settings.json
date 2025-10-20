@@ -33,12 +33,16 @@
       "args": ["-i"],
       "icon": "python"
     },
-    "WordPress CLI": {
+    "WPCLI": {
       "path": "C:\\Windows\\System32\\cmd.exe",
-      "args": ["/k", "cd C:\\xampp\\htdocs\\takeflightglobal && php C:\\xampp\\php\\wp-cli.phar shell"],
-      "label": "WPCLI"
+      "args": [
+        "/k",
+        "set WP_CLI_NON_INTERACTIVE=1 && set WP_CLI_DISABLE_PAGER=1 && set PAGER=more && set LESS= && cd /d C:\\xampp\\htdocs\\takeflightglobal"
+      ],
+      "icon": "server",
+      "overrideName": true
     }
-  },
+},
 
   "terminal.integrated.automationShell.windows": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin\\bash.exe"
 }
