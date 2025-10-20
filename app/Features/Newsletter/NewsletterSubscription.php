@@ -392,7 +392,7 @@ final class NewsletterSubscription
     {
         \ob_start();
         $site_key = '';
-        $keys = ReCAPTCHA::get_keys();
+        $keys = ReCAPTCHA::getKeys();
         $site_key = (string) ($keys['site'] ?? '');
 
         if ($site_key !== '') {
