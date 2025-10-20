@@ -14,7 +14,6 @@ if (!defined('ABSPATH')) {
 /** -----------------------------------------------------------------
  *  Safe defaults (guarded)
  *  ---------------------------------------------------------------- */
-\defined('TFG_SAFEMODE')        || \define('TFG_SAFEMODE', false);
 \defined('WP_ENV')              || \define('WP_ENV', 'development');
 \defined('WP_ENVIRONMENT')      || \define('WP_ENVIRONMENT', 'local');
 \defined('TFG_VERSION')         || \define('TFG_VERSION', '1.0.0');
@@ -24,6 +23,37 @@ if (!defined('ABSPATH')) {
 // Security constants
 \defined('TFG_HMAC_SECRET')     || \define('TFG_HMAC_SECRET', \defined('AUTH_SALT') ? AUTH_SALT : 'tfg-default-hmac-secret-' . \wp_generate_password(32, false));
 \defined('MEMBER_PASSWORD_DEFAULT') || \define('MEMBER_PASSWORD_DEFAULT', 'password123');
+
+/** ------------------------------------------------------------------------
+ *  Debug / Environment
+ * --------------------------------------------------------------------- */
+\defined('TFG_DEBUG_CAPS')        || \define('TFG_DEBUG_CAPS', true);    // Enable extra admin-cap logging
+\defined('TFG_SAFEMODE')          || \define('TFG_SAFEMODE', false);     // Disable heavy or risky operations
+\defined('TFG_MIN_PASSWORD_LENGTH')|| \define('TFG_MIN_PASSWORD_LENGTH', 10);
+
+/** ------------------------------------------------------------------------
+ *  Paths / Versions
+ * --------------------------------------------------------------------- */
+\defined('TFG_PLUGIN_PATH')       || \define('TFG_PLUGIN_PATH', WP_CONTENT_DIR . '/mu-plugins/tfg/');
+\defined('KADENCE_VERSION')       || \define('KADENCE_VERSION', '1.0.0'); // fallback if theme constant undefined
+
+/** ------------------------------------------------------------------------
+ *  API / Security Tokens
+ *  (⚠️ replace with real values in wp-config.php or environment vars)
+ * --------------------------------------------------------------------- */
+\defined('TFG_VERIFICATION_API_TOKEN')
+    || \define('TFG_VERIFICATION_API_TOKEN', 'dev-verification-token-placeholder');
+
+\defined('RECAPTCHA_SITE_KEY')
+    || \define('RECAPTCHA_SITE_KEY', 'recaptcha-site-key-placeholder');
+
+\defined('RECAPTCHA_SECRET_KEY')
+    || \define('RECAPTCHA_SECRET_KEY', 'recaptcha-secret-key-placeholder');
+
+/** ------------------------------------------------------------------------
+ *  Misc / Default Environment Labels
+ * --------------------------------------------------------------------- */
+\defined('TFG_ENVIRONMENT')       || \define('TFG_ENVIRONMENT', 'local'); // local | staging | production
 
 /** -----------------------------------------------------------------
  *  ACF admin visibility (optional)
