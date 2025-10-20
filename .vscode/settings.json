@@ -19,6 +19,7 @@
       "args": ["--login", "-i"],
       "icon": "terminal-bash"
     },
+
     "PowerShell": {
       "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
       "icon": "terminal-powershell"
@@ -31,6 +32,11 @@
       "path": "C:\\Users\\dback\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
       "args": ["-i"],
       "icon": "python"
+    },
+    "WordPress CLI": {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "args": ["/k", "cd C:\\xampp\\htdocs\\takeflightglobal && php C:\\xampp\\php\\wp-cli.phar shell"],
+      "label": "WPCLI"
     }
   },
 
