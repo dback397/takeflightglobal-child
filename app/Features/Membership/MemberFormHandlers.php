@@ -19,7 +19,7 @@ final class MemberFormHandlers
         if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-admin') !== false) {
             return;
         }
-        
+
         if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
 
         // Require subscription cookie (server-trust; UI cookie ignored)
@@ -29,10 +29,10 @@ final class MemberFormHandlers
                 \error_log('[TFG FormHandlers] Redirect loop prevented: already on subscribe page');
                 return;
             }
-            
+
             \error_log('[TFG FormHandlers] No subscription cookie found, redirecting to subscribe');
             // Show modal code 104 then redirect to /subscribe
-            ErrorModal::show_r('104', 20, \home_url('/subscribe'));
+            ErrorModal::showR('104', 20, \home_url('/subscribe'));
             return;
         }
 
