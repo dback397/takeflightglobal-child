@@ -188,7 +188,7 @@ final class Shortcodes
     public function updateBrochureUrls(): string
     {
         if (!\current_user_can('manage_options')) {
-            \error_log('[Update Brochure URLs] Unauthorized access attempt.');
+            \TFG\Core\Utils::info('[Update Brochure URLs] Unauthorized access attempt.');
             return '<strong>Unauthorized access.</strong>';
         }
         if (!\function_exists('get_field')) {

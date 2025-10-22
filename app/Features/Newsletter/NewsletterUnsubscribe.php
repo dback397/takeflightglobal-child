@@ -147,7 +147,7 @@ final class NewsletterUnsubscribe
             \wp_safe_redirect($url);
             exit;
         }
-        \error_log("[Redirect Success] Redirect failed, headers sent");
+        \TFG\Core\Utils::info("[Redirect Success] Redirect failed, headers sent");
     }
 
     private static function redirectWithError(string $msg): void
@@ -158,7 +158,7 @@ final class NewsletterUnsubscribe
             \wp_safe_redirect($url);
             exit;
         }
-        \error_log("[Redirect w Error] Redirect failed, headers sent");
+        \TFG\Core\Utils::info("[Redirect w Error] Redirect failed, headers sent");
     }
 }
 

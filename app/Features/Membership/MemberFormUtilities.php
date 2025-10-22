@@ -148,7 +148,7 @@ final class MemberFormUtilities
     public static function handleGenericPasswordSubmission(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -157,7 +157,7 @@ final class MemberFormUtilities
 
         // CSRF
         if (empty($_POST[self::NONCE_FIELD_PW]) || !\wp_verify_nonce($_POST[self::NONCE_FIELD_PW], self::NONCE_ACTION_PW)) {
-            \error_log('[TFG GENERIC PW] Nonce verification failed.');
+            \TFG\Core\Utils::info('[TFG GENERIC PW] Nonce verification failed.');
             return;
         }
 
@@ -166,24 +166,24 @@ final class MemberFormUtilities
         $confirm  = (string) \wp_unslash($_POST['institution_password_confirm'] ?? '');
 
         if (!$post_id) {
-            \error_log('[TFG GENERIC PW] ❌ Missing post_id.');
+            \TFG\Core\Utils::info('[TFG GENERIC PW] ❌ Missing post_id.');
             return;
         }
         if ($password !== $confirm) {
-            \error_log('[TFG GENERIC PW] ❌ Passwords do not match.');
+            \TFG\Core\Utils::info('[TFG GENERIC PW] ❌ Passwords do not match.');
             return;
         }
 
         $min_len = \defined('TFG_MIN_PASSWORD_LENGTH') ? (int) \TFG_MIN_PASSWORD_LENGTH : self::MIN_PW_LEN;
         if (\strlen($password) < $min_len) {
-            \error_log("[TFG GENERIC PW] ❌ Password too short (min {$min_len}).");
+            \TFG\Core\Utils::info("[TFG GENERIC PW] ❌ Password too short (min {$min_len}).");
             return;
         }
 
         // Hash password — use PHP's PASSWORD_DEFAULT (do NOT use a custom string const here)
         $hash = \password_hash($password, \PASSWORD_DEFAULT);
         if (!$hash) {
-            \error_log('[TFG GENERIC PW] ❌ password_hash() failed.');
+            \TFG\Core\Utils::info('[TFG GENERIC PW] ❌ password_hash() failed.');
             return;
         }
 
@@ -196,11 +196,11 @@ final class MemberFormUtilities
         }
 
         if (!$ok) {
-            \error_log("[TFG GENERIC PW] ❌ Could not save password hash for post {$post_id}.");
+            \TFG\Core\Utils::info("[TFG GENERIC PW] ❌ Could not save password hash for post {$post_id}.");
             return;
         }
 
-        \error_log("[TFG GENERIC PW] ✅ Password set for post {$post_id}.");
+        \TFG\Core\Utils::info("[TFG GENERIC PW] ✅ Password set for post {$post_id}.");
 
         $redirect = \add_query_arg('post_id', $post_id, \site_url('/profile-confirmation/'));
         if (!\headers_sent()) {
@@ -218,21 +218,21 @@ final class MemberFormUtilities
         $token = \sanitize_text_field($_POST['g-recaptcha-response'] ?? '');
 
         if ($token === '') {
-            \error_log('[TFG reCAPTCHA] ❌ Token missing.');
+            \TFG\Core\Utils::info('[TFG reCAPTCHA] ❌ Token missing.');
             return false;
         }
 
         if (!\class_exists(ReCaptcha::class)) {
-            \error_log('[TFG reCAPTCHA] ❌ ReCaptcha class missing.');
+            \TFG\Core\Utils::info('[TFG reCAPTCHA] ❌ ReCaptcha class missing.');
             return false;
         }
 
         $verified = (bool) ReCaptcha::verify($token);
 
         if (!$verified) {
-            \error_log('[TFG reCAPTCHA] ❌ Verification failed.');
+            \TFG\Core\Utils::info('[TFG reCAPTCHA] ❌ Verification failed.');
         } else {
-            \error_log('[TFG reCAPTCHA] ✅ Verification passed.');
+            \TFG\Core\Utils::info('[TFG reCAPTCHA] ✅ Verification passed.');
         }
 
         return $verified;

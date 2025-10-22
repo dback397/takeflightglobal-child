@@ -107,13 +107,13 @@ final class MagicLogin
     {
 
        if (Utils::isSystemRequest()) {
-         \error_log('[TFG SystemGuard] Skipped handleSubmit due to REST/CRON/CLI/AJAX context');
+         \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleSubmit due to REST/CRON/CLI/AJAX context');
          return;
        }
 
       $email = Utils::normalizeEmail($_POST['magic_email'] ?? '');
         if (!$email || !\is_email($email)) {
-            \error_log('[Magic Login] Invalid email format.');
+            \TFG\Core\Utils::info('[Magic Login] Invalid email format.');
             return;
         }
 
@@ -129,26 +129,26 @@ final class MagicLogin
         }
 
         if (!$isVerified) {
-            \error_log('[Magic Login] Email not verified: ' . $email);
+            \TFG\Core\Utils::info('[Magic Login] Email not verified: ' . $email);
 
             // Use RedirectHelper to prevent loops
             $signup_url = \apply_filters('tfg_magic_login_signup_url', \home_url('/newsletter-signup'));
 
             if (RedirectHelper::isOnPage('/newsletter-signup') || RedirectHelper::isOnPage('/subscribe')) {
-                \error_log('[Magic Login] Redirect loop prevented: already on signup/subscribe page');
+                \TFG\Core\Utils::info('[Magic Login] Redirect loop prevented: already on signup/subscribe page');
                 return;
             }
 
             // Prefill cookie for signup form
             Cookies::setUiCookie('tfg_prefill_email', $email, 600);
 
-            \error_log('[Magic Login] Redirecting unverified user to: ' . $signup_url);
+            \TFG\Core\Utils::info('[Magic Login] Redirecting unverified user to: ' . $signup_url);
             if (!\headers_sent()) {
                 \nocache_headers();
                 \wp_safe_redirect($signup_url);
                 exit;
             }
-            \error_log("[Magic Login] Verification failed (headers already sent)");
+            \TFG\Core\Utils::info("[Magic Login] Verification failed (headers already sent)");
             return;
         }
 
@@ -168,7 +168,7 @@ final class MagicLogin
         $magic_post_id = \is_array($magic) ? (int)    ($magic['post_id'] ?? 0)  : 0;
 
         if ($magic_url === '' || $magic_post_id === 0) {
-            \error_log('[Magic Login] Failed to create magic token for ' . $email);
+            \TFG\Core\Utils::info('[Magic Login] Failed to create magic token for ' . $email);
             return;
         }
 
@@ -203,11 +203,11 @@ final class MagicLogin
         }
 
         if (!$sent) {
-            \error_log('[Magic Login] wp_mail() failed for ' . $email);
+            \TFG\Core\Utils::info('[Magic Login] wp_mail() failed for ' . $email);
             return;
         }
 
-        \error_log('[Magic Login] Link sent');
+        \TFG\Core\Utils::info('[Magic Login] Link sent');
     }
 }
 

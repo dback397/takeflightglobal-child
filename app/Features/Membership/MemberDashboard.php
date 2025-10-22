@@ -180,7 +180,7 @@ final class MemberDashboard
     public static function unsubscribeTrigger(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -198,7 +198,7 @@ final class MemberDashboard
             } else {
                 \update_post_meta($profile->ID, 'is_active', 0);
             }
-            \error_log("[TFG Dashboard] Profile {$member_id} marked as deactivated.");
+            \TFG\Core\Utils::info("[TFG Dashboard] Profile {$member_id} marked as deactivated.");
         }
 
         Cookies::unsetMemberCookie();
@@ -214,7 +214,7 @@ final class MemberDashboard
     public static function logoutTrigger(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -227,7 +227,7 @@ final class MemberDashboard
             \wp_safe_redirect(\home_url('/'));
             exit;
         }
-        \error_log('[TFG Dashboard] Headers already sent; could not redirect after logout.');
+        \TFG\Core\Utils::info('[TFG Dashboard] Headers already sent; could not redirect after logout.');
     }
 
     /* ---------------- Helpers ---------------- */

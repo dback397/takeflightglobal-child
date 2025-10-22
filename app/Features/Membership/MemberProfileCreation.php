@@ -22,20 +22,20 @@ final class MemberProfileCreation
         // If you prefer strict routing, re-enable your router:
         // if (!FormRouter::matches('profile_transfer')) return;
 
-        \error_log('[TFG Profile Transfer] Entering handleProfileTransfer()');
+        \TFG\Core\Utils::info('[TFG Profile Transfer] Entering handleProfileTransfer()');
 
         $post_id  = isset($_POST['post_id']) ? \absint($_POST['post_id']) : 0;
         $password = (string) ($_POST['institution_password'] ?? '');
         $confirm  = (string) ($_POST['institution_password_confirm'] ?? '');
 
         if ($post_id <= 0 || $password === '' || $password !== $confirm) {
-            \error_log('[TFG Profile Creation] ❌ Missing post_id or password mismatch');
+            \TFG\Core\Utils::info('[TFG Profile Creation] ❌ Missing post_id or password mismatch');
             return;
         }
 
         $stub = \get_post($post_id);
         if (!$stub || $stub->post_type !== 'profile_stub') {
-            \error_log("[TFG Profile Creation] ❌ Invalid stub post_type for ID: {$post_id}");
+            \TFG\Core\Utils::info("[TFG Profile Creation] ❌ Invalid stub post_type for ID: {$post_id}");
             return;
         }
 
@@ -49,14 +49,14 @@ final class MemberProfileCreation
         $email     = Utils::normalizeEmail($email ?? '');
 
         if ($member_type === '' || $member_id === '') {
-            \error_log("[TFG Profile Creation] ❌ Missing member_type/member_id on stub {$post_id}");
+            \TFG\Core\Utils::info("[TFG Profile Creation] ❌ Missing member_type/member_id on stub {$post_id}");
             return;
         }
 
         // Hash & save password back to stub (keeps source-of-truth intact)
         $hash = \password_hash($password, \defined('MEMBER_PASSWORD_DEFAULT') ? MEMBER_PASSWORD_DEFAULT : PASSWORD_DEFAULT);
         if (!$hash) {
-            \error_log('[TFG Profile Creation] ❌ password_hash() failed');
+            \TFG\Core\Utils::info('[TFG Profile Creation] ❌ password_hash() failed');
             return;
         }
         if (\function_exists('update_field')) {
@@ -74,7 +74,7 @@ final class MemberProfileCreation
 
         if (\is_wp_error($new_post_id) || !$new_post_id) {
             $msg = \is_wp_error($new_post_id) ? $new_post_id->get_error_message() : 'unknown';
-            \error_log("[TFG Profile Creation] ❌ Failed to create member_profile from stub {$post_id}: {$msg}");
+            \TFG\Core\Utils::info("[TFG Profile Creation] ❌ Failed to create member_profile from stub {$post_id}: {$msg}");
             return;
         }
 
@@ -99,7 +99,7 @@ final class MemberProfileCreation
             \update_post_meta($new_post_id, 'registration_date', \current_time('mysql'));
         }
 
-        \error_log("[TFG Profile Creation] ✅ Final profile created: ID={$new_post_id} from stub ID={$post_id}");
+        \TFG\Core\Utils::info("[TFG Profile Creation] ✅ Final profile created: ID={$new_post_id} from stub ID={$post_id}");
 
         // Trusted member session (HttpOnly HMAC cookie + UI flag)
         if (\class_exists(Cookies::class)) {

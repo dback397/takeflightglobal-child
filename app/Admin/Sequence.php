@@ -36,7 +36,7 @@ final class Sequence
         );
         $ins = $wpdb->query($insert_sql);
         if ($ins === false) {
-            error_log("[TFG_Sequence] INSERT failed for {$safe}: " . $wpdb->last_error);
+            \TFG\Core\Utils::info("[TFG_Sequence] INSERT failed for {$safe}: " . $wpdb->last_error);
         }
 
         // 2) Atomic increment and capture using LAST_INSERT_ID(expr)
@@ -48,7 +48,7 @@ final class Sequence
         );
         $upd = $wpdb->query($update_sql);
         if ($upd === false) {
-            error_log("[TFG_Sequence] UPDATE failed for {$safe}: " . $wpdb->last_error);
+            \TFG\Core\Utils::info("[TFG_Sequence] UPDATE failed for {$safe}: " . $wpdb->last_error);
             return 0;
         }
 

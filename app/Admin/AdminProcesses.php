@@ -16,7 +16,7 @@ final class AdminProcesses
 
     public static function initMemberIdTracker(): void
     {
-        \error_log('[TFG] 🔧 init_member_id_tracker() running');
+        \TFG\Core\Utils::info('[TFG] 🔧 init_member_id_tracker() running');
         \add_action('admin_menu', [self::class, 'registerMemberIdMenu']);
     }
 
@@ -37,7 +37,7 @@ final class AdminProcesses
             $uri   = isset($_SERVER['REQUEST_URI']) ? \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])) : '';
             $user  = \wp_get_current_user();
             $uname = ($user instanceof \WP_User && $user->exists()) ? $user->user_login : '(anon)';
-            \error_log("Unauthorized access to {$uri} by user: {$uname}");
+            \TFG\Core\Utils::info("Unauthorized access to {$uri} by user: {$uname}");
             \wp_die(\esc_html__('Access denied', 'tfg'));
         }
         return true;
@@ -88,10 +88,10 @@ final class AdminProcesses
 
     public static function registerMemberIdMenu(): void
     {
-        \error_log('[TFG] 🧩 register_member_id_menu() running');
+        \TFG\Core\Utils::info('[TFG] 🧩 register_member_id_menu() running');
 
         if (\defined('TFG_DEBUG_CAPS') && \TFG_DEBUG_CAPS) {
-            \error_log('[TFG] manage_options? ' . (\current_user_can('manage_options') ? 'YES' : 'NO'));
+            \TFG\Core\Utils::info('[TFG] manage_options? ' . (\current_user_can('manage_options') ? 'YES' : 'NO'));
         }
 
         \add_menu_page(
@@ -104,7 +104,7 @@ final class AdminProcesses
             57
         );
 
-        \error_log('[TFG] ✅ Menu page added: Member ID Tracker');
+        \TFG\Core\Utils::info('[TFG] ✅ Menu page added: Member ID Tracker');
     }
 
     public static function renderMemberIdPage(): void
@@ -188,9 +188,9 @@ final class AdminProcesses
             if (!\get_option('tfg_messages_seeded')) {
                 self::tfgAddErrorMessagesFromArray();
                 \update_option('tfg_messages_seeded', true);
-                \error_log('✅ Message seed executed and option saved.');
+                \TFG\Core\Utils::info('✅ Message seed executed and option saved.');
             } else {
-                \error_log('⏭️ Message seed already completed. Skipping.');
+                \TFG\Core\Utils::info('⏭️ Message seed already completed. Skipping.');
             }
         }
     }
@@ -236,7 +236,7 @@ final class AdminProcesses
             ]);
 
             if (\is_wp_error($post_id)) {
-                \error_log("❌ Failed to insert message: {$msg['msg_code']}");
+                \TFG\Core\Utils::info("❌ Failed to insert message: {$msg['msg_code']}");
                 continue;
             }
 
@@ -250,7 +250,7 @@ final class AdminProcesses
             \update_field('called_by',  $msg['called_by'],  $post_id);
             \update_field('notes',      $msg['notes'],      $post_id);
 
-            \error_log("✅ Created message post: {$msg['msg_code']}");
+            \TFG\Core\Utils::info("✅ Created message post: {$msg['msg_code']}");
         }
     }
 
@@ -353,7 +353,7 @@ final class AdminProcesses
             'sequence_code' => \get_post_meta($post_id, 'sequence_code', true),
         ];
 
-        \error_log('🔎 magic_tokens meta: ' . \print_r($fields, true));
+        \TFG\Core\Utils::info('🔎 magic_tokens meta: ' . \print_r($fields, true));
         return '<pre>' . \esc_html(\print_r($fields, true)) . '</pre>';
     }
 
@@ -372,7 +372,7 @@ final class AdminProcesses
             'email_used'        => \get_field('email_used', $post_id),
         ];
 
-        \error_log('🔍 verification_tokens ACF: ' . \print_r($fields, true));
+        \TFG\Core\Utils::info('🔍 verification_tokens ACF: ' . \print_r($fields, true));
         return '<pre>' . \esc_html(\print_r($fields, true)) . '</pre>';
     }
 }

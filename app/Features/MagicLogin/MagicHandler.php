@@ -65,7 +65,7 @@ final class MagicHandler
     public static function handleMagicLink(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handleMagicLink due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleMagicLink due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -83,25 +83,25 @@ final class MagicHandler
         $email     = Utils::normalizeEmail(\wp_unslash($_GET['email']   ?? ''));
 
         if (!$token || !$signature || !$email) {
-            \error_log("[MagicHandler] Invalid link parameters");
+            \TFG\Core\Utils::info("[MagicHandler] Invalid link parameters");
             return;
         }
 
         if (self::rateLimited($email)) {
-            \error_log("[MagicHandler] Rate-limited for {$email}");
+            \TFG\Core\Utils::info("[MagicHandler] Rate-limited for {$email}");
             return;
         }
 
         $result = MagicUtilities::verifyMagicToken($token, $email, $signature);
         if (!$result || empty($result['success'])) {
-            \error_log("[MagicHandler] Invalid/expired/signature mismatch");
+            \TFG\Core\Utils::info("[MagicHandler] Invalid/expired/signature mismatch");
             return;
         }
 
         $magic_post_id = (int) $result['post_id'];
         $ip            = MagicUtilities::getUserIpAddress();
         self::setField('ip_address', $ip, $magic_post_id);
-        \error_log("[MagicHandler] Magic token {$magic_post_id} used from IP {$ip}");
+        \TFG\Core\Utils::info("[MagicHandler] Magic token {$magic_post_id} used from IP {$ip}");
 
         // Look up verification token
         $seq_id   = isset($result['sequence_id']) ? (int) $result['sequence_id'] : 0;
@@ -135,20 +135,20 @@ final class MagicHandler
         }
 
         if (!$vt_posts) {
-            \error_log("[MagicHandler] No matching verification token");
+            \TFG\Core\Utils::info("[MagicHandler] No matching verification token");
             return;
         }
 
         $v_id    = (int) $vt_posts[0];
         $is_used = (bool) self::getField('is_used', $v_id);
         if ($is_used) {
-            \error_log("[MagicHandler] Token already used: {$v_id}");
+            \TFG\Core\Utils::info("[MagicHandler] Token already used: {$v_id}");
             return;
         }
 
         $stored_email = Utils::normalizeEmail(self::getField('email_used', $v_id) ?: '');
         if ($stored_email && $stored_email !== $email) {
-            \error_log("[MagicHandler] Token email mismatch");
+            \TFG\Core\Utils::info("[MagicHandler] Token email mismatch");
             return;
         }
         if (!$stored_email) {
@@ -174,7 +174,7 @@ final class MagicHandler
         ]);
 
         if (!$sub_id || \is_wp_error($sub_id)) {
-            \error_log('[MagicHandler] Failed to create subscriber');
+            \TFG\Core\Utils::info('[MagicHandler] Failed to create subscriber');
             return;
         }
 
@@ -191,7 +191,7 @@ final class MagicHandler
         self::setField('is_used_copy', 1,                     $v_id);
         self::setField('used_on',      \current_time('mysql'), $v_id);
 
-        \error_log("[MagicHandler] Subscriber {$sub_id} verified; token {$v_id} consumed");
+        \TFG\Core\Utils::info("[MagicHandler] Subscriber {$sub_id} verified; token {$v_id} consumed");
 
         if (!\headers_sent()) {
             \nocache_headers();

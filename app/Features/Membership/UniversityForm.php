@@ -41,7 +41,7 @@ final class UniversityForm
 
     private static function getUserProfile($user_id)
     {
-        \error_log("[TFG UNI GETUSER] Entering get_user_profile($user_id)");
+        \TFG\Core\Utils::info("[TFG UNI GETUSER] Entering get_user_profile($user_id)");
         $member_id = \get_user_meta($user_id, 'member_id', true);
         if (!$member_id) return null;
 
@@ -59,7 +59,7 @@ final class UniversityForm
     public static function handleUniversityFormSubmission(): void
     {
         if (!FormRouter::matches('university-form')) return;
-        \error_log('[TFG UNI SUBMIT] POST ID received in handler: ' . ($_POST['post_id'] ?? 'MISSING'));
+        \TFG\Core\Utils::info('[TFG UNI SUBMIT] POST ID received in handler: ' . ($_POST['post_id'] ?? 'MISSING'));
 
         if (!\is_user_logged_in()) return;
 
@@ -67,7 +67,7 @@ final class UniversityForm
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
 
         if (!$post_id || \get_post_type($post_id) !== 'member_profile') {
-            \error_log('[TFG UNI SUBMIT] Invalid or missing post ID on submission.');
+            \TFG\Core\Utils::info('[TFG UNI SUBMIT] Invalid or missing post ID on submission.');
             return;
         }
 
@@ -85,12 +85,12 @@ final class UniversityForm
             \update_field('member_id', \sanitize_text_field($_COOKIE['member_id']), $post_id);
         }
 
-        \error_log("[TFG UNI SUBMIT] Profile updated for post ID $post_id");
+        \TFG\Core\Utils::info("[TFG UNI SUBMIT] Profile updated for post ID $post_id");
     }
 
     public static function handleNewProfileSubmission(): void
     {
-        \error_log("[TFG NEW PROFILE] Entering handle_new_profile_submission()");
+        \TFG\Core\Utils::info("[TFG NEW PROFILE] Entering handle_new_profile_submission()");
         if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
         if (!\is_user_logged_in()) return;
         if (!isset($_POST['tfg_university_new_form'])) return;
@@ -98,7 +98,7 @@ final class UniversityForm
         $user_id = \get_current_user_id();
         $existing_post_id = self::getUserProfile($user_id);
         if ($existing_post_id) {
-            \error_log("[TFG NEW PROFILE] User $user_id already has a profile (Post ID: $existing_post_id).");
+            \TFG\Core\Utils::info("[TFG NEW PROFILE] User $user_id already has a profile (Post ID: $existing_post_id).");
             return;
         }
 
@@ -109,7 +109,7 @@ final class UniversityForm
         ]);
 
         if (!$post_id || \is_wp_error($post_id)) {
-            \error_log("[TFG NEW PROFILE] Failed to create new post $post_id.");
+            \TFG\Core\Utils::info("[TFG NEW PROFILE] Failed to create new post $post_id.");
             return;
         }
 
@@ -126,7 +126,7 @@ final class UniversityForm
         \update_field('comment', \sanitize_textarea_field($_POST['comment']), $post_id);
         \update_field('gdpr_consent', true, $post_id);
 
-        \error_log("[TFG NEW PROFILE] New university profile created: $post_id");
+        \TFG\Core\Utils::info("[TFG NEW PROFILE] New university profile created: $post_id");
     }
 
     public static function renderUniversityInterestForm($post_id = 0): string

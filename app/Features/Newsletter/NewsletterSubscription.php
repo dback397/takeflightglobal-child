@@ -111,7 +111,7 @@ final class NewsletterSubscription
     public static function handleNewsletterSignup(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -130,7 +130,7 @@ final class NewsletterSubscription
         }
 
         // Debug: prove we reached here and see what PHP actually received
-        \error_log('[TFG NL] router_ok; keys=' . \implode(',', \array_keys($_POST)));
+        \TFG\Core\Utils::info('[TFG NL] router_ok; keys=' . \implode(',', \array_keys($_POST)));
 
         // ── NONCE ─────────────────────────────────────────────────────────────
         $nonce = isset($_POST['_wpnonce']) ? \sanitize_text_field(\wp_unslash($_POST['_wpnonce'])) : '';
@@ -176,7 +176,7 @@ final class NewsletterSubscription
                 $fallback_code = (string) \get_post_meta($vt_id, 'verification_code', true);
                 if ($fallback_code !== '') {
                     $vcode = $fallback_code;
-                    \error_log("[TFG NL] ⚙️ Fallback VT applied for {$email} (vt_id={$vt_id}).");
+                    \TFG\Core\Utils::info("[TFG NL] ⚙️ Fallback VT applied for {$email} (vt_id={$vt_id}).");
                 }
             }
         }
@@ -207,7 +207,7 @@ final class NewsletterSubscription
             ],
         ]);
         if ($existing) {
-            \error_log("[TFG NL] ℹ️ Already subscribed: {$email}");
+            \TFG\Core\Utils::info("[TFG NL] ℹ️ Already subscribed: {$email}");
             self::redirectSuccess();
         }
 
@@ -215,19 +215,19 @@ final class NewsletterSubscription
         if (!\class_exists(VerificationToken::class) || !\method_exists(VerificationToken::class, 'find_by_code')) {
             self::redirectWithError('Verification service unavailable.');
         }
-        \error_log('[TFG NL] enter handle_newsletter_signup');
+        \TFG\Core\Utils::info('[TFG NL] enter handle_newsletter_signup');
 
         $verif = VerificationToken::markUsed($vcode, $vcode, $email, ['check_expiry' => false]);
         if (\is_wp_error($verif)) {
-            \error_log('[TFG NL] ❌ mark_used: ' . $verif->get_error_message());
+            \TFG\Core\Utils::info('[TFG NL] ❌ mark_used: ' . $verif->get_error_message());
             self::redirectWithError('Invalid or expired verification code.');
         }
-        \error_log('[TFG NL] ✅ mark_used OK; vt_post_id=' . ($verif['post_id'] ?? 0) . ' seq=' . ($verif['sequence_code'] ?? 'n/a'));
+        \TFG\Core\Utils::info('[TFG NL] ✅ mark_used OK; vt_post_id=' . ($verif['post_id'] ?? 0) . ' seq=' . ($verif['sequence_code'] ?? 'n/a'));
 
         $vt_post_id    = (int)   ($verif['post_id']       ?? 0);
         $sequence_id   = (string)($verif['sequence_id']   ?? '');
         $sequence_code = (string)($verif['sequence_code'] ?? '');
-        \error_log('[TFG NL] ✅ mark_used OK; vt_post_id=' . $vt_post_id . ' seq=' . ($sequence_code ?: 'n/a'));
+        \TFG\Core\Utils::info('[TFG NL] ✅ mark_used OK; vt_post_id=' . $vt_post_id . ' seq=' . ($sequence_code ?: 'n/a'));
 
         // Canonical title built now that we have sequence_code
         $desired_title = $sequence_code !== ''
@@ -282,7 +282,7 @@ final class NewsletterSubscription
         $set('is_subscribed', 0);
 
         // ── CREATE MAGIC TOKEN & SEND ────────────────────────────────────────
-        \error_log('[TFG NL] enter handle_magic token process');
+        \TFG\Core\Utils::info('[TFG NL] enter handle_magic token process');
         $magic = MagicUtilities::createMagicToken($email, [
             'sequence_id'   => $verif['sequence_id'],
             'sequence_code' => $verif['sequence_code'],
@@ -310,7 +310,7 @@ final class NewsletterSubscription
             \update_post_meta($magic_post_id, 'sent_on', \current_time('mysql'));
             \update_post_meta($magic_post_id, 'sent_to', $email);
         } else {
-            \error_log('[NL] send_magic_link FAILED for ' . $email);
+            \TFG\Core\Utils::info('[NL] send_magic_link FAILED for ' . $email);
         }
 
         // ── DONE ─────────────────────────────────────────────────────────────
@@ -319,11 +319,11 @@ final class NewsletterSubscription
 
     private static function directCreateMagicToken(string $email, int $verif_id = 0, int $seq_id = 0, string $seq_code = '', int $ttl = 900): array
     {
-        \error_log('[TFG NL] directCreateMagicToken start');
+        \TFG\Core\Utils::info('[TFG NL] directCreateMagicToken start');
 
         // CPT is registered by MU-plugin, but double-check
         if (!\post_type_exists('magic_tokens')) {
-            \error_log('[TFG NL] magic_tokens CPT missing at call-time, registering inline');
+            \TFG\Core\Utils::info('[TFG NL] magic_tokens CPT missing at call-time, registering inline');
             \register_post_type('magic_tokens', [
                 'label'               => 'Magic Tokens',
                 'public'              => false,
@@ -350,7 +350,7 @@ final class NewsletterSubscription
         ], true);
 
         if (\is_wp_error($post_id) || !$post_id) {
-            \error_log('[TFG NL] ❌ wp_insert_post failed for magic_tokens: ' . (\is_wp_error($post_id) ? $post_id->get_error_message() : 'unknown'));
+            \TFG\Core\Utils::info('[TFG NL] ❌ wp_insert_post failed for magic_tokens: ' . (\is_wp_error($post_id) ? $post_id->get_error_message() : 'unknown'));
             return [];
         }
 
@@ -364,7 +364,7 @@ final class NewsletterSubscription
 
         $url = \add_query_arg('tfg_magic', \rawurlencode($token), \site_url('/'));
 
-        \error_log('[TFG NL] directCreateMagicToken end; post_id=' . (int) $post_id);
+        \TFG\Core\Utils::info('[TFG NL] directCreateMagicToken end; post_id=' . (int) $post_id);
         return [
             'post_id' => (int) $post_id,
             'url'     => $url,
@@ -379,7 +379,7 @@ final class NewsletterSubscription
             \wp_safe_redirect(\add_query_arg('subscribed', '1', \remove_query_arg(['error'])));
             exit;
         }
-        \error_log("[TFG NL] Redirect Success: headers already sent");
+        \TFG\Core\Utils::info("[TFG NL] Redirect Success: headers already sent");
     }
 
     private static function redirectWithError(string $msg): void
@@ -389,7 +389,7 @@ final class NewsletterSubscription
             \wp_safe_redirect(\add_query_arg('error', \rawurlencode($msg), \remove_query_arg(['subscribed'])));
             exit;
         }
-        \error_log("[TFG NL] Redirect Error: $msg (headers already sent)");
+        \TFG\Core\Utils::info("[TFG NL] Redirect Error: $msg (headers already sent)");
     }
 
     // === 3) Helper: reCAPTCHA insertion (supports either class name) ===

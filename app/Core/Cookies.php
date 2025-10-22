@@ -30,7 +30,7 @@ final class Cookies
     public static function setSubscriberCookie(string $email): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped setSubscriberCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped setSubscriberCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -63,7 +63,7 @@ final class Cookies
     public static function unsetSubscriberCookie(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped unsetSubscriberCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped unsetSubscriberCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -78,7 +78,7 @@ final class Cookies
         // --- 1. Skip during system requests (REST, CRON, CLI, AJAX, heartbeat/autosave)
         if (\TFG\Core\Utils::isSystemRequest()) {
             $trace = wp_debug_backtrace_summary(null, 0, false);
-            \error_log('[TFG Cookies] 🛡 Skipping subscription check during system request → ' . $trace);
+            \TFG\Core\Utils::info('[TFG Cookies] 🛡 Skipping subscription check during system request → ' . $trace);
             return true; // treat as subscribed to prevent backend interference
         }
 
@@ -86,7 +86,7 @@ final class Cookies
         $cookie_value = $_COOKIE[self::SUB_OK] ?? '';
 
         if (empty($cookie_value)) {
-            \error_log('[TFG Cookies] ⚠️ No subscription cookie found (' . self::SUB_OK . ')');
+            \TFG\Core\Utils::info('[TFG Cookies] ⚠️ No subscription cookie found (' . self::SUB_OK . ')');
             return false;
         }
 
@@ -95,7 +95,7 @@ final class Cookies
             $normalized_email = \TFG\Core\Utils::normalizeEmail($email);
 
             if (empty($normalized_email)) {
-                \error_log('[TFG Cookies] ⚠️ Invalid or empty email provided for subscription check');
+                \TFG\Core\Utils::info('[TFG Cookies] ⚠️ Invalid or empty email provided for subscription check');
                 return false;
             }
 
@@ -103,16 +103,16 @@ final class Cookies
             $is_valid = \hash_equals($expected_hmac, $cookie_value);
 
             if ($is_valid) {
-                \error_log('[TFG Cookies] ✅ Valid subscription cookie confirmed for ' . $normalized_email);
+                \TFG\Core\Utils::info('[TFG Cookies] ✅ Valid subscription cookie confirmed for ' . $normalized_email);
             } else {
-                \error_log('[TFG Cookies] ❌ HMAC mismatch for subscription cookie (' . $normalized_email . ')');
+                \TFG\Core\Utils::info('[TFG Cookies] ❌ HMAC mismatch for subscription cookie (' . $normalized_email . ')');
             }
 
             return $is_valid;
         }
 
         // --- 4. Email not provided, cookie exists but cannot be verified
-        \error_log('[TFG Cookies] ⚠️ Subscription cookie exists but no email provided — assuming subscribed for front-end context');
+        \TFG\Core\Utils::info('[TFG Cookies] ⚠️ Subscription cookie exists but no email provided — assuming subscribed for front-end context');
         return true; // assume subscribed for limited contexts like front-end display
     }
 
@@ -122,7 +122,7 @@ final class Cookies
     public static function setMemberCookie(string $member_id, string $email = ''): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped setMemberCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped setMemberCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -156,7 +156,7 @@ final class Cookies
     public static function unsetMemberCookie(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped unsetMemberCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped unsetMemberCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -170,14 +170,14 @@ final class Cookies
     {
         $server = $_COOKIE[self::MEM_OK] ?? '';
         if (!$server) {
-            \error_log('[TFG Cookies] No member cookie found (member_ok)');
+            \TFG\Core\Utils::info('[TFG Cookies] No member cookie found (member_ok)');
             return false;
         }
 
         if ($member_id) {
             $member_id = Utils::normalizeMemberId($member_id);
             if (!$member_id) {
-                \error_log('[TFG Cookies] Invalid member ID provided for member check');
+                \TFG\Core\Utils::info('[TFG Cookies] Invalid member ID provided for member check');
                 return false;
             }
 
@@ -185,12 +185,12 @@ final class Cookies
             $expected_hmac = self::memberHmac($member_id, $email);
             $is_valid = \hash_equals($expected_hmac, $server);
             if (!$is_valid) {
-                \error_log('[TFG Cookies] Member cookie HMAC mismatch for member_id: ' . $member_id . ', email: ' . $email);
+                \TFG\Core\Utils::info('[TFG Cookies] Member cookie HMAC mismatch for member_id: ' . $member_id . ', email: ' . $email);
             }
             return $is_valid;
         }
 
-        \error_log('[TFG Cookies] Member cookie exists but no member_id provided for validation');
+        \TFG\Core\Utils::info('[TFG Cookies] Member cookie exists but no member_id provided for validation');
         return false;
     }
 
@@ -200,7 +200,7 @@ final class Cookies
     private static function guardHeaders(string $what): bool
     {
         if (\headers_sent($file, $line)) {
-            \error_log("[TFG\\Core\\Cookies] Headers already sent at $file:$line; cannot $what.");
+            \TFG\Core\Utils::info("[TFG\\Core\\Cookies] Headers already sent at $file:$line; cannot $what.");
             return false;
         }
         return true;
@@ -266,12 +266,12 @@ final class Cookies
     public static function setUiCookie(string $name, string $value, int $ttl_seconds = 300): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped setUiCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped setUiCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
         if (\headers_sent($f, $l)) {
-            \error_log("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot setUiCookie($name).");
+            \TFG\Core\Utils::info("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot setUiCookie($name).");
             return;
         }
         \setcookie($name, $value, [
@@ -287,12 +287,12 @@ final class Cookies
     public static function deleteUiCookie(string $name): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped deleteUiCookie due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped deleteUiCookie due to REST/CRON/CLI/AJAX context');
             return;
         }
 
         if (\headers_sent($f, $l)) {
-            \error_log("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot deleteUiCookie($name).");
+            \TFG\Core\Utils::info("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot deleteUiCookie($name).");
             return;
         }
 

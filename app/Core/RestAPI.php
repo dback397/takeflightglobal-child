@@ -70,7 +70,7 @@ final class RestAPI
     public static function checkTokenPermission(): bool
     {
         if (!defined('TFG_VERIFICATION_API_TOKEN') || !TFG_VERIFICATION_API_TOKEN) {
-            error_log('[TFG REST] TFG_VERIFICATION_API_TOKEN not defined.');
+            \TFG\Core\Utils::info('[TFG REST] TFG_VERIFICATION_API_TOKEN not defined.');
             return false;
         }
         $got = $_SERVER[self::HDR] ?? '';
@@ -101,7 +101,7 @@ final class RestAPI
         ]);
 
         $found = !empty($matches);
-        error_log("[TFG REST] restore-access probe for {$email}: " . ($found ? 'YES' : 'NO'));
+        \TFG\Core\Utils::info("[TFG REST] restore-access probe for {$email}: " . ($found ? 'YES' : 'NO'));
 
         if ($found) {
             $sub_id = (int) $matches[0];

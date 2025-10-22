@@ -87,12 +87,12 @@ final class SubscriberConfirm
         $seq_code  = is_string($seq_code) ? Utils::normalizeToken(\wp_unslash($seq_code)) : '';
 
         if ($email === '' || $token === '' || $signature === '') {
-            \error_log('[Confirm] ❌ Missing required params (email/token/sig).');
+            \TFG\Core\Utils::info('[Confirm] ❌ Missing required params (email/token/sig).');
             return ['ok' => false, 'error' => 'missing_params'];
         }
 
         if (!MagicUtilities::verifyMagicToken($token, $email, $signature)) {
-            \error_log('[Confirm] ❌ verify_magic_token failed.');
+            \TFG\Core\Utils::info('[Confirm] ❌ verify_magic_token failed.');
             return ['ok' => false, 'error' => 'bad_signature_or_token'];
         }
 
@@ -182,7 +182,7 @@ final class SubscriberConfirm
         }
 
         if (!$sub_id) {
-            \error_log('[Confirm] ❌ Subscriber stub not found (seq_code=' . $seq_code . ', email=' . $email . ').');
+            \TFG\Core\Utils::info('[Confirm] ❌ Subscriber stub not found (seq_code=' . $seq_code . ', email=' . $email . ').');
             return 0;
         }
 

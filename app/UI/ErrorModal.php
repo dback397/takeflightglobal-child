@@ -56,11 +56,11 @@ final class ErrorModal
             'fields'           => 'ids',
         ]);
 
-        \error_log('🔍 Found ' . \count($posts) . ' message posts');
+        \TFG\Core\Utils::info('🔍 Found ' . \count($posts) . ' message posts');
         foreach ($posts as $pid) {
             $code = (string) \get_field('msg_code', $pid);
             $msg  = (string) \get_field('message', $pid);
-            \error_log("🔢 Code: {$code} | Message: {$msg}");
+            \TFG\Core\Utils::info("🔢 Code: {$code} | Message: {$msg}");
         }
     }
 

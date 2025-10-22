@@ -60,7 +60,7 @@ final class Log
         $data = \apply_filters('tfg_log_prepared_data', $data);
 
         if ($data['event_type'] === '' && $data['notes'] === '') {
-            \error_log('⚠️ TFG\Core\Log: Skipped empty log entry (no event_type or notes)');
+            \TFG\Core\Utils::info('⚠️ TFG\Core\Log: Skipped empty log entry (no event_type or notes)');
             return false;
         }
 
@@ -75,7 +75,7 @@ final class Log
         }
 
         if (!\post_type_exists('tfg_log_entry')) {
-            \error_log('⚠️ TFG\Core\Log: CPT "tfg_log_entry" not registered.');
+            \TFG\Core\Utils::info('⚠️ TFG\Core\Log: CPT "tfg_log_entry" not registered.');
             return false;
         }
 
@@ -92,7 +92,7 @@ final class Log
         $post_id = \wp_insert_post($post_args, true);
         if (\is_wp_error($post_id) || !$post_id) {
             $msg = \is_wp_error($post_id) ? $post_id->get_error_message() : 'unknown';
-            \error_log('❌ TFG\Core\Log: Failed to create log entry: ' . $msg);
+            \TFG\Core\Utils::info('❌ TFG\Core\Log: Failed to create log entry: ' . $msg);
             return false;
         }
 

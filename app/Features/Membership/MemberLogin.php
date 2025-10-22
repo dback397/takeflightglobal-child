@@ -37,21 +37,21 @@ final class MemberLogin
               \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false ||
               Utils::isSystemRequest()
             ) {
-              \error_log('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php/system request');
+              \TFG\Core\Utils::info('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php/system request');
                return;
             }
 
             // Normal login-page redirection logic
             if ((\is_page('member-login')) && !Utils::isSystemRequest()) {
-              \error_log('[TFG MemberLogin] On member-login page, checking for member cookie');
+              \TFG\Core\Utils::info('[TFG MemberLogin] On member-login page, checking for member cookie');
               $member_id = Cookies::getMemberId();
               if (!empty($member_id) && !\headers_sent()) {
                   $dashboard_url = \site_url('/member-dashboard/');
                   if (RedirectHelper::isOnPage('/member-dashboard')) {
-                      \error_log('[TFG MemberLogin] Redirect loop prevented: already on dashboard');
+                      \TFG\Core\Utils::info('[TFG MemberLogin] Redirect loop prevented: already on dashboard');
                       return;
                   }
-                  \error_log('[TFG MemberLogin] Redirecting logged-in member to dashboard');
+                  \TFG\Core\Utils::info('[TFG MemberLogin] Redirecting logged-in member to dashboard');
                   RedirectHelper::safeRedirect($dashboard_url);
               }
           }
@@ -65,7 +65,7 @@ final class MemberLogin
     public static function renderLoginForm(): string
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped renderLoginForm due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped renderLoginForm due to REST/CRON/CLI/AJAX context');
             return '<p>System request - login form not available.</p>';
         }
 
@@ -74,11 +74,11 @@ final class MemberLogin
             $dashboard_url = \site_url('/member-dashboard/');
 
             if (RedirectHelper::isOnPage('/member-dashboard')) {
-                \error_log('[TFG MemberLogin] Redirect loop prevented in renderLoginForm: already on dashboard');
+                \TFG\Core\Utils::info('[TFG MemberLogin] Redirect loop prevented in renderLoginForm: already on dashboard');
                 return '<p>You are already logged in and on the dashboard.</p>';
             }
 
-            \error_log('[TFG MemberLogin] Redirecting logged-in member to dashboard from form');
+            \TFG\Core\Utils::info('[TFG MemberLogin] Redirecting logged-in member to dashboard from form');
             RedirectHelper::safeRedirect($dashboard_url);
         }
 
@@ -130,7 +130,7 @@ final class MemberLogin
     public static function handleLogin(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handleLogin due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleLogin due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -225,7 +225,7 @@ final class MemberLogin
     public static function handleResetRequest(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handleResetRequest due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleResetRequest due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -320,7 +320,7 @@ final class MemberLogin
     public static function handlePasswordReset(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handlePasswordReset due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handlePasswordReset due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -431,7 +431,7 @@ final class MemberLogin
     public static function handleForgotMemberId(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handleForgotMemberId due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleForgotMemberId due to REST/CRON/CLI/AJAX context');
             return;
         }
 

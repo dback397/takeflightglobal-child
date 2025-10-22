@@ -18,7 +18,7 @@ final class MemberFormHandlers
     {
         // --- 1. Master Guard: skip for REST, AJAX, CRON, or CLI
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG MemberFormHandlers] 🛡 Skipping routeSubmission() — system request context: ' . current_action());
+            \TFG\Core\Utils::info('[TFG MemberFormHandlers] 🛡 Skipping routeSubmission() — system request context: ' . current_action());
             return;
         }
 
@@ -30,7 +30,7 @@ final class MemberFormHandlers
 
         // --- 3. Double-guard: ensure we're not running in heartbeat or autosave
         if (!empty($_POST['action']) && \in_array($_POST['action'], ['heartbeat', 'wp_autosave'], true)) {
-            \error_log('[TFG MemberFormHandlers] 🛡 Skipping due to heartbeat/autosave action');
+            \TFG\Core\Utils::info('[TFG MemberFormHandlers] 🛡 Skipping due to heartbeat/autosave action');
             return;
         }
 
@@ -39,18 +39,18 @@ final class MemberFormHandlers
 
             // Prevent redirect loops on /subscribe
             if (\TFG\Core\RedirectHelper::isOnPage('/subscribe')) {
-                \error_log('[TFG FormHandlers] ⚠️ Redirect loop prevented — already on /subscribe');
+                \TFG\Core\Utils::info('[TFG FormHandlers] ⚠️ Redirect loop prevented — already on /subscribe');
                 return;
             }
 
             // Final sanity: if this somehow fires in a system request, bail anyway
             if (\TFG\Core\Utils::isSystemRequest()) {
-                \error_log('[TFG FormHandlers] 🛡 Redirect suppressed — system context (secondary guard)');
+                \TFG\Core\Utils::info('[TFG FormHandlers] 🛡 Redirect suppressed — system context (secondary guard)');
                 return;
             }
 
             // --- 5. Safe redirect
-            \error_log('[TFG FormHandlers] ⚠️ No subscription cookie found — redirecting to /subscribe');
+            \TFG\Core\Utils::info('[TFG FormHandlers] ⚠️ No subscription cookie found — redirecting to /subscribe');
             \TFG\Core\RedirectHelper::safeRedirect(\home_url('/subscribe'));
             return;
         }
@@ -65,7 +65,7 @@ final class MemberFormHandlers
 
             // Future cases: agency, affiliate, etc.
             default:
-                \error_log('[TFG MemberFormHandlers] Unknown form type: ' . $type);
+                \TFG\Core\Utils::info('[TFG MemberFormHandlers] Unknown form type: ' . $type);
                 break;
         }
     }
@@ -81,7 +81,7 @@ final class MemberFormHandlers
         ], true);
 
         if (\is_wp_error($post_id) || !$post_id) {
-            \error_log('❌ Failed to insert member_profile post.');
+            \TFG\Core\Utils::info('❌ Failed to insert member_profile post.');
             return;
         }
 

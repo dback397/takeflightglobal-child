@@ -19,27 +19,27 @@ final class RedirectHelper
     {
         // --- 1. Guard against system or hybrid requests
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG RedirectHelper] 🛡 Skipping redirect to ' . $url . ' (REST/CRON/CLI/AJAX context)');
+            \TFG\Core\Utils::info('[TFG RedirectHelper] 🛡 Skipping redirect to ' . $url . ' (REST/CRON/CLI/AJAX context)');
             return;
         }
 
         // --- 2. Detect WP autosave / heartbeat
         $action = $_POST['action'] ?? '';
         if (\in_array($action, ['heartbeat', 'wp_autosave'], true)) {
-            \error_log('[TFG RedirectHelper] 🛡 Skipping redirect — autosave or heartbeat context');
+            \TFG\Core\Utils::info('[TFG RedirectHelper] 🛡 Skipping redirect — autosave or heartbeat context');
             return;
         }
 
         // --- 3. Don’t interfere with wp-admin or login areas
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         if (\is_admin() || \strpos($uri, '/wp-login.php') !== false) {
-            \error_log('[TFG RedirectHelper] Skipping redirect — admin or login context');
+            \TFG\Core\Utils::info('[TFG RedirectHelper] Skipping redirect — admin or login context');
             return;
         }
 
         // --- 4. Bail if headers already sent
         if (\headers_sent()) {
-            \error_log('[TFG RedirectHelper] ⚠️ Headers already sent, cannot redirect to: ' . $url);
+            \TFG\Core\Utils::info('[TFG RedirectHelper] ⚠️ Headers already sent, cannot redirect to: ' . $url);
             return;
         }
 
@@ -49,7 +49,7 @@ final class RedirectHelper
 
         // --- 6. Prevent redirect loops
         if (self::isRedirectLoop($current_url, $target_url)) {
-            \error_log('[TFG RedirectHelper] ⚠️ Redirect loop prevented (' . $current_url . ' → ' . $target_url . ')');
+            \TFG\Core\Utils::info('[TFG RedirectHelper] ⚠️ Redirect loop prevented (' . $current_url . ' → ' . $target_url . ')');
             return;
         }
 
@@ -61,11 +61,11 @@ final class RedirectHelper
             ? ('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])
             : '[unknown origin]';
 
-        \error_log('[TFG RedirectHelper] 🚀 Redirecting from ' . $from . ' to ' . $target_url);
+        \TFG\Core\Utils::info('[TFG RedirectHelper] 🚀 Redirecting from ' . $from . ' to ' . $target_url);
 
         // --- Silent mode for CLI/CRON even if reached here accidentally
         if (\defined('WP_CLI') && \constant('WP_CLI')) {
-            \error_log('[TFG RedirectHelper] 🛑 Suppressed redirect in WP-CLI');
+            \TFG\Core\Utils::info('[TFG RedirectHelper] 🛑 Suppressed redirect in WP-CLI');
             return;
         }
 

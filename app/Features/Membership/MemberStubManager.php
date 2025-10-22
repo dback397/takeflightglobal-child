@@ -40,7 +40,7 @@ final class MemberStubManager
        ========================= */
     public static function renderStubForm($atts): string
     {
-        \error_log('[TFG RENDER STUB] Entering renderStubForm()');
+        \TFG\Core\Utils::info('[TFG RENDER STUB] Entering renderStubForm()');
 
         // 1) Resolve member_type (shortcode attr → POST on submit)
         $atts        = \shortcode_atts(['type' => ''], $atts);
@@ -51,14 +51,14 @@ final class MemberStubManager
         }
 
         if ($memberType !== '' && !\in_array($memberType, self::VALID_MEMBER_TYPES, true)) {
-            \error_log("Invalid member type resolved in render: {$memberType}");
+            \TFG\Core\Utils::info("Invalid member type resolved in render: {$memberType}");
             return '<p class="tfg-error">Invalid member type.</p>';
         }
 
         // 2) Edit vs New
         $postId = \absint($_GET['post_id'] ?? 0);
         $mode   = $postId ? 'edit' : 'new';
-        \error_log("Rendering stub form: mode={$mode}, post_id={$postId}, member_type={$memberType}");
+        \TFG\Core\Utils::info("Rendering stub form: mode={$mode}, post_id={$postId}, member_type={$memberType}");
 
         // 3) Prefill values on edit
         $values = [
@@ -74,7 +74,7 @@ final class MemberStubManager
                 $val = \function_exists('get_field')
                     ? (string) \get_field($key, $postId)
                     : (string) \get_post_meta($postId, $key, true);
-                \error_log("Editing value {$key} = {$val}");
+                \TFG\Core\Utils::info("Editing value {$key} = {$val}");
             }
             unset($val);
         }
@@ -163,7 +163,7 @@ final class MemberStubManager
     public static function handleStubSubmission(): void
     {
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped handleStubSubmission due to REST/CRON/CLI/AJAX context');
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleStubSubmission due to REST/CRON/CLI/AJAX context');
             return;
         }
 
@@ -180,26 +180,26 @@ final class MemberStubManager
             }
         }
 
-        \error_log('[TFG HANDLE STUB] Entering handleStubSubmission()');
+        \TFG\Core\Utils::info('[TFG HANDLE STUB] Entering handleStubSubmission()');
 
         // Confirm which submit path we’re on
         $isNew  = isset($_POST['save_profile_stub']);
         $isEdit = isset($_POST['save_stub_edit']);
         if (!$isNew && !$isEdit) {
-            \error_log('[TFG HANDLE STUB] ❌ No matching submit button.');
+            \TFG\Core\Utils::info('[TFG HANDLE STUB] ❌ No matching submit button.');
             return;
         }
 
         // CSRF
         if (empty($_POST['tfg_stub_nonce']) || !\wp_verify_nonce($_POST['tfg_stub_nonce'], 'tfg_stub_form')) {
-            \error_log('[TFG HANDLE STUB] ❌ Nonce check failed.');
+            \TFG\Core\Utils::info('[TFG HANDLE STUB] ❌ Nonce check failed.');
             return;
         }
 
         // Sanitize + validate payload
         $memberType = \sanitize_text_field(\wp_unslash($_POST['member_type'] ?? ''));
         if (!\in_array($memberType, self::VALID_MEMBER_TYPES, true)) {
-            \error_log("[TFG HANDLE STUB] ❌ Invalid member_type: {$memberType}");
+            \TFG\Core\Utils::info("[TFG HANDLE STUB] ❌ Invalid member_type: {$memberType}");
             echo '<p class="tfg-error">Invalid member type.</p>';
             return;
         }
@@ -227,7 +227,7 @@ final class MemberStubManager
 
         if ($isNew) {
             // === NEW STUB CREATION ===
-            \error_log('[TFG HANDLE STUB] Creating NEW profile_stub…');
+            \TFG\Core\Utils::info('[TFG HANDLE STUB] Creating NEW profile_stub…');
 
             $newPostId = \wp_insert_post([
                 'post_type'   => 'profile_stub',
@@ -236,7 +236,7 @@ final class MemberStubManager
             ]);
 
             if (\is_wp_error($newPostId) || !$newPostId) {
-                \error_log('[TFG HANDLE STUB] ❌ wp_insert_post failed for profile_stub.');
+                \TFG\Core\Utils::info('[TFG HANDLE STUB] ❌ wp_insert_post failed for profile_stub.');
                 echo '<p class="tfg-error">There was an error creating your profile. Please try again.</p>';
                 return;
             }
@@ -248,7 +248,7 @@ final class MemberStubManager
             $set('organization_name',    $organizationName,   $newPostId);
             $set('website',              $website,            $newPostId);
 
-            \error_log("[TFG HANDLE STUB] ✅ Created profile_stub ID {$newPostId} (type {$memberType})");
+            \TFG\Core\Utils::info("[TFG HANDLE STUB] ✅ Created profile_stub ID {$newPostId} (type {$memberType})");
 
             $redirectUrl = \add_query_arg([
                 'post_id' => $newPostId,
@@ -267,12 +267,12 @@ final class MemberStubManager
             // === EXISTING STUB EDIT ===
             $postId = \absint($_POST['post_id'] ?? 0);
             if (!$postId) {
-                \error_log('[TFG HANDLE STUB] ❌ Missing post_id for edit.');
+                \TFG\Core\Utils::info('[TFG HANDLE STUB] ❌ Missing post_id for edit.');
                 echo '<p class="tfg-error">Missing profile reference.</p>';
                 return;
             }
 
-            \error_log("[TFG HANDLE STUB] Updating profile_stub ID {$postId}");
+            \TFG\Core\Utils::info("[TFG HANDLE STUB] Updating profile_stub ID {$postId}");
 
             $set('member_type',          $memberType,         $postId);
             $set('contact_name',         $contactName,        $postId);

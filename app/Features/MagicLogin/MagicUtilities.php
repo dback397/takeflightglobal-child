@@ -14,12 +14,12 @@ final class MagicUtilities
      * ====================== */
     protected static function log(string $msg): void
     {
-        \error_log('[Magic] ' . $msg);
+        \TFG\Core\Utils::info('[Magic] ' . $msg);
     }
 
     protected static function tfgLog(string $msg): void
     {
-        \error_log('[TFG MAGIC] ' . $msg);
+        \TFG\Core\Utils::info('[TFG MAGIC] ' . $msg);
     }
 
     /* ========================
@@ -261,7 +261,7 @@ final class MagicUtilities
     public static function sendMagicLink(string $url, string $email): bool
     {
         if (!$email || !$url) {
-            \error_log('[TFG MAGIC] ❌ sendMagicLink: bad parameters');
+            \TFG\Core\Utils::info('[TFG MAGIC] ❌ sendMagicLink: bad parameters');
             return false;
         }
 
@@ -282,10 +282,10 @@ final class MagicUtilities
         $ok = \wp_mail($email, $subject, $body, $headers);
 
         if ($ok) {
-            \error_log("[Magic] 📤 Magic link sent to $email url=$url");
+            \TFG\Core\Utils::info("[Magic] 📤 Magic link sent to $email url=$url");
             return true;
         }
-        \error_log("[TFG MAGIC] ❌ wp_mail returned false for $email");
+        \TFG\Core\Utils::info("[TFG MAGIC] ❌ wp_mail returned false for $email");
         return false;
     }
 }

@@ -68,7 +68,7 @@ final class Mailer
 
         $template_path = \trailingslashit($base_path) . "email-templates/{$slug}.php";
         if (!\file_exists($template_path)) {
-            \error_log("[TFG\\Core\\Mailer] 🚫 Template not found: {$template_path}");
+            \TFG\Core\Utils::info("[TFG\\Core\\Mailer] 🚫 Template not found: {$template_path}");
             return false;
         }
 
@@ -87,7 +87,7 @@ final class Mailer
 
     protected static function logSuccess(string $to, string $subject): void
     {
-        \error_log("[TFG\\Core\\Mailer] ✅ Sent email to {$to} | {$subject}");
+        \TFG\Core\Utils::info("[TFG\\Core\\Mailer] ✅ Sent email to {$to} | {$subject}");
         if (\class_exists(Log::class)) {
             Log::addLogEntry([
                 'email'      => $to,
@@ -100,7 +100,7 @@ final class Mailer
 
     protected static function logFailure(string $to, string $subject, string $reason): void
     {
-        \error_log("[TFG\\Core\\Mailer] ❌ Failed to send to {$to} — {$reason}");
+        \TFG\Core\Utils::info("[TFG\\Core\\Mailer] ❌ Failed to send to {$to} — {$reason}");
         if (\class_exists(Log::class)) {
             Log::addLogEntry([
                 'email'      => $to,

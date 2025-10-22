@@ -44,7 +44,7 @@ final class MemberStubAccess
                 return '<p class="tfg-error">Missing profile ID or type for this mode.</p>';
             }
             if (\get_post_type($post_id) !== $post_type) {
-                \error_log("[TFG StubAccess] Post type mismatch for ID {$post_id}. Expected {$post_type}.");
+                \TFG\Core\Utils::info("[TFG StubAccess] Post type mismatch for ID {$post_id}. Expected {$post_type}.");
                 return '<p class="tfg-error">Invalid or mismatched profile ID.</p>';
             }
         } else {
@@ -108,7 +108,7 @@ final class MemberStubAccess
         }
 
         if (!\class_exists(MemberStubManager::class)) {
-            \error_log('[TFG StubAccess] MemberStubManager not found.');
+            \TFG\Core\Utils::info('[TFG StubAccess] MemberStubManager not found.');
             return 0;
         }
 

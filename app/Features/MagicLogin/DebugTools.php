@@ -15,7 +15,7 @@ final class DebugTools
         if (!$email) { return false; }
 
         if (!\post_type_exists('magic_tokens')) {
-            \error_log('[TFG MAGIC] ❌ CPT magic_tokens NOT REGISTERED on this request');
+            \TFG\Core\Utils::info('[TFG MAGIC] ❌ CPT magic_tokens NOT REGISTERED on this request');
             return false;
         }
 
@@ -40,7 +40,7 @@ final class DebugTools
 
         $post_id = \wp_insert_post($postarr, true);
         if (\is_wp_error($post_id)) {
-            \error_log('[TFG MAGIC] ❌ wp_insert_post: ' . $post_id->get_error_message());
+            \TFG\Core\Utils::info('[TFG MAGIC] ❌ wp_insert_post: ' . $post_id->get_error_message());
             return false;
         }
 
@@ -52,7 +52,7 @@ final class DebugTools
             \home_url('/subscription-confirmed')
         );
 
-        \error_log('[TFG MAGIC] ✅ Direct token #' . $post_id . ' for ' . $email . ' seq=' . ($seq_code ?: 'n/a'));
+        \TFG\Core\Utils::info('[TFG MAGIC] ✅ Direct token #' . $post_id . ' for ' . $email . ' seq=' . ($seq_code ?: 'n/a'));
         return ['post_id' => (int)$post_id, 'token' => $token, 'url' => $url, 'expires' => (int)$exp];
     }
 

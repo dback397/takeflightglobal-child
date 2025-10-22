@@ -24,9 +24,9 @@ final class VerificationToken
         // Delay CPT check until after init
         \add_action('init', function () {
             if (!\post_type_exists('verification_tokens')) {
-                \error_log('[TFG Init] ❌ verification_tokens CPT not registered.');
+                \TFG\Core\Utils::info('[TFG Init] ❌ verification_tokens CPT not registered.');
         //    } else {
-        //        \error_log('[TFG Init] ✅ verification_tokens CPT found.');
+        //        \TFG\Core\Utils::info('[TFG Init] ✅ verification_tokens CPT found.');
             }
         }, 30);
     }
@@ -34,9 +34,9 @@ final class VerificationToken
     public static function checkPostYypes(): void
     {
         if (!\post_type_exists('verification_tokens')) {
-            \error_log('[TFG VerificationToken] ❌ verification_tokens CPT not registered.');
+            \TFG\Core\Utils::info('[TFG VerificationToken] ❌ verification_tokens CPT not registered.');
         } else {
-            \error_log('[TFG VerificationToken] ✅ verification_tokens CPT is registered.');
+            \TFG\Core\Utils::info('[TFG VerificationToken] ✅ verification_tokens CPT is registered.');
         }
     }
 
@@ -113,7 +113,7 @@ final class VerificationToken
         int $expires_in = 900
     ) {
         if (self::isAlreadySubscribed($email)) {
-            error_log("[TFG] Already subscribed: $email");
+            \TFG\Core\Utils::info("[TFG] Already subscribed: $email");
             return false;
         }
 
@@ -127,7 +127,7 @@ final class VerificationToken
 
         $expires_at = time() + max(60, (int) $expires_in); // min 60s
 
-        error_log("[TFG] ✅ Creating verification token for $email with code $code (seq {$sequence_code})");
+        \TFG\Core\Utils::info("[TFG] ✅ Creating verification token for $email with code $code (seq {$sequence_code})");
 
         $post_id = \wp_insert_post([
             'post_type'   => 'verification_tokens',
@@ -196,7 +196,7 @@ final class VerificationToken
         $token_id     = (int) $tokens[0];
         $requested_on = get_field('requested_on', $token_id);
         if ($requested_on && strtotime($requested_on) < strtotime("-{$expiry_hours} hours")) {
-            error_log("[TFG_Token] ⌛ Token for $email is expired.");
+            \TFG\Core\Utils::info("[TFG_Token] ⌛ Token for $email is expired.");
             return false;
         }
 
@@ -265,7 +265,7 @@ final class VerificationToken
         if (!$post_id) {
             $post_id = self::findByCode($code);
             if (!$post_id) {
-                error_log("[TFG VERIF] ❌ No verification post found for code={$code}");
+                \TFG\Core\Utils::info("[TFG VERIF] ❌ No verification post found for code={$code}");
                 return new \wp_Error('tfg_verif_not_found', 'Verification token not found.');
             }
         }
@@ -283,7 +283,7 @@ final class VerificationToken
         $seq_code    = get_post_meta($post_id, 'sequence_code', true);
 
         if (!$stored_code || !hash_equals((string)$stored_code, (string)$code)) {
-            error_log("[TFG VERIF] ❌ Code mismatch for post #{$post_id}");
+            \TFG\Core\Utils::info("[TFG VERIF] ❌ Code mismatch for post #{$post_id}");
             return new \wp_Error('tfg_verif_mismatch', 'Verification code mismatch.');
         }
 
@@ -294,7 +294,7 @@ final class VerificationToken
                 $now = current_time('timestamp', true);
                 $exp = is_numeric($exp_raw) ? (int)$exp_raw : strtotime($exp_raw);
                 if ($exp && $now > $exp) {
-                    error_log("[TFG VERIF] ❌ Code expired for post #{$post_id}");
+                    \TFG\Core\Utils::info("[TFG VERIF] ❌ Code expired for post #{$post_id}");
                     return new \wp_Error('tfg_verif_expired', 'Verification code has expired.');
                 }
             }
@@ -303,7 +303,7 @@ final class VerificationToken
         // 3) Short-circuit if already used (idempotent)
         if ($is_used && (string)$is_used !== '0') {
             // already used; return info to allow caller to continue gracefully
-            error_log("[TFG VERIF] ℹ️ Already used code for post #{$post_id}");
+            \TFG\Core\Utils::info("[TFG VERIF] ℹ️ Already used code for post #{$post_id}");
             return [
                 'post_id'       => $post_id,
                 'email'         => get_post_meta($post_id, 'email_used', true) ?: $email,
@@ -338,7 +338,7 @@ final class VerificationToken
                 $updated = 1; // we effectively marked it used
             } else {
                 // Another process likely claimed it first; treat as already used
-                error_log("[TFG VERIF] ⚠️ Race: token already claimed for post #{$post_id}");
+                \TFG\Core\Utils::info("[TFG VERIF] ⚠️ Race: token already claimed for post #{$post_id}");
             }
         }
 
@@ -355,7 +355,7 @@ final class VerificationToken
         if (!$seq_id)   { $seq_id   = get_post_meta($post_id, 'sequence_id', true); }
         if (!$seq_code) { $seq_code = get_post_meta($post_id, 'sequence_code', true); }
 
-        error_log("[TFG VERIF] ✅ mark_used success for post #{$post_id} email={$email} seq={$seq_code}");
+        \TFG\Core\Utils::info("[TFG VERIF] ✅ mark_used success for post #{$post_id} email={$email} seq={$seq_code}");
 
         return [
             'post_id'       => $post_id,
