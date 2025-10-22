@@ -65,14 +65,18 @@ final class Cookies
     public static function isSubscribed(?string $email = null): bool
   {
       // 🧩 Skip checks for REST, CRON, or CLI requests
-      if (
-          (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
-          (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
-          (\defined('WP_CLI') && \constant('WP_CLI'))
-      ) {
-        \error_log('[TFG Cookies] Skipping subscription check due to REST, CRON, or CLI request');
-        return true; // treat as subscribed to prevent redirects
-        }
+      // 🧩 Skip checks for REST, CRON, CLI, or admin-ajax requests
+  if (
+    (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
+    (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
+    (\defined('WP_CLI') && \constant('WP_CLI')) ||
+    (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/wp-admin/admin-ajax.php') !== false) ||
+    (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'wp-cron.php') !== false)
+  ) {
+    error_log('[TFG Cookies] Skipping subscription check due to REST, CRON, CLI, or AJAX request');
+    return true; // treat as subscribed to prevent redirects
+  }
+
 
       $server = $_COOKIE[self::SUB_OK] ?? '';
       if (!$server) {
