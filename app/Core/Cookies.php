@@ -77,7 +77,8 @@ final class Cookies
     {
         // --- 1. Skip during system requests (REST, CRON, CLI, AJAX, heartbeat/autosave)
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG Cookies] Skipping subscription check during system request');
+            $trace = wp_debug_backtrace_summary(null, 0, false);
+            \error_log('[TFG Cookies] 🛡 Skipping subscription check during system request → ' . $trace);
             return true; // treat as subscribed to prevent backend interference
         }
 
@@ -85,36 +86,35 @@ final class Cookies
         $cookie_value = $_COOKIE[self::SUB_OK] ?? '';
 
         if (empty($cookie_value)) {
-            \error_log('[TFG Cookies] No subscription cookie found (' . self::SUB_OK . ')');
+            \error_log('[TFG Cookies] ⚠️ No subscription cookie found (' . self::SUB_OK . ')');
             return false;
         }
 
         // --- 3. If email provided, validate via HMAC
         if (!empty($email)) {
-            $normalized_email = Utils::normalizeEmail($email);
+            $normalized_email = \TFG\Core\Utils::normalizeEmail($email);
 
             if (empty($normalized_email)) {
-                \error_log('[TFG Cookies] Invalid or empty email provided for subscription check');
+                \error_log('[TFG Cookies] ⚠️ Invalid or empty email provided for subscription check');
                 return false;
             }
 
             $expected_hmac = self::subscriberHmac($normalized_email);
             $is_valid = \hash_equals($expected_hmac, $cookie_value);
 
-            if (!$is_valid) {
-                \error_log('[TFG Cookies] Subscription cookie HMAC mismatch for email: ' . $normalized_email);
+            if ($is_valid) {
+                \error_log('[TFG Cookies] ✅ Valid subscription cookie confirmed for ' . $normalized_email);
             } else {
-                \error_log('[TFG Cookies] Valid subscription cookie confirmed for: ' . $normalized_email);
+                \error_log('[TFG Cookies] ❌ HMAC mismatch for subscription cookie (' . $normalized_email . ')');
             }
 
             return $is_valid;
         }
 
         // --- 4. Email not provided, cookie exists but cannot be verified
-        \error_log('[TFG Cookies] Subscription cookie exists but no email provided — unverified session');
-        return true; // assume subscribed (fallback for front-end display only)
+        \error_log('[TFG Cookies] ⚠️ Subscription cookie exists but no email provided — assuming subscribed for front-end context');
+        return true; // assume subscribed for limited contexts like front-end display
     }
-
 
     // =======================
     // Member cookie interface

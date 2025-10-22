@@ -17,38 +17,65 @@ final class RedirectHelper
      */
     public static function safeRedirect(string $url, int $status_code = 302): void
     {
+        // --- 1. Guard against system or hybrid requests
         if (\TFG\Core\Utils::isSystemRequest()) {
-            \error_log('[TFG SystemGuard] Skipped safeRedirect due to REST/CRON/CLI/AJAX context');
+            \error_log('[TFG RedirectHelper] 🛡 Skipping redirect to ' . $url . ' (REST/CRON/CLI/AJAX context)');
             return;
         }
 
-        // Don't interfere with WordPress admin login
-        if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false) {
-            \error_log('[TFG RedirectHelper] Skipping redirect - admin area or wp-login.php');
+        // --- 2. Detect WP autosave / heartbeat
+        $action = $_POST['action'] ?? '';
+        if (\in_array($action, ['heartbeat', 'wp_autosave'], true)) {
+            \error_log('[TFG RedirectHelper] 🛡 Skipping redirect — autosave or heartbeat context');
             return;
         }
 
+        // --- 3. Don’t interfere with wp-admin or login areas
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (\is_admin() || \strpos($uri, '/wp-login.php') !== false) {
+            \error_log('[TFG RedirectHelper] Skipping redirect — admin or login context');
+            return;
+        }
+
+        // --- 4. Bail if headers already sent
         if (\headers_sent()) {
-            \error_log('[TFG RedirectHelper] Headers already sent, cannot redirect to: ' . $url);
+            \error_log('[TFG RedirectHelper] ⚠️ Headers already sent, cannot redirect to: ' . $url);
             return;
         }
 
+        // --- 5. Get URLs
         $current_url = self::getCurrentUrl();
-        $target_url = self::normalizeUrl($url);
+        $target_url  = self::normalizeUrl($url);
 
-        // Check for redirect loop
+        // --- 6. Prevent redirect loops
         if (self::isRedirectLoop($current_url, $target_url)) {
-            \error_log('[TFG RedirectHelper] Redirect loop detected from ' . $current_url . ' to ' . $target_url);
+            \error_log('[TFG RedirectHelper] ⚠️ Redirect loop prevented (' . $current_url . ' → ' . $target_url . ')');
             return;
         }
 
-        // Record this redirect attempt
+        // --- 7. Record the redirect
         self::recordRedirect($current_url, $target_url);
 
-        \error_log('[TFG RedirectHelper] Redirecting from ' . $current_url . ' to ' . $target_url);
+        // --- 8. Perform redirect only in true browser contexts
+        $from = (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
+            ? ('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])
+            : '[unknown origin]';
+
+        \error_log('[TFG RedirectHelper] 🚀 Redirecting from ' . $from . ' to ' . $target_url);
+
+        // --- Silent mode for CLI/CRON even if reached here accidentally
+        if (\defined('WP_CLI') && \constant('WP_CLI')) {
+            \error_log('[TFG RedirectHelper] 🛑 Suppressed redirect in WP-CLI');
+            return;
+        }
+
         \nocache_headers();
         \wp_safe_redirect($target_url, $status_code);
-        exit;
+
+        // --- 9. Exit only in HTTP context
+        if (php_sapi_name() !== 'cli') {
+            exit;
+        }
     }
 
     /**

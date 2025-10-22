@@ -9,37 +9,65 @@ final class Utils
      * Determine if the current request is a system call
      * (REST API, CRON, WP-CLI, AJAX, or editor autosave)
      */
-    public static function isSystemRequest(bool $log = false): bool
-    {
-        $uri  = $_SERVER['REQUEST_URI'] ?? '';
-        $path = \wp_parse_url($uri, PHP_URL_PATH) ?? '';
+    public static function isSystemRequest(): bool
+        {
+            // --- REST API
+            if (defined('REST_REQUEST') && REST_REQUEST) {
+                return true;
+            }
 
-        // True system conditions
-        $is_system =
-            (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
-            (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
-            (\defined('WP_CLI') && \constant('WP_CLI')) ||
-            \strpos($path, '/wp-json/') !== false ||
-            \strpos($path, '/wp-admin/admin-ajax.php') !== false ||
-            \strpos($path, '/wp-cron.php') !== false;
+            // --- WP-CLI
+            if (\defined('WP_CLI') && \constant('WP_CLI')) {
+                return true;
+            }
 
-        // Skip WordPress heartbeat and autosave requests too
-        if (\strpos($path, 'heartbeat') !== false || \strpos($path, 'autosave') !== false) {
-            $is_system = true;
+            // --- Cron
+            if (defined('DOING_CRON') && DOING_CRON) {
+                return true;
+            }
+
+            // --- AJAX
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                return true;
+            }
+
+            // --- Autosave or Heartbeat (editor)
+            if (!empty($_POST['action']) && in_array($_POST['action'], ['heartbeat', 'wp_autosave'], true)) {
+                return true;
+            }
+
+            // --- JSON endpoints or Kadence autosave URIs
+            $uri = $_SERVER['REQUEST_URI'] ?? '';
+            if (
+                stripos($uri, '/wp-json/') !== false ||
+                stripos($uri, 'wp-cron.php') !== false ||
+                stripos($uri, 'wpforms/v1/') !== false ||
+                stripos($uri, 'kadence_element') !== false
+            ) {
+                return true;
+            }
+
+            return false;
         }
 
-        // DO NOT treat front-end POSTs as system
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !\is_admin()) {
-            $is_system = false;
-        }
+          // -----------------------------------------------------------------------------
+          // Lightweight internal logger with throttling
+          // -----------------------------------------------------------------------------
+          private static $last_log_times = [];
 
-        if ($is_system && $log) {
-            \error_log('[TFG Utils] Detected system request (REST, CRON, CLI, AJAX)');
-        }
+          public static function logOnce($message, $interval = 15)
+          {
+                  // Completely disable if TFG_DEBUG is off
+                  if (!defined('TFG_DEBUG') || !TFG_DEBUG) return;
 
-        return $is_system;
-    }
+                  $key = md5($message);
+                  $now = microtime(true);
 
+                  if (!isset(self::$last_log_times[$key]) || ($now - self::$last_log_times[$key]) > $interval) {
+                      self::$last_log_times[$key] = $now;
+                      error_log($message);
+                  }
+          }
 
 
     /**
