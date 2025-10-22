@@ -35,7 +35,7 @@ final class MemberFormHandlers
             }
 
             \error_log('[TFG FormHandlers] No subscription cookie found, redirecting to subscribe');
-            ErrorModal::showR('104', 20, \home_url('/subscribe'));
+            //ErrorModal::showR('104', 20, \home_url('/subscribe'));
             return;
         }
 

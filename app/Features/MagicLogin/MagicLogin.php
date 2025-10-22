@@ -105,7 +105,13 @@ final class MagicLogin
     /** Handle POST: validate email, (optionally) require verified subscriber, create+send magic link. */
     private static function handleSubmit(): void
     {
-        $email = Utils::normalizeEmail($_POST['magic_email'] ?? '');
+
+       if (Utils::isSystemRequest()) {
+         \error_log('[TFG SystemGuard] Skipped handleSubmit due to REST/CRON/CLI/AJAX context');
+         return;
+       }
+
+      $email = Utils::normalizeEmail($_POST['magic_email'] ?? '');
         if (!$email || !\is_email($email)) {
             \error_log('[Magic Login] Invalid email format.');
             return;
@@ -127,7 +133,7 @@ final class MagicLogin
 
             // Use RedirectHelper to prevent loops
             $signup_url = \apply_filters('tfg_magic_login_signup_url', \home_url('/newsletter-signup'));
-            
+
             if (RedirectHelper::isOnPage('/newsletter-signup') || RedirectHelper::isOnPage('/subscribe')) {
                 \error_log('[Magic Login] Redirect loop prevented: already on signup/subscribe page');
                 return;
