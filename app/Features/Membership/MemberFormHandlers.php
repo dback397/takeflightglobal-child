@@ -17,7 +17,7 @@ final class MemberFormHandlers
     public static function routeSubmission(): void
     {
         // 🔒 Skip background / system requests early
-        if (Utils::is_system_request()) {
+        if (Utils::isSystemRequest()) {
             \error_log('[TFG MemberFormHandlers] Skipping submission due to system request');
             return;
         }
