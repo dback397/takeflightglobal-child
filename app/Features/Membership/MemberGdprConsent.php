@@ -1,4 +1,5 @@
 <?php
+// ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 namespace TFG\Features\Membership;
 
 use TFG\Core\FormRouter;
@@ -103,6 +104,11 @@ final class MemberGdprConsent
 
     public static function handleGdprSubmission(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleGdprSubmission due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_consent')) return;
         \error_log('[TFG GDPR Handle] Entering handle_gdpr_submission()');
 
@@ -157,6 +163,11 @@ final class MemberGdprConsent
 
     public static function handlePasswordSubmission(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handlePasswordSubmission due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_password')) return;
         \error_log('[TFG Password] Entering handle_password_submission()');
 
@@ -210,6 +221,11 @@ final class MemberGdprConsent
 
     public static function handleProfileTransferFromStub(int $stub_id): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleProfileTransferFromStub due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         \error_log("[TFG Profile Transfer] Entering handle_profile_transfer_from_stub({$stub_id})");
 
         if ($stub_id <= 0 || \get_post_type($stub_id) !== 'profile_stub') {

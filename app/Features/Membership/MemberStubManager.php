@@ -1,4 +1,5 @@
 <?php
+// ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 /**
  * UI/MemberStubManager.php
  * Renders and handles the member stub form (new/edit) and manages stub persistence.
@@ -161,6 +162,11 @@ final class MemberStubManager
        ========================= */
     public static function handleStubSubmission(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleStubSubmission due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (\class_exists(FormRouter::class)) {
             if (!FormRouter::matches('stub_profile')) {
                 return;

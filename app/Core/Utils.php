@@ -9,25 +9,38 @@ final class Utils
      * Determine if the current request is a system call
      * (REST API, CRON, WP-CLI, AJAX, or editor autosave)
      */
-    public static function is_system_request(): bool
+    public static function isSystemRequest(bool $log = false): bool
     {
-        // Avoid namespace conflicts
-        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $uri  = $_SERVER['REQUEST_URI'] ?? '';
+        $path = \wp_parse_url($uri, PHP_URL_PATH) ?? '';
 
-        if (
+        // True system conditions
+        $is_system =
             (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
             (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
             (\defined('WP_CLI') && \constant('WP_CLI')) ||
-            \strpos($uri, '/wp-json/') !== false ||
-            \strpos($uri, '/wp-admin/admin-ajax.php') !== false ||
-            \strpos($uri, 'wp-cron.php') !== false
-        ) {
-            \error_log('[TFG Utils] Detected system request (REST, CRON, CLI, AJAX)');
-            return true;
+            \strpos($path, '/wp-json/') !== false ||
+            \strpos($path, '/wp-admin/admin-ajax.php') !== false ||
+            \strpos($path, '/wp-cron.php') !== false;
+
+        // Skip WordPress heartbeat and autosave requests too
+        if (\strpos($path, 'heartbeat') !== false || \strpos($path, 'autosave') !== false) {
+            $is_system = true;
         }
 
-        return false;
+        // DO NOT treat front-end POSTs as system
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !\is_admin()) {
+            $is_system = false;
+        }
+
+        if ($is_system && $log) {
+            \error_log('[TFG Utils] Detected system request (REST, CRON, CLI, AJAX)');
+        }
+
+        return $is_system;
     }
+
+
 
     /**
      * Normalize member ID (uppercase, trimmed, A–Z/0–9/_/- only).

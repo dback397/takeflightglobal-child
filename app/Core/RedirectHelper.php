@@ -1,4 +1,5 @@
 <?php
+// ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 
 namespace TFG\Core;
 
@@ -16,12 +17,17 @@ final class RedirectHelper
      */
     public static function safeRedirect(string $url, int $status_code = 302): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped safeRedirect due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         // Don't interfere with WordPress admin login
         if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false) {
             \error_log('[TFG RedirectHelper] Skipping redirect - admin area or wp-login.php');
             return;
         }
-        
+
         if (\headers_sent()) {
             \error_log('[TFG RedirectHelper] Headers already sent, cannot redirect to: ' . $url);
             return;

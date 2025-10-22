@@ -1,4 +1,5 @@
 <?php
+// ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 
 namespace TFG\Features\Membership;
 
@@ -34,14 +35,14 @@ final class MemberLogin
               \is_admin() ||
               \is_user_logged_in() ||
               \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false ||
-              Utils::is_system_request()
+              Utils::isSystemRequest()
             ) {
               \error_log('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php/system request');
                return;
             }
 
             // Normal login-page redirection logic
-            if ((\is_page('member-login')) && !Utils::is_system_request()) {
+            if ((\is_page('member-login')) && !Utils::isSystemRequest()) {
               \error_log('[TFG MemberLogin] On member-login page, checking for member cookie');
               $member_id = Cookies::getMemberId();
               if (!empty($member_id) && !\headers_sent()) {
@@ -63,6 +64,11 @@ final class MemberLogin
 
     public static function renderLoginForm(): string
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped renderLoginForm due to REST/CRON/CLI/AJAX context');
+            return '<p>System request - login form not available.</p>';
+        }
+
         if (Cookies::getMemberId() && !\headers_sent()) {
             // Use RedirectHelper to prevent loops
             $dashboard_url = \site_url('/member-dashboard/');
@@ -123,6 +129,11 @@ final class MemberLogin
 
     public static function handleLogin(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleLogin due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         // Don't interfere with WordPress admin login
         if (\is_admin() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-admin') !== false) {
             return;
@@ -213,6 +224,11 @@ final class MemberLogin
 
     public static function handleResetRequest(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleResetRequest due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!FormRouter::matches('password_reset_request')) return;
         if (empty($_POST['tfg_member_reset_request_submit'])) return;
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_reset_request')) {
@@ -303,6 +319,11 @@ final class MemberLogin
 
     public static function handlePasswordReset(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handlePasswordReset due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!FormRouter::matches('password_reset')) return;
         if (empty($_POST['tfg_submit_password'])) return;
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_password_reset')) {
@@ -409,6 +430,11 @@ final class MemberLogin
 
     public static function handleForgotMemberId(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped handleForgotMemberId due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!FormRouter::matches('forgot_member_id')) return;
         if (empty($_POST['tfg_member_id_lookup_submit'])) return;
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_forgot_id')) {

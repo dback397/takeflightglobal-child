@@ -1,4 +1,5 @@
 <?php
+// ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 namespace TFG\Core;
 
 final class Cookies
@@ -28,6 +29,11 @@ final class Cookies
     // ===========================
     public static function setSubscriberCookie(string $email): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped setSubscriberCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         $email = Utils::normalizeEmail($email);
         if (!$email) return;
 
@@ -56,6 +62,11 @@ final class Cookies
 
     public static function unsetSubscriberCookie(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped unsetSubscriberCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!self::guardHeaders('unset subscriber cookies')) return;
 
         self::deleteCookie(self::SUB_UI);
@@ -64,7 +75,7 @@ final class Cookies
 
     public static function isSubscribed(?string $email = null): bool
   {
-      if (Utils::is_system_request()) {
+      if (Utils::isSystemRequest()) {
         return true; // trusted system call, skip subscription check
       }
 
@@ -98,6 +109,11 @@ final class Cookies
     // =======================
     public static function setMemberCookie(string $member_id, string $email = ''): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped setMemberCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         $member_id = Utils::normalizeMemberId($member_id);
         $email     = $email ? Utils::normalizeEmail($email) : '';
 
@@ -127,6 +143,11 @@ final class Cookies
 
     public static function unsetMemberCookie(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped unsetMemberCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!self::guardHeaders('unset member cookies')) return;
 
         self::deleteCookie(self::MEM_UI);
@@ -232,6 +253,11 @@ final class Cookies
     // ============================
     public static function setUiCookie(string $name, string $value, int $ttl_seconds = 300): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped setUiCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (\headers_sent($f, $l)) {
             \error_log("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot setUiCookie($name).");
             return;
@@ -248,6 +274,11 @@ final class Cookies
 
     public static function deleteUiCookie(string $name): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipped deleteUiCookie due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (\headers_sent($f, $l)) {
             \error_log("[TFG\\Core\\Cookies] Headers already sent at $f:$l; cannot deleteUiCookie($name).");
             return;
