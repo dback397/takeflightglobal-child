@@ -110,6 +110,11 @@ final class NewsletterSubscription
     // === 2) Handle the POST ===
     public static function handleNewsletterSignup(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         // --- ROUTE GUARD (hardened) ---
         $is_post = (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST');
         $hid     = isset($_POST['handler_id']) ? (string) \wp_unslash($_POST['handler_id']) : '';

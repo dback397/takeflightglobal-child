@@ -179,6 +179,11 @@ final class MemberDashboard
 
     public static function unsubscribeTrigger(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!isset($_GET[self::UNSUB_QS]) || $_GET[self::UNSUB_QS] !== 'deactivate') return;
         if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) return;
 
@@ -208,6 +213,11 @@ final class MemberDashboard
 
     public static function logoutTrigger(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!isset($_GET[self::LOGOUT_QS])) return;
         if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) return;
 

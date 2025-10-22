@@ -147,6 +147,11 @@ final class MemberFormUtilities
 
     public static function handleGenericPasswordSubmission(): void
     {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \error_log('[TFG SystemGuard] Skipping ' . __METHOD__ . ' due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
         if (!\class_exists(FormRouter::class) || !FormRouter::matches('generic_password')) return;
         if (empty($_POST['submit_password_setup'])) return;
 
