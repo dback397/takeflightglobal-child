@@ -6,6 +6,30 @@ final class Utils
     public static function init(): void {}
 
     /**
+     * Determine if the current request is a system call
+     * (REST API, CRON, WP-CLI, AJAX, or editor autosave)
+     */
+    public static function is_system_request(): bool
+    {
+        // Avoid namespace conflicts
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        if (
+            (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
+            (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
+            (\defined('WP_CLI') && \constant('WP_CLI')) ||
+            \strpos($uri, '/wp-json/') !== false ||
+            \strpos($uri, '/wp-admin/admin-ajax.php') !== false ||
+            \strpos($uri, 'wp-cron.php') !== false
+        ) {
+            \error_log('[TFG Utils] Detected system request (REST, CRON, CLI, AJAX)');
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Normalize member ID (uppercase, trimmed, A–Z/0–9/_/- only).
      */
     public static function normalizeMemberId($id): string

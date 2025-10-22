@@ -3,6 +3,7 @@
 namespace TFG\Features\Membership;
 
 use TFG\Core\Cookies;
+use TFG\Core\Utils;
 use TFG\Core\RedirectHelper;
 use TFG\UI\ErrorModal;
 
@@ -15,24 +16,25 @@ final class MemberFormHandlers
 
     public static function routeSubmission(): void
     {
-    // 🧩 Skip REST API requests
-        if ( \defined('REST_REQUEST') && \constant('REST_REQUEST') ) {
-        \error_log('[TFG MemberFormHandlers] Skipping submission due to REST API request');
-        return;
-    }
+        // 🔒 Skip background / system requests early
+        if (Utils::is_system_request()) {
+            \error_log('[TFG MemberFormHandlers] Skipping submission due to system request');
+            return;
+        }
 
-        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
+        // Handle only POST forms
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            return;
+        }
 
-        // Require subscription cookie (server-trust; UI cookie ignored)
+        // Require valid subscription cookie
         if (!Cookies::isSubscribed()) {
-            // Use RedirectHelper to prevent loops
             if (RedirectHelper::isOnPage('/subscribe')) {
                 \error_log('[TFG FormHandlers] Redirect loop prevented: already on subscribe page');
                 return;
             }
 
             \error_log('[TFG FormHandlers] No subscription cookie found, redirecting to subscribe');
-            // Show modal code 104 then redirect to /subscribe
             ErrorModal::showR('104', 20, \home_url('/subscribe'));
             return;
         }
@@ -43,7 +45,7 @@ final class MemberFormHandlers
             return;
         }
 
-        // Future: handle other types (agency/affiliate/etc.)
+        // Future: handle agency/affiliate/etc.
     }
 
     private static function handleUniversityForm(array $data): void
