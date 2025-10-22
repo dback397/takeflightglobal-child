@@ -66,16 +66,20 @@ final class Cookies
   {
       // 🧩 Skip checks for REST, CRON, or CLI requests
       // 🧩 Skip checks for REST, CRON, CLI, or admin-ajax requests
-  if (
-    (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
-    (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
-    (\defined('WP_CLI') && \constant('WP_CLI')) ||
-    (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/wp-admin/admin-ajax.php') !== false) ||
-    (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'wp-cron.php') !== false)
-  ) {
-    error_log('[TFG Cookies] Skipping subscription check due to REST, CRON, CLI, or AJAX request');
-    return true; // treat as subscribed to prevent redirects
-  }
+      if (
+        (\defined('REST_REQUEST') && \constant('REST_REQUEST')) ||
+        (\defined('DOING_CRON') && \constant('DOING_CRON')) ||
+        (\defined('WP_CLI') && \constant('WP_CLI')) ||
+        (!empty($_SERVER['REQUEST_URI']) && (
+            \strpos($_SERVER['REQUEST_URI'], '/wp-json/') !== false ||       // REST API calls
+            \strpos($_SERVER['REQUEST_URI'], '/wp-admin/admin-ajax.php') !== false || // AJAX
+            \strpos($_SERVER['REQUEST_URI'], 'wp-cron.php') !== false        // CRON
+        ))
+    ) {
+        \error_log('[TFG Cookies] Skipping subscription check due to REST, CRON, CLI, or AJAX request');
+        return true; // treat as subscribed to prevent redirects
+    }
+
 
 
       $server = $_COOKIE[self::SUB_OK] ?? '';
