@@ -15,17 +15,11 @@ final class MemberFormHandlers
 
     public static function routeSubmission(): void
     {
-        // Don't interfere with WordPress admin login
-        if (
-          \is_admin() ||
-          \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false ||
-          \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-admin') !== false ||
-          (\defined('DOING_CRON') && DOING_CRON) ||          // skip WordPress cron
-          (\defined('\WP_CLI') && constant('\WP_CLI')) ||          // skip WP-CLI
-          \strpos($_SERVER['REQUEST_URI'] ?? '', 'wp-cron.php') !== false // skip direct cron calls
-      ) {
-          return;
-      }
+    // 🧩 Skip REST API requests
+        if ( \defined('REST_REQUEST') && \constant('REST_REQUEST') ) {
+        \error_log('[TFG MemberFormHandlers] Skipping submission due to REST API request');
+        return;
+    }
 
         if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
 
