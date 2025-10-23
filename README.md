@@ -9,3 +9,4 @@ This repository contains the child theme for the TFG site.
 # TakeFlightGlobal Child Theme
 
 ![PHP Checks](https://github.com/dback397/takeflightglobal-wp/actions/workflows/php-checks.yml/badge.svg)
+# takeflightglobal-child
