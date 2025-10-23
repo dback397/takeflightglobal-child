@@ -44,5 +44,10 @@
     }
 },
 
-  "terminal.integrated.automationShell.windows": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin\\bash.exe"
+  "terminal.integrated.env.windows": {
+  "PATH": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin;${env:PATH}",
+  "SHELL": "C:\\Users\\dback\\AppData\\Local\\Programs\\Git\\bin\\bash.exe"
+},
+"terminal.integrated.defaultProfile.windows": "Git Bash"
+
 }
