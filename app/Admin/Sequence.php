@@ -17,7 +17,9 @@ final class Sequence
      * @return int          The next sequence number
      */
 
-    public static function init(): void {} // no hooks; utility only
+    public static function init(): void
+    {
+    } // no hooks; utility only
 
     public static function next(string $name, int $start = 1): int
     {
@@ -53,7 +55,7 @@ final class Sequence
         }
 
         // 3) Return the value we set via LAST_INSERT_ID(expr)
-        $val = (int) $wpdb->get_var("SELECT LAST_INSERT_ID()");
+        $val = (int) $wpdb->get_var('SELECT LAST_INSERT_ID()');
         return $val;
     }
 

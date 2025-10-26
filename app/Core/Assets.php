@@ -1,7 +1,9 @@
 <?php
+
 namespace TFG\Core;
 
-Use TFG\UI\ErrorModal;
+use TFG\UI\ErrorModal;
+
 final class Assets
 {
     public static function init(): void
@@ -45,9 +47,9 @@ final class Assets
 
         // Core styles
         self::enqueueStyle('tfg-custom-stylesheet', '/css/tfg-custom-stylesheet.css');
-        self::enqueueStyle('tfg-buttons',            '/css/tfg-buttons.css');
-        self::enqueueStyle('tfg-fonts',              '/css/tfg-fonts.css');
-        self::enqueueStyle('tfg-forms',              '/css/tfg-forms.css');
+        self::enqueueStyle('tfg-buttons', '/css/tfg-buttons.css');
+        self::enqueueStyle('tfg-fonts', '/css/tfg-fonts.css');
+        self::enqueueStyle('tfg-forms', '/css/tfg-forms.css');
 
         // Error modal (JS + CSS) + localized messages
         \wp_register_script(

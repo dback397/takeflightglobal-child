@@ -25,8 +25,8 @@ final class VerificationToken
         \add_action('init', function () {
             if (!\post_type_exists('verification_tokens')) {
                 \TFG\Core\Utils::info('[TFG Init] ❌ verification_tokens CPT not registered.');
-        //    } else {
-        //        \TFG\Core\Utils::info('[TFG Init] ✅ verification_tokens CPT found.');
+                //    } else {
+                //        \TFG\Core\Utils::info('[TFG Init] ✅ verification_tokens CPT found.');
             }
         }, 30);
     }
@@ -58,7 +58,7 @@ final class VerificationToken
     {
         $p       = $request->get_params();
         $raw_em  = isset($p['subscriber_email']) ? \wp_unslash($p['subscriber_email']) : '';
-        $raw_nm  = isset($p['subscriber_name'])  ? \wp_unslash($p['subscriber_name'])  : '';
+        $raw_nm  = isset($p['subscriber_name']) ? \wp_unslash($p['subscriber_name']) : '';
         $raw_cs  = $p['gdpr_consent'] ?? false;
         $raw_src = isset($p['source']) ? \wp_unslash($p['source']) : 'newsletter_form';
 
@@ -99,9 +99,9 @@ final class VerificationToken
         return $resp;
     }
 
-/**
-     * Create the verification token CPT entry.
-     */
+    /**
+         * Create the verification token CPT entry.
+         */
     public static function createVerificationToken(
         string $email,
         string $code,
@@ -139,18 +139,18 @@ final class VerificationToken
         }
 
         // ACF-backed fields
-        update_field('verification_code', $code,  $post_id);
-        update_field('email_used',        $email, $post_id); // bind at creation
-        update_field('subscriber_name',   $name,  $post_id);
-        update_field('gdpr_consent',      $gdpr ? 1 : 0, $post_id);
-        update_field('source',            $source, $post_id);
-        update_field('is_used',           0, $post_id);
-        update_field('is_used_copy',      0, $post_id);
-        update_field('request_ip',        MagicUtilities::clientIp(), $post_id);
+        update_field('verification_code', $code, $post_id);
+        update_field('email_used', $email, $post_id); // bind at creation
+        update_field('subscriber_name', $name, $post_id);
+        update_field('gdpr_consent', $gdpr ? 1 : 0, $post_id);
+        update_field('source', $source, $post_id);
+        update_field('is_used', 0, $post_id);
+        update_field('is_used_copy', 0, $post_id);
+        update_field('request_ip', MagicUtilities::clientIp(), $post_id);
 
         // Extra meta
-        update_post_meta($post_id, 'expires_at',    $expires_at);
-        update_post_meta($post_id, 'sequence_id',   (int) $sequence_id);
+        update_post_meta($post_id, 'expires_at', $expires_at);
+        update_post_meta($post_id, 'sequence_id', (int) $sequence_id);
         update_post_meta($post_id, 'sequence_code', (string) $sequence_code);
 
         return [
@@ -164,9 +164,12 @@ final class VerificationToken
     /**
      * Fetch latest unused token for an email (quick helper).
      */
-    public static function getUnusedTokenByEmail(string $email, int $expiry_hours = 24) {
+    public static function getUnusedTokenByEmail(string $email, int $expiry_hours = 24)
+    {
         $email = Utils::normalizeEmail($email);
-        if (!$email) return false;
+        if (!$email) {
+            return false;
+        }
 
         $tokens = get_posts([
             'post_type'        => 'verification_tokens',
@@ -183,15 +186,17 @@ final class VerificationToken
                 ],
                 [
                     'relation' => 'OR',
-                    ['key' => 'is_used', 'value' => 0, 'compare' => '='],
-                    ['key' => 'is_used', 'compare' => 'NOT EXISTS'],
+                    ['key'     => 'is_used', 'value' => 0, 'compare' => '='],
+                    ['key'     => 'is_used', 'compare' => 'NOT EXISTS'],
                 ],
             ],
             'orderby' => 'date',
             'order'   => 'DESC',
         ]);
 
-        if (!$tokens) return false;
+        if (!$tokens) {
+            return false;
+        }
 
         $token_id     = (int) $tokens[0];
         $requested_on = get_field('requested_on', $token_id);
@@ -206,9 +211,12 @@ final class VerificationToken
     /**
      * Check if an email is already subscribed (published subscriber with is_subscribed=1).
      */
-    public static function isAlreadySubscribed(string $email): bool {
+    public static function isAlreadySubscribed(string $email): bool
+    {
         $email = Utils::normalizeEmail($email);
-        if (!$email) return false;
+        if (!$email) {
+            return false;
+        }
 
         $sub = get_posts([
             'post_type'        => 'subscriber',
@@ -226,16 +234,17 @@ final class VerificationToken
         return !empty($sub);
     }
 
-  /**
-     * Mark a verification token as used (atomic), attach email, and return sequence info.
-     *
-     * @param int|string $post_id_or_code  Post ID of verification token OR the raw verification code.
-     * @param string|null $code            The verification code (required if first arg is post ID).
-     * @param string|null $email           Email that used the code (will be saved).
-     * @param array $opts                  Options: ['check_expiry' => bool, 'expiry_meta' => 'expires_on']
-     * @return array|WP_Error              ['post_id','email','sequence_id','sequence_code'] on success
-     */
-    public static function markUsed($post_id_or_code, ?string $code = null, ?string $email = null, array $opts = []) {
+    /**
+       * Mark a verification token as used (atomic), attach email, and return sequence info.
+       *
+       * @param int|string $post_id_or_code  Post ID of verification token OR the raw verification code.
+       * @param string|null $code            The verification code (required if first arg is post ID).
+       * @param string|null $email           Email that used the code (will be saved).
+       * @param array $opts                  Options: ['check_expiry' => bool, 'expiry_meta' => 'expires_on']
+       * @return array|WP_Error              ['post_id','email','sequence_id','sequence_code'] on success
+       */
+    public static function markUsed($post_id_or_code, ?string $code = null, ?string $email = null, array $opts = [])
+    {
         global $wpdb;
 
         $opts = array_merge([
@@ -254,7 +263,7 @@ final class VerificationToken
             $code    = (string) ($code ?? '');
         } else {
             // Arg1 is actually the code
-            $code    = (string) $post_id_or_code;
+            $code = (string) $post_id_or_code;
         }
 
         $code = \sanitize_text_field($code);
@@ -315,7 +324,7 @@ final class VerificationToken
 
         // 4) Atomic flip: set is_used=1 only if currently 0/empty/null
         $meta_table = $wpdb->postmeta;
-        $updated = $wpdb->query(
+        $updated    = $wpdb->query(
             $wpdb->prepare(
                 "UPDATE {$meta_table}
                  SET meta_value = '1'
@@ -352,8 +361,12 @@ final class VerificationToken
         }
 
         // Refresh sequence in case not present
-        if (!$seq_id)   { $seq_id   = get_post_meta($post_id, 'sequence_id', true); }
-        if (!$seq_code) { $seq_code = get_post_meta($post_id, 'sequence_code', true); }
+        if (!$seq_id) {
+            $seq_id = get_post_meta($post_id, 'sequence_id', true);
+        }
+        if (!$seq_code) {
+            $seq_code = get_post_meta($post_id, 'sequence_code', true);
+        }
 
         \TFG\Core\Utils::info("[TFG VERIF] ✅ mark_used success for post #{$post_id} email={$email} seq={$seq_code}");
 
@@ -371,9 +384,12 @@ final class VerificationToken
      * @param string $code
      * @return int|null
      */
-    public static function findByCode(string $code): ?int {
+    public static function findByCode(string $code): ?int
+    {
         $code = \sanitize_text_field($code);
-        if ($code === '') return null;
+        if ($code === '') {
+            return null;
+        }
 
         $q = get_posts([
             'post_type'      => 'verification_tokens',
@@ -385,9 +401,9 @@ final class VerificationToken
                     'value' => $code,
                 ],
             ],
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-            'no_found_rows'  => true,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'no_found_rows'    => true,
             'suppress_filters' => true,
         ]);
         return $q ? (int)$q[0] : null;

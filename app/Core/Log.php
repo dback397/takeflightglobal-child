@@ -1,4 +1,5 @@
 <?php
+
 namespace TFG\Core;
 
 /**
@@ -31,8 +32,8 @@ final class Log
      */
     public static function addLogEntry(array $args = [])
     {
-        $ip  = $_SERVER['REMOTE_ADDR']     ?? '';
-        $ua  = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ip = $_SERVER['REMOTE_ADDR']     ?? '';
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $defaults = [
             'email'         => '',
@@ -97,14 +98,14 @@ final class Log
         }
 
         // Save fields
-        self::saveField($post_id, 'email',         $data['email']);
-        self::saveField($post_id, 'event_type',    $data['event_type']);
-        self::saveField($post_id, 'ip_address',    $data['ip_address']);
-        self::saveField($post_id, 'timestamp',     $data['timestamp']);
-        self::saveField($post_id, 'user_agent',    $data['user_agent']);
+        self::saveField($post_id, 'email', $data['email']);
+        self::saveField($post_id, 'event_type', $data['event_type']);
+        self::saveField($post_id, 'ip_address', $data['ip_address']);
+        self::saveField($post_id, 'timestamp', $data['timestamp']);
+        self::saveField($post_id, 'user_agent', $data['user_agent']);
         self::saveField($post_id, 'related_token', $data['related_token']);
-        self::saveField($post_id, 'status',        $data['status']);
-        self::saveField($post_id, 'notes',         $data['notes']);
+        self::saveField($post_id, 'status', $data['status']);
+        self::saveField($post_id, 'notes', $data['notes']);
 
         return (int) $post_id;
     }

@@ -14,7 +14,7 @@ final class MemberDashboard
 
     public static function init(): void
     {
-        \add_shortcode('tfg_member_dashboard',    [self::class, 'renderDashboard']);
+        \add_shortcode('tfg_member_dashboard', [self::class, 'renderDashboard']);
         \add_shortcode('tfg_edit_member_profile', [self::class, 'renderEditForm']);
 
         \add_action('init', [self::class, 'logoutTrigger']);
@@ -36,7 +36,9 @@ final class MemberDashboard
             ? \get_field('member_id', $post_id)
             : \get_post_meta($post_id, 'member_id', true);
 
-        if (!$member_id) return '<p>Missing Member ID on this profile.</p>';
+        if (!$member_id) {
+            return '<p>Missing Member ID on this profile.</p>';
+        }
 
         $stub = \get_posts([
             'post_type'        => 'profile_stub',
@@ -47,7 +49,9 @@ final class MemberDashboard
             'suppress_filters' => true,
             'no_found_rows'    => true,
         ]);
-        if (!$stub) return '<p>Stub not found for this profile.</p>';
+        if (!$stub) {
+            return '<p>Stub not found for this profile.</p>';
+        }
 
         $stub_id     = (int) $stub[0];
         $member_type = \function_exists('get_field')
@@ -119,7 +123,7 @@ final class MemberDashboard
         // 5) Action URLs (+ nonces)
         $base       = \remove_query_arg([self::UNSUB_QS, self::NONCE_QS, self::LOGOUT_QS]);
         $nonce      = \wp_create_nonce(self::NONCE_KEY);
-        $edit_url   = \add_query_arg(['tfg_action' => 'edit'],   $base);
+        $edit_url   = \add_query_arg(['tfg_action' => 'edit'], $base);
         $expand_url = \add_query_arg(['tfg_action' => 'expand'], $base);
         $reset_url  = \esc_url(\site_url('/reset-password'));
         $deact_url  = \add_query_arg([self::UNSUB_QS => 'deactivate', self::NONCE_QS => $nonce], $base);
@@ -139,7 +143,9 @@ final class MemberDashboard
         ];
         foreach ($fields_to_show as $key => $label) {
             $value = \function_exists('get_field') ? \get_field($key, $post_id) : \get_post_meta($post_id, $key, true);
-            if (\is_array($value)) $value = \implode(', ', $value);
+            if (\is_array($value)) {
+                $value = \implode(', ', $value);
+            }
             if ($value !== '' && $value !== null) {
                 echo '<div style="margin-bottom:0.5em;"><strong>' . \esc_html($label) . ':</strong> ' . \esc_html((string) $value) . '</div>';
             }
@@ -184,12 +190,18 @@ final class MemberDashboard
             return;
         }
 
-        if (!isset($_GET[self::UNSUB_QS]) || $_GET[self::UNSUB_QS] !== 'deactivate') return;
-        if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) return;
+        if (!isset($_GET[self::UNSUB_QS]) || $_GET[self::UNSUB_QS] !== 'deactivate') {
+            return;
+        }
+        if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) {
+            return;
+        }
 
         $member_id = Cookies::getMemberId();
         $email     = Cookies::getMemberEmail();
-        if (!$member_id || !Cookies::isMember($member_id, $email ?? '')) return;
+        if (!$member_id || !Cookies::isMember($member_id, $email ?? '')) {
+            return;
+        }
 
         $profile = self::getMemberProfileById($member_id);
         if ($profile) {
@@ -218,8 +230,12 @@ final class MemberDashboard
             return;
         }
 
-        if (!isset($_GET[self::LOGOUT_QS])) return;
-        if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) return;
+        if (!isset($_GET[self::LOGOUT_QS])) {
+            return;
+        }
+        if (empty($_GET[self::NONCE_QS]) || !\wp_verify_nonce($_GET[self::NONCE_QS], self::NONCE_KEY)) {
+            return;
+        }
 
         Cookies::unsetMemberCookie();
         if (!\headers_sent()) {
@@ -235,7 +251,9 @@ final class MemberDashboard
     public static function getMemberProfileById(string $member_id)
     {
         $member_id = Utils::normalizeMemberId($member_id);
-        if ($member_id === '') return null;
+        if ($member_id === '') {
+            return null;
+        }
 
         $results = \get_posts([
             'post_type'        => 'member_profile',
@@ -249,7 +267,7 @@ final class MemberDashboard
         return $results[0] ?? null;
     }
 
-    }
+}
 
 /* ---- Legacy class alias for transition ---- */
 \class_alias(\TFG\Features\Membership\MemberDashboard::class, 'TFG_Member_Dashboard');

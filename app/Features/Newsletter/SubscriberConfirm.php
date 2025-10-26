@@ -1,5 +1,7 @@
 <?php
+
 // File: Newsletter/SubscriberConfirm.php
+
 namespace TFG\Features\Newsletter;
 
 use TFG\Core\Utils;
@@ -53,7 +55,7 @@ final class SubscriberConfirm
 
         $token    = isset($_GET['token']) ? (string) $_GET['token'] : '';
         $email    = isset($_GET['email']) ? (string) $_GET['email'] : '';
-        $sig      = isset($_GET['sig'])   ? (string) $_GET['sig']   : '';
+        $sig      = isset($_GET['sig']) ? (string) $_GET['sig'] : '';
         $seq_code = isset($_GET['sequence_code']) ? (string) $_GET['sequence_code'] : '';
         $magic_id = isset($_GET['magic_id']) ? (int) $_GET['magic_id'] : 0;
 
@@ -114,8 +116,8 @@ final class SubscriberConfirm
                 'no_found_rows'    => true,
                 'meta_query'       => [
                     'relation' => 'AND',
-                    ['key' => 'sequence_code', 'value' => $seq_code],
-                    ['key' => 'email_used',    'value' => $email],
+                    ['key'     => 'sequence_code', 'value' => $seq_code],
+                    ['key'     => 'email_used',    'value' => $email],
                 ],
                 'orderby' => 'date',
                 'order'   => 'DESC',
@@ -127,12 +129,12 @@ final class SubscriberConfirm
         }
 
         return [
-            'ok'        => true,
-            'vt_id'     => $vt_id,
-            'seq_code'  => $seq_code,
-            'magic_id'  => $magic_id ? (int) $magic_id : 0,
-            'email'     => $email,
-            'token'     => $token,
+            'ok'       => true,
+            'vt_id'    => $vt_id,
+            'seq_code' => $seq_code,
+            'magic_id' => $magic_id ? (int) $magic_id : 0,
+            'email'    => $email,
+            'token'    => $token,
         ];
     }
 
@@ -215,8 +217,8 @@ final class SubscriberConfirm
         }
 
         $now = \current_time('mysql');
-        $set('is_verified',   1);
-        $set('verified_on',   $now);
+        $set('is_verified', 1);
+        $set('verified_on', $now);
         $set('is_subscribed', 1);
 
         $existing_date = (string) \get_post_meta($sub_id, 'date_subscribed', true);

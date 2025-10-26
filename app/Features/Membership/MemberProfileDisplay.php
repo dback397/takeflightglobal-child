@@ -121,7 +121,7 @@ final class MemberProfileDisplay
     /** Fetch the minimal set of fields efficiently (ACF or raw meta). */
     private static function fetchFields(int $post_id): array
     {
-        $out = [];
+        $out     = [];
         $use_acf = \function_exists('get_field');
 
         foreach (self::FIELD_KEYS as $key) {
@@ -134,7 +134,7 @@ final class MemberProfileDisplay
             $out[$key] = $val;
         }
 
-        $has_any = \array_reduce($out, fn($c, $v) => $c || ($v !== '' && $v !== null), false);
+        $has_any = \array_reduce($out, fn ($c, $v) => $c || ($v !== '' && $v !== null), false);
         return $has_any ? $out : [];
     }
 
@@ -142,7 +142,9 @@ final class MemberProfileDisplay
     private static function cleanUrlHref(string $raw): string
     {
         $raw = \trim($raw);
-        if ($raw === '') return '';
+        if ($raw === '') {
+            return '';
+        }
         if (!\preg_match('~^https?://~i', $raw)) {
             $raw = 'https://' . $raw;
         }
@@ -153,14 +155,22 @@ final class MemberProfileDisplay
     private static function cleanUrlLabel(string $raw): string
     {
         $href = self::cleanUrlHref($raw);
-        if ($href === '') return '';
+        if ($href === '') {
+            return '';
+        }
         $label = \preg_replace('~^https?://~i', '', $href);
         return \rtrim($label, '/');
     }
 
     /* ---- Legacy method aliases (optional) ---- */
-    /** @deprecated */ public static function render_profile_summary(int $id): string  { return self::renderProfileSummary($id); }
-    /** @deprecated */ public static function render_profile_columns(int $id): string  { return self::renderProfileColumns($id); }
+    /** @deprecated */ public static function render_profile_summary(int $id): string
+    {
+        return self::renderProfileSummary($id);
+    }
+    /** @deprecated */ public static function render_profile_columns(int $id): string
+    {
+        return self::renderProfileColumns($id);
+    }
 }
 
 /* ---- Legacy class alias for transition ---- */

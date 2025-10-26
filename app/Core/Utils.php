@@ -1,98 +1,105 @@
 <?php
+
 namespace TFG\Core;
 
 final class Utils
 {
-    public static function init(): void {}
+    public static function init(): void
+    {
+    }
 
     /**
      * Determine if the current request is a system call
      * (REST API, CRON, WP-CLI, AJAX, or editor autosave)
      */
     public static function isSystemRequest(): bool
-        {
-            // --- REST API
-            if (defined('REST_REQUEST') && REST_REQUEST) {
-                return true;
-            }
-
-            // --- WP-CLI
-            if (\defined('WP_CLI') && \constant('WP_CLI')) {
-                return true;
-            }
-
-            // --- Cron
-            if (defined('DOING_CRON') && DOING_CRON) {
-                return true;
-            }
-
-            // --- AJAX
-            if (defined('DOING_AJAX') && DOING_AJAX) {
-                return true;
-            }
-
-            // --- Autosave or Heartbeat (editor)
-            if (!empty($_POST['action']) && in_array($_POST['action'], ['heartbeat', 'wp_autosave'], true)) {
-                return true;
-            }
-
-            // --- JSON endpoints or Kadence autosave URIs
-            $uri = $_SERVER['REQUEST_URI'] ?? '';
-            if (
-                stripos($uri, '/wp-json/') !== false ||
-                stripos($uri, 'wp-cron.php') !== false ||
-                stripos($uri, 'wpforms/v1/') !== false ||
-                stripos($uri, 'kadence_element') !== false
-            ) {
-                return true;
-            }
-
-            return false;
+    {
+        // --- REST API
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            return true;
         }
 
-          // -----------------------------------------------------------------------------
-          // Lightweight internal logger with throttling
-          // -----------------------------------------------------------------------------
-          private static $last_log_times = [];
+        // --- WP-CLI
+        if (\defined('WP_CLI') && \constant('WP_CLI')) {
+            return true;
+        }
 
-          public static function logOnce($message, $interval = 15)
-          {
-                  // Completely disable if TFG_DEBUG is off
-                  if (!defined('TFG_DEBUG') || !TFG_DEBUG) return;
+        // --- Cron
+        if (defined('DOING_CRON') && DOING_CRON) {
+            return true;
+        }
 
-                  $key = md5($message);
-                  $now = microtime(true);
+        // --- AJAX
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            return true;
+        }
 
-                  if (!isset(self::$last_log_times[$key]) || ($now - self::$last_log_times[$key]) > $interval) {
-                      self::$last_log_times[$key] = $now;
-                      \TFG\Core\Utils::info($message);
-                  }
-          }
+        // --- Autosave or Heartbeat (editor)
+        if (!empty($_POST['action']) && in_array($_POST['action'], ['heartbeat', 'wp_autosave'], true)) {
+            return true;
+        }
 
-              private static $last = [];
+        // --- JSON endpoints or Kadence autosave URIs
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (
+            stripos($uri, '/wp-json/') !== false || stripos($uri, 'wp-cron.php') !== false || stripos($uri, 'wpforms/v1/') !== false || stripos($uri, 'kadence_element') !== false
+        ) {
+            return true;
+        }
 
-              public static function info($msg, $interval = 15) {
-                  if (!\defined('TFG_DEBUG') || !\constant('TFG_DEBUG')) return;
-              
-                  $key = md5($msg);
-                  $now = microtime(true);
-              
-                  if (!isset(self::$last[$key]) || ($now - self::$last[$key]) > $interval) {
-                      self::$last[$key] = $now;
-                      \TFG\Core\Log::addLogEntry([
-                          'event_type' => 'info',
-                          'message' => $msg,
-                      ]);
-                  }
-              }
-              
+        return false;
+    }
+
+    // -----------------------------------------------------------------------------
+    // Lightweight internal logger with throttling
+    // -----------------------------------------------------------------------------
+    private static $last_log_times = [];
+
+    public static function logOnce($message, $interval = 15)
+    {
+        // Completely disable if TFG_DEBUG is off
+        if (!defined('TFG_DEBUG') || !TFG_DEBUG) {
+            return;
+        }
+
+        $key = md5($message);
+        $now = microtime(true);
+
+        if (!isset(self::$last_log_times[$key]) || ($now - self::$last_log_times[$key]) > $interval) {
+            self::$last_log_times[$key] = $now;
+            \TFG\Core\Utils::info($message);
+        }
+    }
+
+    private static $last = [];
+
+    public static function info($msg, $interval = 15)
+    {
+        if (!\defined('TFG_DEBUG') || !\constant('TFG_DEBUG')) {
+            return;
+        }
+
+        $key = md5($msg);
+        $now = microtime(true);
+
+        if (!isset(self::$last[$key]) || ($now - self::$last[$key]) > $interval) {
+            self::$last[$key] = $now;
+            \TFG\Core\Log::addLogEntry([
+                'event_type' => 'info',
+                'message'    => $msg,
+            ]);
+        }
+    }
+
 
     /**
      * Normalize member ID (uppercase, trimmed, A–Z/0–9/_/- only).
      */
     public static function normalizeMemberId($id): string
     {
-        if (!\is_string($id)) return '';
+        if (!\is_string($id)) {
+            return '';
+        }
         $id = \strtoupper(\trim($id));
         return \preg_match('/^[A-Z0-9_-]+$/', $id) ? $id : '';
     }

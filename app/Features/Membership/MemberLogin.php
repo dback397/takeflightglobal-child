@@ -7,6 +7,7 @@ use TFG\Core\Cookies;
 use TFG\Core\Utils;
 use TFG\Core\FormRouter;
 use TFG\Core\RedirectHelper;
+
 // use TFG\Core\Mailer; // optional if you email the member ID
 
 /**
@@ -17,9 +18,9 @@ final class MemberLogin
     public static function init(): void
     {
         // Shortcodes
-        \add_shortcode('tfg_member_login_form',     [self::class, 'renderLoginForm']);
-        \add_shortcode('tfg_member_reset_request',  [self::class, 'renderResetRequestForm']); // identity check
-        \add_shortcode('tfg_member_reset_form',     [self::class, 'renderPasswordResetForm']); // requires cookie
+        \add_shortcode('tfg_member_login_form', [self::class, 'renderLoginForm']);
+        \add_shortcode('tfg_member_reset_request', [self::class, 'renderResetRequestForm']); // identity check
+        \add_shortcode('tfg_member_reset_form', [self::class, 'renderPasswordResetForm']); // requires cookie
         \add_shortcode('tfg_forgot_member_id_form', [self::class, 'renderForgotMemberIdForm']);
 
         // Handlers
@@ -32,29 +33,26 @@ final class MemberLogin
         \add_action('templateRedirect', function () {
             // 🧩 Skip all system or admin contexts
             if (
-              \is_admin() ||
-              \is_user_logged_in() ||
-              \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false ||
-              Utils::isSystemRequest()
+                \is_admin() || \is_user_logged_in() || \strpos($_SERVER['REQUEST_URI'] ?? '', '/wp-login.php') !== false || Utils::isSystemRequest()
             ) {
-              \TFG\Core\Utils::info('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php/system request');
-               return;
+                \TFG\Core\Utils::info('[TFG MemberLogin] Skipping template_redirect - admin/logged in/wp-login.php/system request');
+                return;
             }
 
             // Normal login-page redirection logic
             if ((\is_page('member-login')) && !Utils::isSystemRequest()) {
-              \TFG\Core\Utils::info('[TFG MemberLogin] On member-login page, checking for member cookie');
-              $member_id = Cookies::getMemberId();
-              if (!empty($member_id) && !\headers_sent()) {
-                  $dashboard_url = \site_url('/member-dashboard/');
-                  if (RedirectHelper::isOnPage('/member-dashboard')) {
-                      \TFG\Core\Utils::info('[TFG MemberLogin] Redirect loop prevented: already on dashboard');
-                      return;
-                  }
-                  \TFG\Core\Utils::info('[TFG MemberLogin] Redirecting logged-in member to dashboard');
-                  RedirectHelper::safeRedirect($dashboard_url);
-              }
-          }
+                \TFG\Core\Utils::info('[TFG MemberLogin] On member-login page, checking for member cookie');
+                $member_id = Cookies::getMemberId();
+                if (!empty($member_id) && !\headers_sent()) {
+                    $dashboard_url = \site_url('/member-dashboard/');
+                    if (RedirectHelper::isOnPage('/member-dashboard')) {
+                        \TFG\Core\Utils::info('[TFG MemberLogin] Redirect loop prevented: already on dashboard');
+                        return;
+                    }
+                    \TFG\Core\Utils::info('[TFG MemberLogin] Redirecting logged-in member to dashboard');
+                    RedirectHelper::safeRedirect($dashboard_url);
+                }
+            }
         });
     }
 
@@ -139,8 +137,12 @@ final class MemberLogin
             return;
         }
 
-        if (!FormRouter::matches('member_login')) return;
-        if (empty($_POST['tfg_member_login_submit'])) return;
+        if (!FormRouter::matches('member_login')) {
+            return;
+        }
+        if (empty($_POST['tfg_member_login_submit'])) {
+            return;
+        }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_login')) {
             echo '<p class="tfg-error">Security check failed. Please refresh and try again.</p>';
             return;
@@ -229,8 +231,12 @@ final class MemberLogin
             return;
         }
 
-        if (!FormRouter::matches('password_reset_request')) return;
-        if (empty($_POST['tfg_member_reset_request_submit'])) return;
+        if (!FormRouter::matches('password_reset_request')) {
+            return;
+        }
+        if (empty($_POST['tfg_member_reset_request_submit'])) {
+            return;
+        }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_reset_request')) {
             echo '<p class="tfg-error">Security check failed. Please refresh and try again.</p>';
             return;
@@ -245,9 +251,9 @@ final class MemberLogin
         }
 
         $stub = \get_posts([
-            'post_type'        => 'profile_stub',
-            'post_status'      => 'any',
-            'meta_query'       => [
+            'post_type'   => 'profile_stub',
+            'post_status' => 'any',
+            'meta_query'  => [
                 ['key' => 'member_id',     'value' => $member_id],
                 ['key' => 'contact_email', 'value' => $email],
             ],
@@ -324,8 +330,12 @@ final class MemberLogin
             return;
         }
 
-        if (!FormRouter::matches('password_reset')) return;
-        if (empty($_POST['tfg_submit_password'])) return;
+        if (!FormRouter::matches('password_reset')) {
+            return;
+        }
+        if (empty($_POST['tfg_submit_password'])) {
+            return;
+        }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_password_reset')) {
             echo '<p class="tfg-error">Security check failed. Please refresh and try again.</p>';
             return;
@@ -435,8 +445,12 @@ final class MemberLogin
             return;
         }
 
-        if (!FormRouter::matches('forgot_member_id')) return;
-        if (empty($_POST['tfg_member_id_lookup_submit'])) return;
+        if (!FormRouter::matches('forgot_member_id')) {
+            return;
+        }
+        if (empty($_POST['tfg_member_id_lookup_submit'])) {
+            return;
+        }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_forgot_id')) {
             echo "<p class='tfg-error'>Security check failed. Please refresh and try again.</p>";
             return;
@@ -486,4 +500,3 @@ final class MemberLogin
 
 /* ---- Legacy class alias for transition ---- */
 \class_alias(\TFG\Features\Membership\MemberLogin::class, 'TFG_Member_Login');
-

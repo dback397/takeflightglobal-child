@@ -2,11 +2,6 @@
 
 namespace TFG\Features\Membership;
 
-use TFG\Core\Cookies;
-use TFG\Core\Utils;
-use TFG\Core\RedirectHelper;
-use TFG\UI\ErrorModal;
-
 final class MemberFormHandlers
 {
     public static function init(): void
@@ -63,7 +58,7 @@ final class MemberFormHandlers
                 self::handleUniversityForm($_POST);
                 break;
 
-            // Future cases: agency, affiliate, etc.
+                // Future cases: agency, affiliate, etc.
             default:
                 \TFG\Core\Utils::info('[TFG MemberFormHandlers] Unknown form type: ' . $type);
                 break;
@@ -86,16 +81,16 @@ final class MemberFormHandlers
         }
 
         // ACF fields (adjust keys if needed)
-        \update_field('contact_name',        $data['contact_name']        ?? '', $post_id);
-        \update_field('title_and_department',$data['title_and_department']?? '', $post_id);
-        \update_field('contact_email',       $data['contact_email']       ?? '', $post_id);
-        \update_field('member_type',         $data['member_type']         ?? 'university', $post_id);
-        \update_field('organization_name',   $data['organization_name']   ?? '', $post_id);
-        \update_field('website',             $data['website']             ?? '', $post_id);
-        \update_field('programs',            $data['programs']            ?? '', $post_id);
-        \update_field('other_program',       $data['other_program']       ?? '', $post_id);
-        \update_field('comment',             $data['comment']             ?? '', $post_id);
-        \update_field('gdpr_consent',        true,                               $post_id);
+        \update_field('contact_name', $data['contact_name'] ?? '', $post_id);
+        \update_field('title_and_department', $data['title_and_department'] ?? '', $post_id);
+        \update_field('contact_email', $data['contact_email'] ?? '', $post_id);
+        \update_field('member_type', $data['member_type'] ?? 'university', $post_id);
+        \update_field('organization_name', $data['organization_name'] ?? '', $post_id);
+        \update_field('website', $data['website'] ?? '', $post_id);
+        \update_field('programs', $data['programs'] ?? '', $post_id);
+        \update_field('other_program', $data['other_program'] ?? '', $post_id);
+        \update_field('comment', $data['comment'] ?? '', $post_id);
+        \update_field('gdpr_consent', true, $post_id);
 
         if (\is_user_logged_in()) {
             \update_field('submitted_by_user', \get_current_user_id(), $post_id);
@@ -111,5 +106,8 @@ final class MemberFormHandlers
 
     /* ---- Legacy alias (optional; remove when all references updated) ---- */
     /** @deprecated Use MemberFormHandlers::init() */
-    public static function init_legacy(): void { self::init(); }
+    public static function init_legacy(): void
+    {
+        self::init();
+    }
 }

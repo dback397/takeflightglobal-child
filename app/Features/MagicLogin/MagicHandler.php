@@ -1,11 +1,11 @@
 <?php
+
 // ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 
 namespace TFG\Features\MagicLogin;
 
 use TFG\Core\Utils;
 use TFG\Core\Cookies;
-use \WP_Error;
 
 /**
  * Handles incoming magic link validation and subscriber updates.
@@ -33,8 +33,8 @@ final class MagicHandler
 
     private static function rateLimited(string $email): bool
     {
-        $ip  = $_SERVER['REMOTE_ADDR'] ?? '';
-        $key = 'tfg_ml_rl_' . md5($email . '|' . $ip);
+        $ip   = $_SERVER['REMOTE_ADDR'] ?? '';
+        $key  = 'tfg_ml_rl_' . md5($email . '|' . $ip);
         $hits = (int) \get_transient($key);
         if ($hits >= 10) {
             return true;
@@ -79,11 +79,11 @@ final class MagicHandler
         }
 
         $token     = Utils::normalizeToken(\wp_unslash($_GET['token'] ?? ''));
-        $signature = Utils::normalizeSignature(\wp_unslash($_GET['sig']   ?? ''));
-        $email     = Utils::normalizeEmail(\wp_unslash($_GET['email']   ?? ''));
+        $signature = Utils::normalizeSignature(\wp_unslash($_GET['sig'] ?? ''));
+        $email     = Utils::normalizeEmail(\wp_unslash($_GET['email'] ?? ''));
 
         if (!$token || !$signature || !$email) {
-            \TFG\Core\Utils::info("[MagicHandler] Invalid link parameters");
+            \TFG\Core\Utils::info('[MagicHandler] Invalid link parameters');
             return;
         }
 
@@ -94,7 +94,7 @@ final class MagicHandler
 
         $result = MagicUtilities::verifyMagicToken($token, $email, $signature);
         if (!$result || empty($result['success'])) {
-            \TFG\Core\Utils::info("[MagicHandler] Invalid/expired/signature mismatch");
+            \TFG\Core\Utils::info('[MagicHandler] Invalid/expired/signature mismatch');
             return;
         }
 
@@ -135,7 +135,7 @@ final class MagicHandler
         }
 
         if (!$vt_posts) {
-            \TFG\Core\Utils::info("[MagicHandler] No matching verification token");
+            \TFG\Core\Utils::info('[MagicHandler] No matching verification token');
             return;
         }
 
@@ -148,7 +148,7 @@ final class MagicHandler
 
         $stored_email = Utils::normalizeEmail(self::getField('email_used', $v_id) ?: '');
         if ($stored_email && $stored_email !== $email) {
-            \TFG\Core\Utils::info("[MagicHandler] Token email mismatch");
+            \TFG\Core\Utils::info('[MagicHandler] Token email mismatch');
             return;
         }
         if (!$stored_email) {
@@ -178,18 +178,18 @@ final class MagicHandler
             return;
         }
 
-        self::setField('email',            $email,               $sub_id);
-        self::setField('is_verified',      true,                 $sub_id);
-        self::setField('verification_code',$token,               $sub_id);
-        self::setField('is_subscribed',    true,                 $sub_id);
-        self::setField('date_subscribed',  \current_time('mysql'), $sub_id);
-        self::setField('source',           'magic_link',         $sub_id);
+        self::setField('email', $email, $sub_id);
+        self::setField('is_verified', true, $sub_id);
+        self::setField('verification_code', $token, $sub_id);
+        self::setField('is_subscribed', true, $sub_id);
+        self::setField('date_subscribed', \current_time('mysql'), $sub_id);
+        self::setField('source', 'magic_link', $sub_id);
 
         Cookies::setSubscriberCookie($email);
 
-        self::setField('is_used',      true,                  $v_id);
-        self::setField('is_used_copy', 1,                     $v_id);
-        self::setField('used_on',      \current_time('mysql'), $v_id);
+        self::setField('is_used', true, $v_id);
+        self::setField('is_used_copy', 1, $v_id);
+        self::setField('used_on', \current_time('mysql'), $v_id);
 
         \TFG\Core\Utils::info("[MagicHandler] Subscriber {$sub_id} verified; token {$v_id} consumed");
 

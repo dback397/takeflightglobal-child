@@ -17,7 +17,7 @@ final class ThemeSetup
     private function register_hooks(): void
     {
         \add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
-        \add_action('wp_footer',          [$this, 'customFooterText']);
+        \add_action('wp_footer', [$this, 'customFooterText']);
     }
 
     public function enqueueAssets(): void
@@ -32,8 +32,8 @@ final class ThemeSetup
         $kadence_ver  = defined('KADENCE_VERSION') ? KADENCE_VERSION : $parent_theme->get('Version');
 
         // Child theme version fallback
-        $child_theme  = \wp_get_theme();
-        $tfg_ver      = defined('TFG_VERSION') ? TFG_VERSION : $child_theme->get('Version');
+        $child_theme = \wp_get_theme();
+        $tfg_ver     = defined('TFG_VERSION') ? TFG_VERSION : $child_theme->get('Version');
 
         // Parent CSS
         \wp_enqueue_style(

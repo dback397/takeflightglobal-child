@@ -12,7 +12,9 @@ final class DebugTools
     public static function directCreateMagicToken(string $email, ?string $seq_code, ?string $seq_id, int $expires_in = 900)
     {
         $email = \sanitize_email($email);
-        if (!$email) { return false; }
+        if (!$email) {
+            return false;
+        }
 
         if (!\post_type_exists('magic_tokens')) {
             \TFG\Core\Utils::info('[TFG MAGIC] ❌ CPT magic_tokens NOT REGISTERED on this request');

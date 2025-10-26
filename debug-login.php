@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WordPress Login Diagnostic Script
  * Place this file in your theme directory and access it via browser
@@ -97,7 +98,7 @@ echo '<hr>';
 echo '<h2>9. Recent Error Log (Last 50 Lines)</h2>';
 $log_file = ini_get('error_log');
 if (file_exists($log_file)) {
-    $lines = file($log_file);
+    $lines        = file($log_file);
     $recent_lines = array_slice($lines, -50);
     echo '<pre style="background: #f0f0f0; padding: 10px; max-height: 400px; overflow-y: scroll;">';
     foreach ($recent_lines as $line) {

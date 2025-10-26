@@ -3,8 +3,6 @@
 namespace TFG\Features\Membership;
 
 use TFG\Core\Utils;
-use TFG\Features\Membership\MemberStubManager;
-
 
 final class MemberStubAccess
 {
@@ -15,7 +13,7 @@ final class MemberStubAccess
     public static function init(): void
     {
         \add_shortcode('tfg_stub_access', [self::class, 'renderStubAccessPage']);
-        \add_filter('query_vars',        [self::class, 'registerQueryVars']);
+        \add_filter('query_vars', [self::class, 'registerQueryVars']);
     }
 
     public static function registerQueryVars(array $vars): array
@@ -84,7 +82,9 @@ final class MemberStubAccess
 
     private static function getFieldSafe(string $key, int $post_id)
     {
-        if (!$post_id) return '';
+        if (!$post_id) {
+            return '';
+        }
         if (\function_exists('get_field')) {
             return \get_field($key, $post_id);
         }
@@ -113,7 +113,9 @@ final class MemberStubAccess
         }
 
         $prefix = MemberStubManager::getPrefixForType($post_type);
-        if (!$prefix) return 0;
+        if (!$prefix) {
+            return 0;
+        }
 
         $member_id   = MemberStubManager::generateMemberId($prefix);
         $email       = Utils::normalizeEmail($email);
@@ -128,9 +130,9 @@ final class MemberStubAccess
             return 0;
         }
 
-        self::updateFieldSafe('member_id',         $member_id,           (int) $new_id);
-        self::updateFieldSafe('member_type',       $member_type,         (int) $new_id);
-        self::updateFieldSafe('contact_email',     $email,               (int) $new_id);
+        self::updateFieldSafe('member_id', $member_id, (int) $new_id);
+        self::updateFieldSafe('member_type', $member_type, (int) $new_id);
+        self::updateFieldSafe('contact_email', $email, (int) $new_id);
         self::updateFieldSafe('submitted_by_user', \get_current_user_id(), (int) $new_id);
         \update_post_meta((int) $new_id, 'stub_token', $token);
 
@@ -143,7 +145,9 @@ final class MemberStubAccess
             return 0;
         }
         $email = Utils::normalizeEmail($email);
-        if (!$email) return 0;
+        if (!$email) {
+            return 0;
+        }
 
         $existing = \get_posts([
             'post_type'      => $post_type,
@@ -169,8 +173,12 @@ final class MemberStubAccess
                 'member_type' => 'university',
             ],
         ];
-        if (!isset($known[$token])) return false;
-        if ($known[$token]['temp_pass'] !== $temp_pass) return false;
+        if (!isset($known[$token])) {
+            return false;
+        }
+        if ($known[$token]['temp_pass'] !== $temp_pass) {
+            return false;
+        }
 
         return [
             'email'       => $known[$token]['email'],

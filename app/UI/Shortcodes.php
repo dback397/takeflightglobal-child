@@ -24,10 +24,10 @@ final class Shortcodes
 
     private function register_hooks(): void
     {
-        \add_shortcode('tfge_matrix_buttons',         [$this, 'renderMatrixButtons']);
-        \add_shortcode('tfge_program_link_codes',     [$this, 'renderProgramLinkCodes']);
-        \add_shortcode('tfge_list_program_link_codes',[__CLASS__, 'listProgramLinkCodes']);
-        \add_shortcode('tfge_update_brochures',       [$this, 'updateBrochureUrls']);
+        \add_shortcode('tfge_matrix_buttons', [$this, 'renderMatrixButtons']);
+        \add_shortcode('tfge_program_link_codes', [$this, 'renderProgramLinkCodes']);
+        \add_shortcode('tfge_list_program_link_codes', [__CLASS__, 'listProgramLinkCodes']);
+        \add_shortcode('tfge_update_brochures', [$this, 'updateBrochureUrls']);
     }
 
     /* ==============================
@@ -239,7 +239,7 @@ final class Shortcodes
                 if ($do_update) {
                     \update_field('file', $map[$code], $pid);
                 }
-                $output[] = "✅ " . ($do_update ? 'Updated' : 'Would update') . " Profile ID {$pid} — {$code} → {$map[$code]}";
+                $output[] = '✅ ' . ($do_update ? 'Updated' : 'Would update') . " Profile ID {$pid} — {$code} → {$map[$code]}";
             } else {
                 $output[] = "❌ No match for Profile ID {$pid} — {$code}";
             }

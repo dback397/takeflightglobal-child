@@ -106,12 +106,12 @@ final class MagicLogin
     private static function handleSubmit(): void
     {
 
-       if (Utils::isSystemRequest()) {
-         \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleSubmit due to REST/CRON/CLI/AJAX context');
-         return;
-       }
+        if (Utils::isSystemRequest()) {
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped handleSubmit due to REST/CRON/CLI/AJAX context');
+            return;
+        }
 
-      $email = Utils::normalizeEmail($_POST['magic_email'] ?? '');
+        $email = Utils::normalizeEmail($_POST['magic_email'] ?? '');
         if (!$email || !\is_email($email)) {
             \TFG\Core\Utils::info('[Magic Login] Invalid email format.');
             return;
@@ -119,11 +119,9 @@ final class MagicLogin
 
         // (Optional) Require verified subscriber status before sending login link
         $isVerified = true;
-        if (\class_exists('\TFG\Features\Membership\SubscriberUtilities') &&
-            \method_exists('\TFG\Features\Membership\SubscriberUtilities', 'isVerifiedSubscriber')) {
+        if (\class_exists('\TFG\Features\Membership\SubscriberUtilities') && \method_exists('\TFG\Features\Membership\SubscriberUtilities', 'isVerifiedSubscriber')) {
             $isVerified = SubscriberUtilities::isVerifiedSubscriber($email);
-        } elseif (\class_exists('TFG_Subscriber_Utilities') &&
-                  \method_exists('TFG_Subscriber_Utilities', 'is_verified_subscriber')) {
+        } elseif (\class_exists('TFG_Subscriber_Utilities') && \method_exists('TFG_Subscriber_Utilities', 'is_verified_subscriber')) {
             // legacy fallback
             $isVerified = SubscriberUtilities::isVerifiedSubscriber($email);
         }
@@ -148,7 +146,7 @@ final class MagicLogin
                 \wp_safe_redirect($signup_url);
                 exit;
             }
-            \TFG\Core\Utils::info("[Magic Login] Verification failed (headers already sent)");
+            \TFG\Core\Utils::info('[Magic Login] Verification failed (headers already sent)');
             return;
         }
 
@@ -156,16 +154,14 @@ final class MagicLogin
 
         // Create magic token (prefer new API, fallback to legacy)
         $magic = null;
-        if (\class_exists(__NAMESPACE__ . '\\MagicUtilities') &&
-            \method_exists(__NAMESPACE__ . '\\MagicUtilities', 'createMagicToken')) {
+        if (\class_exists(__NAMESPACE__ . '\\MagicUtilities') && \method_exists(__NAMESPACE__ . '\\MagicUtilities', 'createMagicToken')) {
             $magic = MagicUtilities::createMagicToken($email, ['expires_in' => $expires_in]);
-        } elseif (\class_exists('TFG_Magic_Utilities') &&
-                  \method_exists('TFG_Magic_Utilities', 'create_magic_token')) {
+        } elseif (\class_exists('TFG_Magic_Utilities') && \method_exists('TFG_Magic_Utilities', 'create_magic_token')) {
             $magic = MagicUtilities::createMagicToken($email, ['expires_in' => $expires_in]);
         }
 
-        $magic_url     = \is_array($magic) ? (string) ($magic['url']     ?? '') : '';
-        $magic_post_id = \is_array($magic) ? (int)    ($magic['post_id'] ?? 0)  : 0;
+        $magic_url     = \is_array($magic) ? (string) ($magic['url'] ?? '') : '';
+        $magic_post_id = \is_array($magic) ? (int)    ($magic['post_id'] ?? 0) : 0;
 
         if ($magic_url === '' || $magic_post_id === 0) {
             \TFG\Core\Utils::info('[Magic Login] Failed to create magic token for ' . $email);
@@ -194,11 +190,9 @@ final class MagicLogin
 
         // Send link (prefer new API, fallback to legacy). Correct arg order: (url, email).
         $sent = false;
-        if (\class_exists(__NAMESPACE__ . '\\MagicUtilities') &&
-            \method_exists(__NAMESPACE__ . '\\MagicUtilities', 'sendMagicLink')) {
+        if (\class_exists(__NAMESPACE__ . '\\MagicUtilities') && \method_exists(__NAMESPACE__ . '\\MagicUtilities', 'sendMagicLink')) {
             $sent = MagicUtilities::sendMagicLink($magic_url, $email);
-        } elseif (\class_exists('TFG_Magic_Utilities') &&
-                  \method_exists('TFG_Magic_Utilities', 'send_magic_link')) {
+        } elseif (\class_exists('TFG_Magic_Utilities') && \method_exists('TFG_Magic_Utilities', 'send_magic_link')) {
             $sent = MagicUtilities::sendMagicLink($magic_url, $email);
         }
 

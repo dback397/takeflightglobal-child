@@ -7,10 +7,8 @@ use TFG\Core\FormRouter;
 use TFG\Core\Cookies;
 use TFG\Features\MagicLogin\MagicUtilities;
 use TFG\Features\MagicLogin\VerificationToken;
-
 // Optional aliases if you expose either/both reCAPTCHA helpers in Core:
 use TFG\Core\ReCAPTCHA;
-
 
 final class NewsletterSubscription
 {
@@ -160,19 +158,19 @@ final class NewsletterSubscription
                     'relation' => 'AND',
                     [
                         'relation' => 'OR',
-                        [ 'key' => 'subscriber_email', 'value' => $email, 'compare' => '=' ],
-                        [ 'key' => 'email',            'value' => $email, 'compare' => '=' ],
+                        [ 'key'    => 'subscriber_email', 'value' => $email, 'compare' => '=' ],
+                        [ 'key'    => 'email',            'value' => $email, 'compare' => '=' ],
                     ],
                     [
                         'relation' => 'OR',
-                        [ 'key' => 'is_used', 'value' => '0', 'compare' => '=', 'type' => 'NUMERIC' ],
-                        [ 'key' => 'is_used', 'compare' => 'NOT EXISTS' ],
+                        [ 'key'    => 'is_used', 'value' => '0', 'compare' => '=', 'type' => 'NUMERIC' ],
+                        [ 'key'    => 'is_used', 'compare' => 'NOT EXISTS' ],
                     ],
                 ],
             ]);
 
             if (!empty($vt)) {
-                $vt_id = (int) $vt[0];
+                $vt_id         = (int) $vt[0];
                 $fallback_code = (string) \get_post_meta($vt_id, 'verification_code', true);
                 if ($fallback_code !== '') {
                     $vcode = $fallback_code;
@@ -224,8 +222,8 @@ final class NewsletterSubscription
         }
         \TFG\Core\Utils::info('[TFG NL] ✅ mark_used OK; vt_post_id=' . ($verif['post_id'] ?? 0) . ' seq=' . ($verif['sequence_code'] ?? 'n/a'));
 
-        $vt_post_id    = (int)   ($verif['post_id']       ?? 0);
-        $sequence_id   = (string)($verif['sequence_id']   ?? '');
+        $vt_post_id    = (int)   ($verif['post_id'] ?? 0);
+        $sequence_id   = (string)($verif['sequence_id'] ?? '');
         $sequence_code = (string)($verif['sequence_code'] ?? '');
         \TFG\Core\Utils::info('[TFG NL] ✅ mark_used OK; vt_post_id=' . $vt_post_id . ' seq=' . ($sequence_code ?: 'n/a'));
 
@@ -265,20 +263,29 @@ final class NewsletterSubscription
 
         // ACF-friendly setter
         $set = function (string $key, $val) use ($sub_id) {
-            if (\function_exists('update_field')) { \update_field($key, $val, $sub_id); }
-            else { \update_post_meta($sub_id, $key, $val); }
+            if (\function_exists('update_field')) {
+                \update_field($key, $val, $sub_id);
+            } else {
+                \update_post_meta($sub_id, $key, $val);
+            }
         };
 
         // Persist stub fields together
-        $set('vt_post_id',        $vt_post_id);
-        $set('email',             $email);
-        if ($name !== '') { $set('name', $name); }
+        $set('vt_post_id', $vt_post_id);
+        $set('email', $email);
+        if ($name !== '') {
+            $set('name', $name);
+        }
         $set('verification_code', $vcode);
-        if ($sequence_id !== '')   { $set('sequence_id',   $sequence_id); }
-        if ($sequence_code !== '') { $set('sequence_code', $sequence_code); }
-        $set('gdpr_consent',      '1');
-        $set('source',            $source);
-        $set('is_verified',   0);
+        if ($sequence_id !== '') {
+            $set('sequence_id', $sequence_id);
+        }
+        if ($sequence_code !== '') {
+            $set('sequence_code', $sequence_code);
+        }
+        $set('gdpr_consent', '1');
+        $set('source', $source);
+        $set('is_verified', 0);
         $set('is_subscribed', 0);
 
         // ── CREATE MAGIC TOKEN & SEND ────────────────────────────────────────
@@ -290,9 +297,9 @@ final class NewsletterSubscription
             'confirm_url'   => \home_url('/subscription-confirmed'), // kept as-is (refactor only)
         ]);
 
-        $magic_url     = \is_array($magic) ? (string)($magic['url']     ?? '') : '';
-        $magic_post_id = \is_array($magic) ? (int)   ($magic['post_id'] ?? 0)  : 0;
-        $magic_expires = \is_array($magic) ? (int)   ($magic['expires'] ?? 0)  : 0;
+        $magic_url     = \is_array($magic) ? (string)($magic['url'] ?? '') : '';
+        $magic_post_id = \is_array($magic) ? (int)   ($magic['post_id'] ?? 0) : 0;
+        $magic_expires = \is_array($magic) ? (int)   ($magic['expires'] ?? 0) : 0;
 
         if ($magic_url === '' || $magic_post_id === 0) {
             self::redirectWithError('Could not create confirmation link.');
@@ -300,9 +307,11 @@ final class NewsletterSubscription
 
         // Store breadcrumbs (optional but useful for audits/support)
         \update_post_meta($magic_post_id, 'verification_code', $vcode); // not in URL
-        $set('magic_post_id',    $magic_post_id);
-        if ($magic_expires) { $set('magic_expires_at', \gmdate('c', $magic_expires)); }
-        $set('last_magic_url',   $magic_url);
+        $set('magic_post_id', $magic_post_id);
+        if ($magic_expires) {
+            $set('magic_expires_at', \gmdate('c', $magic_expires));
+        }
+        $set('last_magic_url', $magic_url);
 
         $sent = (bool) MagicUtilities::sendMagicLink($email, $magic_url);
         if ($sent) {
@@ -354,13 +363,13 @@ final class NewsletterSubscription
             return [];
         }
 
-        \update_post_meta($post_id, 'token',           $token);
-        \update_post_meta($post_id, 'email',           \sanitize_email($email));
+        \update_post_meta($post_id, 'token', $token);
+        \update_post_meta($post_id, 'email', \sanitize_email($email));
         \update_post_meta($post_id, 'verification_id', (int) $verif_id);
-        \update_post_meta($post_id, 'sequence_id',     (int) $seq_id);
-        \update_post_meta($post_id, 'sequence_code',   (string) $seq_code);
-        \update_post_meta($post_id, 'expires_at',      (int) $expires_at);
-        \update_post_meta($post_id, 'used_on',         '');
+        \update_post_meta($post_id, 'sequence_id', (int) $seq_id);
+        \update_post_meta($post_id, 'sequence_code', (string) $seq_code);
+        \update_post_meta($post_id, 'expires_at', (int) $expires_at);
+        \update_post_meta($post_id, 'used_on', '');
 
         $url = \add_query_arg('tfg_magic', \rawurlencode($token), \site_url('/'));
 
@@ -379,7 +388,7 @@ final class NewsletterSubscription
             \wp_safe_redirect(\add_query_arg('subscribed', '1', \remove_query_arg(['error'])));
             exit;
         }
-        \TFG\Core\Utils::info("[TFG NL] Redirect Success: headers already sent");
+        \TFG\Core\Utils::info('[TFG NL] Redirect Success: headers already sent');
     }
 
     private static function redirectWithError(string $msg): void
@@ -397,7 +406,7 @@ final class NewsletterSubscription
     {
         \ob_start();
         $site_key = '';
-        $keys = ReCAPTCHA::getKeys();
+        $keys     = ReCAPTCHA::getKeys();
         $site_key = (string) ($keys['site'] ?? '');
 
         if ($site_key !== '') {

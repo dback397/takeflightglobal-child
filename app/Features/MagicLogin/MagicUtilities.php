@@ -2,7 +2,7 @@
 
 namespace TFG\Features\MagicLogin;
 
-use \WP_Query;
+use WP_Query;
 
 /**
  * Magic login utilities: token creation, verification, and mailing.
@@ -57,7 +57,7 @@ final class MagicUtilities
             if (empty($_SERVER[$key])) {
                 continue;
             }
-            $raw = (string) $_SERVER[$key];
+            $raw  = (string) $_SERVER[$key];
             $list = $key === 'HTTP_X_FORWARDED_FOR'
                 ? array_map('trim', explode(',', $raw))
                 : [trim($raw)];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Take Flight Global — Child Theme Bootstrap
  *
@@ -8,7 +9,9 @@
  * - Loads minimal fallbacks if MU bootstrap is unavailable
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * ------------------------------------------------------------------------
@@ -22,11 +25,11 @@ if (!defined('TFG_ENV')) {
     if (file_exists($bootstrap)) {
         require_once $bootstrap;
     } else {
-      if (function_exists('tfg_log')) {
-        tfg_log('MU bootstrap not found at ' . $bootstrap);
-    } elseif ((defined('TFG_DEBUG') && TFG_DEBUG) || (defined('WP_DEBUG') && WP_DEBUG)) {
-        error_log('[TFG] MU bootstrap not found at ' . $bootstrap);
-    }
+        if (function_exists('tfg_log')) {
+            tfg_log('MU bootstrap not found at ' . $bootstrap);
+        } elseif ((defined('TFG_DEBUG') && TFG_DEBUG) || (defined('WP_DEBUG') && WP_DEBUG)) {
+            error_log('[TFG] MU bootstrap not found at ' . $bootstrap);
+        }
 
     }
 }

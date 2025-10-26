@@ -1,12 +1,11 @@
 <?php
 // ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
+
 namespace TFG\Features\Membership;
 
 use TFG\Core\FormRouter;
 use TFG\Core\Utils;
 use TFG\Core\Cookies;
-use TFG\Features\Membership\MemberProfileDisplay;
-use TFG\Features\Membership\MemberIDGenerator;
 
 /**
  * GDPR consent + password setup, then stub → profile transfer.
@@ -71,10 +70,10 @@ final class MemberGdprConsent
             <div style='margin-top:1.5em; display:flex; flex-wrap:wrap; gap:1em;'>
                 <?php
                 \TFG\Core\Utils::info("[TFG_GDPR Form] Password layout post_id = {$post_id}");
-                if (\class_exists('MemberProfileDisplay')) {
-                    echo MemberProfileDisplay::renderProfileColumns($post_id);
-                }
-                ?>
+            if (\class_exists('MemberProfileDisplay')) {
+                echo MemberProfileDisplay::renderProfileColumns($post_id);
+            }
+            ?>
             </div>
             <?php
             return (string) \ob_get_clean();
@@ -109,7 +108,9 @@ final class MemberGdprConsent
             return;
         }
 
-        if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_consent')) return;
+        if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_consent')) {
+            return;
+        }
         \TFG\Core\Utils::info('[TFG GDPR Handle] Entering handle_gdpr_submission()');
 
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_gdpr_consent')) {
@@ -168,14 +169,18 @@ final class MemberGdprConsent
             return;
         }
 
-        if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_password')) return;
+        if (!\class_exists(FormRouter::class) || !FormRouter::matches('gdpr_password')) {
+            return;
+        }
         \TFG\Core\Utils::info('[TFG Password] Entering handle_password_submission()');
 
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_gdpr_set_password')) {
             \TFG\Core\Utils::info('[TFG Password] Nonce failure');
             return;
         }
-        if (empty($_POST['submit_password'])) return;
+        if (empty($_POST['submit_password'])) {
+            return;
+        }
 
         $post_id = isset($_POST['post_id']) ? \absint($_POST['post_id']) : 0;
         if (!$post_id || \get_post_type($post_id) !== 'profile_stub') {
@@ -229,7 +234,7 @@ final class MemberGdprConsent
         \TFG\Core\Utils::info("[TFG Profile Transfer] Entering handle_profile_transfer_from_stub({$stub_id})");
 
         if ($stub_id <= 0 || \get_post_type($stub_id) !== 'profile_stub') {
-            \TFG\Core\Utils::info("[TFG Profile Transfer] ❌ Invalid stub_id or post_type mismatch");
+            \TFG\Core\Utils::info('[TFG Profile Transfer] ❌ Invalid stub_id or post_type mismatch');
             return;
         }
 
@@ -285,7 +290,7 @@ final class MemberGdprConsent
             Cookies::setMemberCookie($member_id, $email ?: '');
             \TFG\Core\Utils::info("[TFG Profile Transfer] ✅ Set member cookie for ID {$member_id}");
         } else {
-            \TFG\Core\Utils::info("[TFG Profile Transfer] ⚠️ Cookies class missing; cookie not set");
+            \TFG\Core\Utils::info('[TFG Profile Transfer] ⚠️ Cookies class missing; cookie not set');
         }
 
         \TFG\Core\Utils::info("[TFG Profile Transfer] ✅ Completed: stub={$stub_id} → member={$new_post_id} (ID={$member_id})");

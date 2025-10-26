@@ -1,4 +1,5 @@
 <?php
+
 namespace TFG\Features\Newsletter;
 
 use TFG\Core\FormRouter;
@@ -147,7 +148,7 @@ final class NewsletterUnsubscribe
             \wp_safe_redirect($url);
             exit;
         }
-        \TFG\Core\Utils::info("[Redirect Success] Redirect failed, headers sent");
+        \TFG\Core\Utils::info('[Redirect Success] Redirect failed, headers sent');
     }
 
     private static function redirectWithError(string $msg): void
@@ -158,7 +159,7 @@ final class NewsletterUnsubscribe
             \wp_safe_redirect($url);
             exit;
         }
-        \TFG\Core\Utils::info("[Redirect w Error] Redirect failed, headers sent");
+        \TFG\Core\Utils::info('[Redirect w Error] Redirect failed, headers sent');
     }
 }
 

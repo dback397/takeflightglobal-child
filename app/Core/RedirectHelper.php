@@ -1,4 +1,5 @@
 <?php
+
 // ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
 
 namespace TFG\Core;
@@ -9,8 +10,8 @@ namespace TFG\Core;
 final class RedirectHelper
 {
     private static array $redirect_history = [];
-    private const MAX_REDIRECTS = 3;
-    private const REDIRECT_TIMEOUT = 5; // seconds
+    private const MAX_REDIRECTS            = 3;
+    private const REDIRECT_TIMEOUT         = 5; // seconds
 
     /**
      * Safe redirect with loop prevention
@@ -115,7 +116,7 @@ final class RedirectHelper
      */
     private static function recordRedirect(string $from_url, string $to_url): void
     {
-        $redirect_key = $from_url . ' -> ' . $to_url;
+        $redirect_key                          = $from_url . ' -> ' . $to_url;
         self::$redirect_history[$redirect_key] = time();
 
         // Clean old redirects
@@ -140,8 +141,8 @@ final class RedirectHelper
     private static function normalizeUrl(string $url): string
     {
         $parsed = \parse_url($url);
-        $path = $parsed['path'] ?? '/';
-        $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
+        $path   = $parsed['path'] ?? '/';
+        $query  = isset($parsed['query']) ? '?' . $parsed['query'] : '';
         return $path . $query;
     }
 

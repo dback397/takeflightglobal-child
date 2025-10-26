@@ -129,7 +129,7 @@ final class MemberIDGenerator
             return false;
         }
 
-        $val = $wpdb->get_var("SELECT LAST_INSERT_ID()");
+        $val = $wpdb->get_var('SELECT LAST_INSERT_ID()');
         return \is_null($val) ? false : (int) $val;
     }
 }

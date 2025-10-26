@@ -1,4 +1,5 @@
 <?php
+
 namespace TFG\Admin;
 
 final class AdminProcesses
@@ -112,8 +113,7 @@ final class AdminProcesses
         self::checkAccessPermission('manage_options');
 
         if (
-            isset($_POST['tfg_set_member_id'], $_POST['member_type'], $_POST['new_value']) &&
-            \check_admin_referer('tfg_set_member_id_action')
+            isset($_POST['tfg_set_member_id'], $_POST['member_type'], $_POST['new_value']) && \check_admin_referer('tfg_set_member_id_action')
         ) {
             $type  = \strtoupper(\sanitize_text_field(\wp_unslash($_POST['member_type'])));
             $value = (int) ($_POST['new_value']);
@@ -198,22 +198,24 @@ final class AdminProcesses
     public static function tfgAddErrorMessagesFromArray(): void
     {
         $modal_messages = [
-            ['msg_class'=>'ERROR','msg_code'=>'101','title'=>'Invalid Email','message'=>'Please enter a valid email address to receive your login link.','dashicon'=>'no-alt','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Invalid format submitted in the magic login form.'],
-            ['msg_class'=>'INFO','msg_code'=>'102','title'=>'Already Subscribed','message'=>'You are already subscribed. Welcome back.','dashicon'=>'yes-alt','text_color'=>'#FFFFFF','body_color'=>'#487A47','called_by'=>'Magic Login','notes'=>'Email exists and is marked as subscribed.'],
-            ['msg_class'=>'ERROR','msg_code'=>'103','title'=>'Token Reused','message'=>'This login link has already been used. Please request a new one.','dashicon'=>'update','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Reused token detected.'],
-            ['msg_class'=>'ERROR','msg_code'=>'104','title'=>'Invalid Token or Email','message'=>'This login link is invalid or missing required information.','dashicon'=>'dismiss','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Token or email not present or malformed in URL.'],
-            ['msg_class'=>'ERROR','msg_code'=>'105','title'=>'Link Expired','message'=>'This login link has expired. Please submit your email again to get a new one.','dashicon'=>'clock','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Token expiration time has passed.'],
-            ['msg_class'=>'ERROR','msg_code'=>'106','title'=>'Link Not Found','message'=>'No matching login link found. Please check the link or try again.','dashicon'=>'search','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Token/email combo not found in magic_token CPT.'],
-            ['msg_class'=>'ERROR','msg_code'=>'107','title'=>'Verification Failed','message'=>'Your email could not be verified. Please try again or request a new link.','dashicon'=>'warning','text_color'=>'#FFFFFF','body_color'=>'#F51E24','called_by'=>'Magic Login','notes'=>'Verification_token lookup failed or mismatch.'],
-            ['msg_class'=>'INFO','msg_code'=>'108','title'=>'Subscription Confirmed','message'=>'Your email is now verified and subscriber access enabled.','dashicon'=>'yes','text_color'=>'#FFFFFF','body_color'=>'#487A47','called_by'=>'Magic Login','notes'=>'Token was valid, subscriber created or updated.'],
-            ['msg_class'=>'INFO','msg_code'=>'109','title'=>'Link Sent','message'=>'Your subscriber login link has been sent! Please check your inbox (and spam folder).','dashicon'=>'email','text_color'=>'#FFFFFF','body_color'=>'#487A47','called_by'=>'Magic Login','notes'=>'After successful token generation and email dispatch.'],
-            ['msg_class'=>'WARNING','msg_code'=>'110','title'=>'Technical Error','message'=>'A technical issue occurred. Please try again later.','dashicon'=>'admin-network','text_color'=>'#FFFFFF','body_color'=>'#F15624','called_by'=>'Magic Login','notes'=>'wp_insert_post failure, or field update fails.'],
-            ['msg_class'=>'INFO','msg_code'=>'111','title'=>'IP Address Logged','message'=>'Your IP address has been logged for security.','dashicon'=>'location','text_color'=>'#FFFFFF','body_color'=>'#487A47','called_by'=>'Magic Login','notes'=>'After successful login and tracking. (Optional display)'],
-            ['msg_class'=>'WARNING','msg_code'=>'112','title'=>'Link Already Sent','message'=>'A login link has already been sent to your email. Please check your inbox or spam folder.','dashicon'=>'email-alt','text_color'=>'#FFFFFF','body_color'=>'#F15624','called_by'=>'Magic Login','notes'=>'Same user requested again before acting on the first link.'],
+            ['msg_class' => 'ERROR','msg_code' => '101','title' => 'Invalid Email','message' => 'Please enter a valid email address to receive your login link.','dashicon' => 'no-alt','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Invalid format submitted in the magic login form.'],
+            ['msg_class' => 'INFO','msg_code' => '102','title' => 'Already Subscribed','message' => 'You are already subscribed. Welcome back.','dashicon' => 'yes-alt','text_color' => '#FFFFFF','body_color' => '#487A47','called_by' => 'Magic Login','notes' => 'Email exists and is marked as subscribed.'],
+            ['msg_class' => 'ERROR','msg_code' => '103','title' => 'Token Reused','message' => 'This login link has already been used. Please request a new one.','dashicon' => 'update','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Reused token detected.'],
+            ['msg_class' => 'ERROR','msg_code' => '104','title' => 'Invalid Token or Email','message' => 'This login link is invalid or missing required information.','dashicon' => 'dismiss','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Token or email not present or malformed in URL.'],
+            ['msg_class' => 'ERROR','msg_code' => '105','title' => 'Link Expired','message' => 'This login link has expired. Please submit your email again to get a new one.','dashicon' => 'clock','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Token expiration time has passed.'],
+            ['msg_class' => 'ERROR','msg_code' => '106','title' => 'Link Not Found','message' => 'No matching login link found. Please check the link or try again.','dashicon' => 'search','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Token/email combo not found in magic_token CPT.'],
+            ['msg_class' => 'ERROR','msg_code' => '107','title' => 'Verification Failed','message' => 'Your email could not be verified. Please try again or request a new link.','dashicon' => 'warning','text_color' => '#FFFFFF','body_color' => '#F51E24','called_by' => 'Magic Login','notes' => 'Verification_token lookup failed or mismatch.'],
+            ['msg_class' => 'INFO','msg_code' => '108','title' => 'Subscription Confirmed','message' => 'Your email is now verified and subscriber access enabled.','dashicon' => 'yes','text_color' => '#FFFFFF','body_color' => '#487A47','called_by' => 'Magic Login','notes' => 'Token was valid, subscriber created or updated.'],
+            ['msg_class' => 'INFO','msg_code' => '109','title' => 'Link Sent','message' => 'Your subscriber login link has been sent! Please check your inbox (and spam folder).','dashicon' => 'email','text_color' => '#FFFFFF','body_color' => '#487A47','called_by' => 'Magic Login','notes' => 'After successful token generation and email dispatch.'],
+            ['msg_class' => 'WARNING','msg_code' => '110','title' => 'Technical Error','message' => 'A technical issue occurred. Please try again later.','dashicon' => 'admin-network','text_color' => '#FFFFFF','body_color' => '#F15624','called_by' => 'Magic Login','notes' => 'wp_insert_post failure, or field update fails.'],
+            ['msg_class' => 'INFO','msg_code' => '111','title' => 'IP Address Logged','message' => 'Your IP address has been logged for security.','dashicon' => 'location','text_color' => '#FFFFFF','body_color' => '#487A47','called_by' => 'Magic Login','notes' => 'After successful login and tracking. (Optional display)'],
+            ['msg_class' => 'WARNING','msg_code' => '112','title' => 'Link Already Sent','message' => 'A login link has already been sent to your email. Please check your inbox or spam folder.','dashicon' => 'email-alt','text_color' => '#FFFFFF','body_color' => '#F15624','called_by' => 'Magic Login','notes' => 'Same user requested again before acting on the first link.'],
         ];
 
         foreach ($modal_messages as $msg) {
-            if (empty($msg['msg_code'])) { continue; }
+            if (empty($msg['msg_code'])) {
+                continue;
+            }
 
             $existing = \get_posts([
                 'post_type'        => 'messages',
@@ -227,7 +229,9 @@ final class AdminProcesses
                     'compare' => '=',
                 ]],
             ]);
-            if (!empty($existing)) { continue; }
+            if (!empty($existing)) {
+                continue;
+            }
 
             $post_id = \wp_insert_post([
                 'post_title'  => $msg['title'],
@@ -240,15 +244,15 @@ final class AdminProcesses
                 continue;
             }
 
-            \update_field('msg_class',  $msg['msg_class'],  $post_id);
-            \update_field('msg_code',   $msg['msg_code'],   $post_id);
-            \update_field('title',      $msg['title'],      $post_id);
-            \update_field('message',    $msg['message'],    $post_id);
-            \update_field('dashicon',   $msg['dashicon'],   $post_id);
+            \update_field('msg_class', $msg['msg_class'], $post_id);
+            \update_field('msg_code', $msg['msg_code'], $post_id);
+            \update_field('title', $msg['title'], $post_id);
+            \update_field('message', $msg['message'], $post_id);
+            \update_field('dashicon', $msg['dashicon'], $post_id);
             \update_field('text_color', $msg['text_color'], $post_id);
             \update_field('body_color', $msg['body_color'], $post_id);
-            \update_field('called_by',  $msg['called_by'],  $post_id);
-            \update_field('notes',      $msg['notes'],      $post_id);
+            \update_field('called_by', $msg['called_by'], $post_id);
+            \update_field('notes', $msg['notes'], $post_id);
 
             \TFG\Core\Utils::info("✅ Created message post: {$msg['msg_code']}");
         }
@@ -277,8 +281,8 @@ final class AdminProcesses
         echo '<div class="tfg-test-modals">';
         echo '<h3>' . \esc_html__('📋 Testing All Error Modals', 'tfg') . '</h3><ul>';
         foreach ($query->posts as $post) {
-            $code  = (string) \get_field('msg_code', $post->ID);
-            $title = \get_the_title($post);
+            $code      = (string) \get_field('msg_code', $post->ID);
+            $title     = \get_the_title($post);
             $safe_code = \esc_js($code);
             echo '<li><a href="#" onclick="tfgShowErrorModal(\'' . $safe_code . '\');return false;">'
                . \esc_html(\sprintf('Modal %s: %s', $code, $title))
@@ -342,7 +346,9 @@ final class AdminProcesses
 
         $atts    = \shortcode_atts(['id' => 0], $atts);
         $post_id = (int) $atts['id'];
-        if (!$post_id) { return '⚠️ ' . \esc_html__('Missing post_id', 'tfg'); }
+        if (!$post_id) {
+            return '⚠️ ' . \esc_html__('Missing post_id', 'tfg');
+        }
 
         $fields = [
             'email'         => \get_post_meta($post_id, 'email', true),
@@ -363,7 +369,9 @@ final class AdminProcesses
 
         $atts    = \shortcode_atts(['id' => 0], $atts);
         $post_id = (int) $atts['id'];
-        if (!$post_id) { return '⚠️ ' . \esc_html__('Missing post_id', 'tfg'); }
+        if (!$post_id) {
+            return '⚠️ ' . \esc_html__('Missing post_id', 'tfg');
+        }
 
         $fields = [
             'verification_code' => \get_field('verification_code', $post_id),

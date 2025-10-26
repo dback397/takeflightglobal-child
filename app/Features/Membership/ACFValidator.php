@@ -13,7 +13,9 @@ final class ACFValidator
     /** @var array<string,string> */
     private array $errors = [];
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function init(): void
     {
@@ -44,7 +46,7 @@ final class ACFValidator
     public function email(string $key, $value, string $label = ''): void
     {
         $label = $label ?: $key;
-        $v = is_string($value) ? Utils::normalizeEmail($value) : '';
+        $v     = is_string($value) ? Utils::normalizeEmail($value) : '';
         if (!$v) {
             $this->errors[$key] = sprintf(__('%s must be a valid email address.', 'tfg'), $label);
         }
@@ -53,7 +55,7 @@ final class ACFValidator
     public function url(string $key, $value, string $label = ''): void
     {
         $label = $label ?: $key;
-        $v = is_string($value) ? trim($value) : '';
+        $v     = is_string($value) ? trim($value) : '';
         if ($v === '' || !filter_var($v, FILTER_VALIDATE_URL)) {
             $this->errors[$key] = sprintf(__('%s must be a valid URL.', 'tfg'), $label);
         }
@@ -62,7 +64,7 @@ final class ACFValidator
     public function minLength(string $key, $value, int $min, string $label = ''): void
     {
         $label = $label ?: $key;
-        $v = is_string($value) ? trim($value) : '';
+        $v     = is_string($value) ? trim($value) : '';
         if (mb_strlen($v) < $min) {
             $this->errors[$key] = sprintf(__('%s must be at least %d characters.', 'tfg'), $label, $min);
         }
@@ -71,7 +73,7 @@ final class ACFValidator
     public function maxLength(string $key, $value, int $max, string $label = ''): void
     {
         $label = $label ?: $key;
-        $v = is_string($value) ? trim($value) : '';
+        $v     = is_string($value) ? trim($value) : '';
         if (mb_strlen($v) > $max) {
             $this->errors[$key] = sprintf(__('%s must be at most %d characters.', 'tfg'), $label, $max);
         }
@@ -80,7 +82,7 @@ final class ACFValidator
     public function regex(string $key, $value, string $pattern, string $label = ''): void
     {
         $label = $label ?: $key;
-        $v = is_string($value) ? $value : '';
+        $v     = is_string($value) ? $value : '';
         if (@preg_match($pattern, '') === false || !preg_match($pattern, $v)) {
             $this->errors[$key] = sprintf(__('%s has an invalid format.', 'tfg'), $label);
         }

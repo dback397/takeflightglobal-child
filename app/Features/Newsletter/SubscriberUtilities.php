@@ -44,9 +44,9 @@ final class SubscriberUtilities
             'no_found_rows'    => true,
             'meta_query'       => [
                 'relation' => 'AND',
-                [ 'key' => 'email',         'value' => $email, 'compare' => '=' ],
-                [ 'key' => 'is_verified',   'value' => 1, 'compare' => '=', 'type' => 'NUMERIC' ],
-                [ 'key' => 'is_subscribed', 'value' => 1, 'compare' => '=', 'type' => 'NUMERIC' ],
+                [ 'key'    => 'email',         'value' => $email, 'compare' => '=' ],
+                [ 'key'    => 'is_verified',   'value' => 1, 'compare' => '=', 'type' => 'NUMERIC' ],
+                [ 'key'    => 'is_subscribed', 'value' => 1, 'compare' => '=', 'type' => 'NUMERIC' ],
             ],
         ]);
 
@@ -93,7 +93,7 @@ final class SubscriberUtilities
             return ['exists' => false, 'verified' => false, 'subscribed' => false, 'id' => 0];
         }
 
-        $verified   = (int) \get_post_meta($id, 'is_verified', true) === 1;
+        $verified   = (int) \get_post_meta($id, 'is_verified', true)   === 1;
         $subscribed = (int) \get_post_meta($id, 'is_subscribed', true) === 1;
 
         return [

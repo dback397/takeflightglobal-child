@@ -10,8 +10,6 @@ namespace TFG\Features\Membership;
 use TFG\Core\Utils;
 use TFG\Core\FormRouter;
 use TFG\Admin\Sequence;
-use \TFG\Features\Membership\MemberFormUtilities;
-
 
 if (!defined('ABSPATH')) {
     exit;
@@ -43,8 +41,8 @@ final class MemberStubManager
         \TFG\Core\Utils::info('[TFG RENDER STUB] Entering renderStubForm()');
 
         // 1) Resolve member_type (shortcode attr → POST on submit)
-        $atts        = \shortcode_atts(['type' => ''], $atts);
-        $memberType  = \sanitize_text_field($atts['type']);
+        $atts       = \shortcode_atts(['type' => ''], $atts);
+        $memberType = \sanitize_text_field($atts['type']);
 
         if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['member_type'])) {
             $memberType = \sanitize_text_field(\wp_unslash($_POST['member_type']));
@@ -204,12 +202,12 @@ final class MemberStubManager
             return;
         }
 
-        $contactName         = \sanitize_text_field(\wp_unslash($_POST['contact_name'] ?? ''));
-        $titleAndDepartment  = \sanitize_text_field(\wp_unslash($_POST['title_and_department'] ?? ''));
-        $contactEmail        = Utils::normalizeEmail(\wp_unslash($_POST['contact_email'] ?? ''));
-        $organizationName    = \sanitize_text_field(\wp_unslash($_POST['organization_name'] ?? ''));
-        $websiteRaw          = \wp_unslash($_POST['website'] ?? '');
-        $website             = \esc_url_raw($websiteRaw);
+        $contactName        = \sanitize_text_field(\wp_unslash($_POST['contact_name'] ?? ''));
+        $titleAndDepartment = \sanitize_text_field(\wp_unslash($_POST['title_and_department'] ?? ''));
+        $contactEmail       = Utils::normalizeEmail(\wp_unslash($_POST['contact_email'] ?? ''));
+        $organizationName   = \sanitize_text_field(\wp_unslash($_POST['organization_name'] ?? ''));
+        $websiteRaw         = \wp_unslash($_POST['website'] ?? '');
+        $website            = \esc_url_raw($websiteRaw);
 
         if (!$contactName || !$titleAndDepartment || !$contactEmail || !$organizationName || !$website) {
             echo '<p class="tfg-error">Please complete all required fields.</p>';
@@ -241,12 +239,12 @@ final class MemberStubManager
                 return;
             }
 
-            $set('contact_name',         $contactName,        $newPostId);
+            $set('contact_name', $contactName, $newPostId);
             $set('title_and_department', $titleAndDepartment, $newPostId);
-            $set('contact_email',        $contactEmail,       $newPostId);
-            $set('member_type',          $memberType,         $newPostId);
-            $set('organization_name',    $organizationName,   $newPostId);
-            $set('website',              $website,            $newPostId);
+            $set('contact_email', $contactEmail, $newPostId);
+            $set('member_type', $memberType, $newPostId);
+            $set('organization_name', $organizationName, $newPostId);
+            $set('website', $website, $newPostId);
 
             \TFG\Core\Utils::info("[TFG HANDLE STUB] ✅ Created profile_stub ID {$newPostId} (type {$memberType})");
 
@@ -274,12 +272,12 @@ final class MemberStubManager
 
             \TFG\Core\Utils::info("[TFG HANDLE STUB] Updating profile_stub ID {$postId}");
 
-            $set('member_type',          $memberType,         $postId);
-            $set('contact_name',         $contactName,        $postId);
+            $set('member_type', $memberType, $postId);
+            $set('contact_name', $contactName, $postId);
             $set('title_and_department', $titleAndDepartment, $postId);
-            $set('contact_email',        $contactEmail,       $postId);
-            $set('organization_name',    $organizationName,   $postId);
-            $set('website',              $website,            $postId);
+            $set('contact_email', $contactEmail, $postId);
+            $set('organization_name', $organizationName, $postId);
+            $set('website', $website, $postId);
 
             $redirectUrl = \add_query_arg([
                 'post_id' => $postId,
@@ -319,7 +317,7 @@ final class MemberStubManager
      */
     public static function generateMemberId(string $prefix = 'MBR', int $width = 5): string
     {
-        $n = Sequence::next('member_stub_seq', 1);
+        $n   = Sequence::next('member_stub_seq', 1);
         $pad = \str_pad((string) $n, \max(1, $width), '0', STR_PAD_LEFT);
         return \sanitize_text_field($prefix) . $pad;
     }

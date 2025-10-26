@@ -6,7 +6,7 @@ final class Feature
 {
     public function register(): void
     {
-        \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\ACFValidator::class);    
+        \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\ACFValidator::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberDashboard::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberFormHandlers::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberFormUtilities::class);

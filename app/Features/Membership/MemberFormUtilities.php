@@ -152,8 +152,12 @@ final class MemberFormUtilities
             return;
         }
 
-        if (!\class_exists(FormRouter::class) || !FormRouter::matches('generic_password')) return;
-        if (empty($_POST['submit_password_setup'])) return;
+        if (!\class_exists(FormRouter::class) || !FormRouter::matches('generic_password')) {
+            return;
+        }
+        if (empty($_POST['submit_password_setup'])) {
+            return;
+        }
 
         // CSRF
         if (empty($_POST[self::NONCE_FIELD_PW]) || !\wp_verify_nonce($_POST[self::NONCE_FIELD_PW], self::NONCE_ACTION_PW)) {
@@ -241,7 +245,9 @@ final class MemberFormUtilities
     /** Example generic handler (unused by default, kept for reference). */
     public static function tfgHandleFormSubmission(): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            return;
+        }
 
         // reCAPTCHA (optional)
         if (!self::validateRecaptcha()) {
@@ -249,13 +255,13 @@ final class MemberFormUtilities
             return;
         }
 
-        $name  = \sanitize_text_field((string) ($_POST['name']  ?? ''));
+        $name  = \sanitize_text_field((string) ($_POST['name'] ?? ''));
         $email = Utils::normalizeEmail((string) ($_POST['email'] ?? ''));
 
         // ... your form processing logic here ...
     }
 
-    }
+}
 
 /* ---- Legacy class alias for transition ---- */
 \class_alias(\TFG\Features\Membership\MemberFormUtilities::class, 'TFG_Member_Form_Utilities');

@@ -6,10 +6,10 @@ final class Membership
 {
     public static function init(): void
     {
-        \add_action('init',      [self::class, 'registerRoles']);
-        \add_action('init',      [self::class, 'registerCpts']);
-        \add_action('acf/init',  [self::class, 'registerAcfFields']);
-        \add_action('admin_menu',[self::class, 'addAdminMenu']);
+        \add_action('init', [self::class, 'registerRoles']);
+        \add_action('init', [self::class, 'registerCpts']);
+        \add_action('acf/init', [self::class, 'registerAcfFields']);
+        \add_action('admin_menu', [self::class, 'addAdminMenu']);
 
         // Avoid duplicating the shortcode implemented by MemberDashboard
         \add_shortcode('tfg_member_dashboard', [self::class, 'renderMemberDashboard']);
@@ -52,19 +52,19 @@ final class Membership
         }
 
         \register_post_type('member_profile', [
-            'label'         => 'Member Profiles',
-            'labels'        => [
+            'label'  => 'Member Profiles',
+            'labels' => [
                 'name'          => 'Member Profiles',
                 'singular_name' => 'Member Profile',
             ],
-            'public'        => false,
-            'show_ui'       => true,
-            'show_in_menu'  => true,
-            'supports'      => ['title', 'author', 'custom-fields'],
-            'menu_icon'     => 'dashicons-id',
-            'has_archive'   => false,
-            'show_in_rest'  => false,
-            'rewrite'       => false,
+            'public'       => false,
+            'show_ui'      => true,
+            'show_in_menu' => true,
+            'supports'     => ['title', 'author', 'custom-fields'],
+            'menu_icon'    => 'dashicons-id',
+            'has_archive'  => false,
+            'show_in_rest' => false,
+            'rewrite'      => false,
         ]);
     }
 

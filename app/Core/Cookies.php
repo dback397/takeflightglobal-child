@@ -1,5 +1,7 @@
 <?php
+
 // ✅ TFG System Guard injected by Cursor – prevents REST/CRON/CLI/AJAX interference
+
 namespace TFG\Core;
 
 final class Cookies
@@ -35,9 +37,13 @@ final class Cookies
         }
 
         $email = Utils::normalizeEmail($email);
-        if (!$email) return;
+        if (!$email) {
+            return;
+        }
 
-        if (!self::guardHeaders('set subscriber cookies')) return;
+        if (!self::guardHeaders('set subscriber cookies')) {
+            return;
+        }
 
         // UI flag
         self::setCookie(self::SUB_UI, '1', [
@@ -67,7 +73,9 @@ final class Cookies
             return;
         }
 
-        if (!self::guardHeaders('unset subscriber cookies')) return;
+        if (!self::guardHeaders('unset subscriber cookies')) {
+            return;
+        }
 
         self::deleteCookie(self::SUB_UI);
         self::deleteCookie(self::SUB_OK);
@@ -100,7 +108,7 @@ final class Cookies
             }
 
             $expected_hmac = self::subscriberHmac($normalized_email);
-            $is_valid = \hash_equals($expected_hmac, $cookie_value);
+            $is_valid      = \hash_equals($expected_hmac, $cookie_value);
 
             if ($is_valid) {
                 \TFG\Core\Utils::info('[TFG Cookies] ✅ Valid subscription cookie confirmed for ' . $normalized_email);
@@ -129,8 +137,12 @@ final class Cookies
         $member_id = Utils::normalizeMemberId($member_id);
         $email     = $email ? Utils::normalizeEmail($email) : '';
 
-        if (!$member_id) return;
-        if (!self::guardHeaders('set member cookies')) return;
+        if (!$member_id) {
+            return;
+        }
+        if (!self::guardHeaders('set member cookies')) {
+            return;
+        }
 
         // JS-visible flag
         self::setCookie(self::MEM_UI, '1', [
@@ -160,7 +172,9 @@ final class Cookies
             return;
         }
 
-        if (!self::guardHeaders('unset member cookies')) return;
+        if (!self::guardHeaders('unset member cookies')) {
+            return;
+        }
 
         self::deleteCookie(self::MEM_UI);
         self::deleteCookie(self::MEM_OK);
@@ -181,9 +195,9 @@ final class Cookies
                 return false;
             }
 
-            $email = $email ? Utils::normalizeEmail($email) : '';
+            $email         = $email ? Utils::normalizeEmail($email) : '';
             $expected_hmac = self::memberHmac($member_id, $email);
-            $is_valid = \hash_equals($expected_hmac, $server);
+            $is_valid      = \hash_equals($expected_hmac, $server);
             if (!$is_valid) {
                 \TFG\Core\Utils::info('[TFG Cookies] Member cookie HMAC mismatch for member_id: ' . $member_id . ', email: ' . $email);
             }
@@ -231,10 +245,10 @@ final class Cookies
 
     private static function deleteCookie(string $name): void
     {
-        $base = self::baseCookieArgs();
+        $base            = self::baseCookieArgs();
         $base['expires'] = time() - HOUR_IN_SECONDS;
 
-        $args = $base;
+        $args             = $base;
         $args['httponly'] = true;
         \setcookie($name, '', $args);
 
@@ -313,14 +327,18 @@ final class Cookies
     // ============================
     public static function getMemberEmail(): ?string
     {
-        if (!isset($_COOKIE['member_email'])) return null;
+        if (!isset($_COOKIE['member_email'])) {
+            return null;
+        }
         $raw = \wp_unslash($_COOKIE['member_email']);
         return Utils::normalizeEmail($raw) ?: null;
     }
 
     public static function getMemberRole(): ?string
     {
-        if (!isset($_COOKIE['member_role'])) return null;
+        if (!isset($_COOKIE['member_role'])) {
+            return null;
+        }
         $raw = \wp_unslash($_COOKIE['member_role']);
         $val = \sanitize_key($raw);
         return $val !== '' ? $val : null;
@@ -328,7 +346,9 @@ final class Cookies
 
     public static function getMemberId(): ?string
     {
-        if (!isset($_COOKIE['member_id'])) return null;
+        if (!isset($_COOKIE['member_id'])) {
+            return null;
+        }
         $raw = \wp_unslash($_COOKIE['member_id']);
         $val = Utils::normalizeMemberId($raw);
         return $val !== '' ? $val : null;

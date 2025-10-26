@@ -41,9 +41,9 @@ final class MemberProfileCreation
 
         // Pull required fields from the stub (ACF first, meta fallback)
         $member_type = \function_exists('get_field') ? (string) \get_field('member_type', $post_id) : (string) \get_post_meta($post_id, 'member_type', true);
-        $member_id   = \function_exists('get_field') ? (string) \get_field('member_id',   $post_id) : (string) \get_post_meta($post_id, 'member_id',   true);
+        $member_id   = \function_exists('get_field') ? (string) \get_field('member_id', $post_id) : (string) \get_post_meta($post_id, 'member_id', true);
         $org_name    = \function_exists('get_field') ? (string) \get_field('organization_name', $post_id) : (string) \get_post_meta($post_id, 'organization_name', true);
-        $email       = \function_exists('get_field') ? (string) \get_field('contact_email',     $post_id) : (string) \get_post_meta($post_id, 'contact_email',     true);
+        $email       = \function_exists('get_field') ? (string) \get_field('contact_email', $post_id) : (string) \get_post_meta($post_id, 'contact_email', true);
 
         $member_id = Utils::normalizeMemberId($member_id ?? '');
         $email     = Utils::normalizeEmail($email ?? '');

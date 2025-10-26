@@ -43,7 +43,9 @@ final class UniversityForm
     {
         \TFG\Core\Utils::info("[TFG UNI GETUSER] Entering get_user_profile($user_id)");
         $member_id = \get_user_meta($user_id, 'member_id', true);
-        if (!$member_id) return null;
+        if (!$member_id) {
+            return null;
+        }
 
         $posts = \get_posts([
             'post_type'   => 'member_profile',
@@ -58,10 +60,14 @@ final class UniversityForm
 
     public static function handleUniversityFormSubmission(): void
     {
-        if (!FormRouter::matches('university-form')) return;
+        if (!FormRouter::matches('university-form')) {
+            return;
+        }
         \TFG\Core\Utils::info('[TFG UNI SUBMIT] POST ID received in handler: ' . ($_POST['post_id'] ?? 'MISSING'));
 
-        if (!\is_user_logged_in()) return;
+        if (!\is_user_logged_in()) {
+            return;
+        }
 
         $user_id = \get_current_user_id();
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
@@ -90,12 +96,18 @@ final class UniversityForm
 
     public static function handleNewProfileSubmission(): void
     {
-        \TFG\Core\Utils::info("[TFG NEW PROFILE] Entering handle_new_profile_submission()");
-        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') return;
-        if (!\is_user_logged_in()) return;
-        if (!isset($_POST['tfg_university_new_form'])) return;
+        \TFG\Core\Utils::info('[TFG NEW PROFILE] Entering handle_new_profile_submission()');
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            return;
+        }
+        if (!\is_user_logged_in()) {
+            return;
+        }
+        if (!isset($_POST['tfg_university_new_form'])) {
+            return;
+        }
 
-        $user_id = \get_current_user_id();
+        $user_id          = \get_current_user_id();
         $existing_post_id = self::getUserProfile($user_id);
         if ($existing_post_id) {
             \TFG\Core\Utils::info("[TFG NEW PROFILE] User $user_id already has a profile (Post ID: $existing_post_id).");
@@ -138,7 +150,9 @@ final class UniversityForm
         $member_id = $post_id ? \get_field('member_id', $post_id) : \get_user_meta(\get_current_user_id(), 'member_id', true);
         $member_id = Utils::normalizeMemberId($member_id);
 
-        if (!$member_id) return '<p>Invalid member ID.</p>';
+        if (!$member_id) {
+            return '<p>Invalid member ID.</p>';
+        }
 
         $values = [
             'contact_name'         => '',
@@ -154,7 +168,7 @@ final class UniversityForm
         $existing_post = $post_id && \get_post_status($post_id) ? $post_id : self::getProfileByMemberId($member_id);
         if ($existing_post) {
             foreach ($values as $key => $v) {
-                $val = \get_field($key, $existing_post);
+                $val          = \get_field($key, $existing_post);
                 $values[$key] = \is_array($val) ? $val : \esc_attr($val);
             }
         }
@@ -169,31 +183,31 @@ final class UniversityForm
     public static function renderUniversityProfileDisplayForm(): string
     {
         $fields = [
-            'contact_name'        => 'Contact Name',
-            'title_and_department'=> 'Title and Department',
-            'contact_email'       => 'Contact Email',
-            'organization_name'   => 'University Name',
-            'website'             => 'Website',
-            'programs'            => 'Programs',
-            'other_programs'      => 'Other Programs',
-            'comment'             => 'Comment',
+            'contact_name'         => 'Contact Name',
+            'title_and_department' => 'Title and Department',
+            'contact_email'        => 'Contact Email',
+            'organization_name'    => 'University Name',
+            'website'              => 'Website',
+            'programs'             => 'Programs',
+            'other_programs'       => 'Other Programs',
+            'comment'              => 'Comment',
         ];
 
         $values = array_fill_keys(array_keys($fields), '');
 
         if (isset($_COOKIE['member_id']) && ($_COOKIE['member_authenticated'] ?? '') === '1') {
             $member_id = Utils::normalizeMemberId($_COOKIE['member_id']);
-            $profile = \get_posts([
-                'post_type'   => 'member_profile',
-                'meta_key'    => 'member_id',
-                'meta_value'  => $member_id,
+            $profile   = \get_posts([
+                'post_type'      => 'member_profile',
+                'meta_key'       => 'member_id',
+                'meta_value'     => $member_id,
                 'posts_per_page' => 1,
             ]);
 
             if (!empty($profile)) {
                 $post_id = $profile[0]->ID;
                 foreach ($fields as $key => $label) {
-                    $field_value = \get_field($key, $post_id);
+                    $field_value  = \get_field($key, $post_id);
                     $values[$key] = \is_array($field_value) ? implode(', ', $field_value) : $field_value;
                 }
             }
@@ -208,9 +222,11 @@ final class UniversityForm
 
     public static function renderEditFormOld($atts = []): string
     {
-        $atts = \shortcode_atts(['post_id' => ''], $atts);
+        $atts    = \shortcode_atts(['post_id' => ''], $atts);
         $post_id = absint($atts['post_id']);
-        if (!$post_id) return '<p>Invalid post ID.</p>';
+        if (!$post_id) {
+            return '<p>Invalid post ID.</p>';
+        }
 
         $post_type = \get_post_type($post_id);
         if ($post_type === 'member_profile') {

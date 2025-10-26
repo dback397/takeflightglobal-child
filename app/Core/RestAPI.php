@@ -2,10 +2,8 @@
 
 namespace TFG\Core;
 
-use TFG\Core\Utils;
 use TFG\Admin\Sequence;
 use TFG\Features\MagicLogin\VerificationToken;
-
 use WP_REST_Request;
 
 /**
@@ -32,7 +30,7 @@ final class RestAPI
                 'email' => [
                     'required'          => true,
                     'sanitize_callback' => 'sanitize_email',
-                    'validate_callback' => fn($value) => (bool) is_email($value),
+                    'validate_callback' => fn ($value) => (bool) is_email($value),
                 ],
             ],
         ]);
@@ -46,7 +44,7 @@ final class RestAPI
                 'subscriber_email' => [
                     'required'          => true,
                     'sanitize_callback' => 'sanitize_email',
-                    'validate_callback' => fn($v) => (bool) is_email($v),
+                    'validate_callback' => fn ($v) => (bool) is_email($v),
                 ],
                 'subscriber_name' => [
                     'required'          => false,
@@ -54,7 +52,7 @@ final class RestAPI
                 ],
                 'gdpr_consent' => [
                     'required'          => true,
-                    'sanitize_callback' => fn($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN),
+                    'sanitize_callback' => fn ($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN),
                 ],
                 'source' => [
                     'required'          => false,
@@ -97,7 +95,7 @@ final class RestAPI
                 ['key' => 'is_verified',  'value' => 1, 'type' => 'NUMERIC', 'compare' => '='],
                 ['key' => 'is_subscribed','value' => 1, 'type' => 'NUMERIC', 'compare' => '='],
             ],
-            'fields'           => 'ids',
+            'fields' => 'ids',
         ]);
 
         $found = !empty($matches);
@@ -109,7 +107,7 @@ final class RestAPI
                 'success'    => true,
                 'email'      => $email,
                 'post_id'    => $sub_id,
-                'verified'   => (bool) get_field('is_verified',   $sub_id),
+                'verified'   => (bool) get_field('is_verified', $sub_id),
                 'subscribed' => (bool) get_field('is_subscribed', $sub_id),
             ], 200);
         }
@@ -138,7 +136,7 @@ final class RestAPI
                 ['key' => 'email',        'value' => $email, 'compare' => '='],
                 ['key' => 'is_subscribed','value' => 1, 'type' => 'NUMERIC', 'compare' => '='],
             ],
-            'fields'           => 'ids',
+            'fields' => 'ids',
         ]);
         if ($existing) {
             return self::response([
@@ -152,7 +150,14 @@ final class RestAPI
         $code     = wp_generate_password(10, false, false);
 
         $created = VerificationToken::createVerificationToken(
-            $email, $code, $name, $source, true, $seq, $seq_code, 15 * MINUTE_IN_SECONDS
+            $email,
+            $code,
+            $name,
+            $source,
+            true,
+            $seq,
+            $seq_code,
+            15 * MINUTE_IN_SECONDS
         );
         if ($created === false) {
             return self::response([

@@ -23,7 +23,7 @@ final class ReCAPTCHA
     public static function getKeys(): array
     {
         return [
-            'site'   => \defined('RECAPTCHA_SITE_KEY')   ? (string) \RECAPTCHA_SITE_KEY   : '',
+            'site'   => \defined('RECAPTCHA_SITE_KEY') ? (string) \RECAPTCHA_SITE_KEY : '',
             'secret' => \defined('RECAPTCHA_SECRET_KEY') ? (string) \RECAPTCHA_SECRET_KEY : '',
         ];
     }

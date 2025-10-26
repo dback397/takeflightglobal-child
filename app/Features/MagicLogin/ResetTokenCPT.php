@@ -10,7 +10,7 @@ final class ResetTokenCPT
 {
     public static function init(): void
     {
-        \add_action('init',     [__CLASS__, 'registerCpt']);
+        \add_action('init', [__CLASS__, 'registerCpt']);
         \add_action('acf/init', [__CLASS__, 'registerAcfFields']);
     }
 
@@ -41,17 +41,17 @@ final class ResetTokenCPT
                 'name'          => __('Reset Tokens', 'tfg'),
                 'singular_name' => __('Reset Token', 'tfg'),
             ],
-            'public'             => false,
-            'publicly_queryable' => false,
-            'exclude_from_search'=> true,
-            'show_ui'            => true,
-            'show_in_menu'       => false,
-            'show_in_rest'       => false,
-            'supports'           => ['title'],
-            'capability_type'    => 'post',
-            'map_meta_cap'       => true,
-            'capabilities'       => $caps,
-            'rewrite'            => false,
+            'public'              => false,
+            'publicly_queryable'  => false,
+            'exclude_from_search' => true,
+            'show_ui'             => true,
+            'show_in_menu'        => false,
+            'show_in_rest'        => false,
+            'supports'            => ['title'],
+            'capability_type'     => 'post',
+            'map_meta_cap'        => true,
+            'capabilities'        => $caps,
+            'rewrite'             => false,
         ]);
     }
 

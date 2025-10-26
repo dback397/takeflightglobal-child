@@ -46,7 +46,9 @@ final class ErrorModal
 
     public static function logMessagesDebug(): void
     {
-        if (!\is_user_logged_in()) return;
+        if (!\is_user_logged_in()) {
+            return;
+        }
 
         $posts = \get_posts([
             'post_type'        => 'messages',
@@ -67,7 +69,9 @@ final class ErrorModal
     /** Return the modal markup (do not echo). */
     public static function show($code): string
     {
-        if (empty($code)) return '';
+        if (empty($code)) {
+            return '';
+        }
         return \do_shortcode('[tfgErrorModal code="' . \esc_attr($code) . '"]');
     }
 
@@ -84,14 +88,16 @@ final class ErrorModal
         $messages = [];
         foreach ($posts as $post) {
             $code = (string) \get_field('msg_code', $post->ID);
-            if ($code === '') continue;
+            if ($code === '') {
+                continue;
+            }
 
             $messages[$code] = [
-                'title'      => (string) \get_field('title',      $post->ID),
-                'message'    => (string) \get_field('message',    $post->ID),
+                'title'      => (string) \get_field('title', $post->ID),
+                'message'    => (string) \get_field('message', $post->ID),
                 'text_color' => (string) \get_field('text_color', $post->ID),
                 'body_color' => (string) \get_field('body_color', $post->ID),
-                'dashicon'   => (string) \get_field('dashicon',   $post->ID),
+                'dashicon'   => (string) \get_field('dashicon', $post->ID),
             ];
         }
 
@@ -123,7 +129,9 @@ final class ErrorModal
     /** Store the code transient for this visitor and redirect. */
     public static function showR($code, int $seconds = 30, ?string $redirect_url = null): void
     {
-        if (empty($code)) return;
+        if (empty($code)) {
+            return;
+        }
 
         $redirect_url = $redirect_url ?: \home_url('/');
 
