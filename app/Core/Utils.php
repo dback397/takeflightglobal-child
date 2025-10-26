@@ -69,20 +69,23 @@ final class Utils
                   }
           }
 
-          private static $last = [];
+              private static $last = [];
 
-          public static function info($msg, $interval = 15) {
-              // Disable completely in production
-              if (!\defined('TFG_DEBUG') || !\constant('TFG_DEBUG')) return;
-
-              $key = md5($msg);
-              $now = microtime(true);
-
-              if (!isset(self::$last[$key]) || ($now - self::$last[$key]) > $interval) {
-                  self::$last[$key] = $now;
-                  error_log("[TFG] {$msg}");
+              public static function info($msg, $interval = 15) {
+                  if (!\defined('TFG_DEBUG') || !\constant('TFG_DEBUG')) return;
+              
+                  $key = md5($msg);
+                  $now = microtime(true);
+              
+                  if (!isset(self::$last[$key]) || ($now - self::$last[$key]) > $interval) {
+                      self::$last[$key] = $now;
+                      \TFG\Core\Log::addLogEntry([
+                          'event_type' => 'info',
+                          'message' => $msg,
+                      ]);
+                  }
               }
-          }
+              
 
     /**
      * Normalize member ID (uppercase, trimmed, A–Z/0–9/_/- only).

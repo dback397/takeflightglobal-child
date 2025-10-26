@@ -1,0 +1,128 @@
+[
+  {
+    "file_path": "Core/ThemeSetup.php",
+    "issue_detected": "Theme-specific path dependencies",
+    "reason": "Uses get_template_directory_uri() and get_stylesheet_uri() for CSS enqueuing",
+    "recommended_action": "Move CSS enqueuing logic to MU-plugin with dynamic path resolution or use wp_enqueue_style with theme-relative paths",
+    "dependency_notes": "Critical for theme functionality - requires careful path handling in MU-plugin context"
+  },
+  {
+    "file_path": "Core/Assets.php",
+    "issue_detected": "Theme-specific path dependencies",
+    "reason": "Uses get_stylesheet_directory_uri() and get_stylesheet_directory() for asset paths",
+    "recommended_action": "Implement dynamic path resolution using TFG_PLUGIN_PATH constant or create asset path resolver utility",
+    "dependency_notes": "All frontend assets depend on theme directory paths - needs MU-plugin compatible path resolution"
+  },
+  {
+    "file_path": "Core/Mailer.php",
+    "issue_detected": "Conditional theme path dependency",
+    "reason": "Falls back to get_stylesheet_directory() when TFG_PLUGIN_PATH not defined",
+    "recommended_action": "Ensure TFG_PLUGIN_PATH is properly defined in wp-config.php before MU-plugin migration",
+    "dependency_notes": "Already has MU-plugin compatibility but requires TFG_PLUGIN_PATH constant"
+  },
+  {
+    "file_path": "Core/ThemeSetup.php",
+    "issue_detected": "Theme initialization hooks",
+    "reason": "Uses wp_enqueue_scripts and wp_footer hooks that depend on theme loading",
+    "recommended_action": "Replace with muplugins_loaded or plugins_loaded hooks for MU-plugin compatibility",
+    "dependency_notes": "Theme-specific hooks will not fire in MU-plugin context"
+  },
+  {
+    "file_path": "Core/Assets.php",
+    "issue_detected": "Theme initialization hooks",
+    "reason": "Uses wp_enqueue_scripts and admin_enqueue_scripts hooks",
+    "recommended_action": "Move to plugins_loaded hook or create separate asset loader for MU-plugin context",
+    "dependency_notes": "Asset loading depends on theme initialization - needs hook replacement"
+  },
+  {
+    "file_path": "Features/Membership/Membership.php",
+    "issue_detected": "Direct bootstrap call",
+    "reason": "Contains direct call to Membership::init() at file bottom (line 169)",
+    "recommended_action": "Remove direct bootstrap call - let App.php handle initialization",
+    "dependency_notes": "Will cause double initialization when moved to MU-plugin"
+  },
+  {
+    "file_path": "functions.php",
+    "issue_detected": "Theme-specific constants",
+    "reason": "Defines TFG_THEME_PATH as __DIR__ which will be incorrect in MU-plugin context",
+    "recommended_action": "Update TFG_THEME_PATH definition to use MU-plugin path or make it conditional",
+    "dependency_notes": "Theme path constant will point to wrong location after migration"
+  },
+  {
+    "file_path": "functions.php",
+    "issue_detected": "Composer autoloader path dependency",
+    "reason": "Hardcoded path to theme vendor/autoload.php",
+    "recommended_action": "Update autoloader path to point to MU-plugin vendor directory or use global Composer autoloader",
+    "dependency_notes": "Autoloader will fail to load classes from theme directory in MU-plugin context"
+  },
+  {
+    "file_path": "functions.php",
+    "issue_detected": "ACF and mail filters",
+    "reason": "Contains ACF settings filters and wp_mail filters that duplicate MU-plugin functionality",
+    "recommended_action": "Move ACF and mail configuration to MU-plugin or remove duplicates",
+    "dependency_notes": "Potential conflicts with MU-plugin configuration"
+  },
+  {
+    "file_path": "mu-plugins/_autoload.php",
+    "issue_detected": "Hardcoded theme path",
+    "reason": "Autoloader points to theme app/ directory (line 19)",
+    "recommended_action": "Update autoloader to point to MU-plugin directory structure",
+    "dependency_notes": "Autoloader will fail to find classes after migration"
+  },
+  {
+    "file_path": "mu-plugins/tfg-magic-core.php",
+    "issue_detected": "Legacy class dependencies",
+    "reason": "Depends on TFG_Magic_Utilities and TFG_Utils legacy class aliases",
+    "recommended_action": "Update to use namespaced classes (TFG\\Features\\MagicLogin\\MagicUtilities, TFG\\Core\\Utils)",
+    "dependency_notes": "Legacy class aliases may not be available in MU-plugin context"
+  },
+  {
+    "file_path": "mu-plugins/tfg-subscriber-confirm-bootstrap.php",
+    "issue_detected": "Theme path dependencies",
+    "reason": "Searches for classes in theme directories (lines 18-22)",
+    "recommended_action": "Update to search in MU-plugin directory structure",
+    "dependency_notes": "Will fail to find classes after migration to MU-plugin"
+  },
+  {
+    "file_path": "wp-config.php",
+    "issue_detected": "Missing production constants",
+    "reason": "Missing WP_ENVIRONMENT_TYPE, DISALLOW_FILE_EDIT, FORCE_SSL_ADMIN for production deployment",
+    "recommended_action": "Add production security constants to wp-config.php",
+    "dependency_notes": "Required for secure production deployment"
+  },
+  {
+    "file_path": "wp-config.php",
+    "issue_detected": "Development-only constants",
+    "reason": "WP_DEBUG, WP_DEBUG_DISPLAY enabled - should be disabled in production",
+    "recommended_action": "Add environment-based conditional debug settings",
+    "dependency_notes": "Debug settings should be environment-specific"
+  },
+  {
+    "file_path": "wp-config.php",
+    "issue_detected": "Missing TFG constants",
+    "reason": "Missing TFG_VERIFICATION_API_TOKEN, RECAPTCHA keys in wp-config.php",
+    "recommended_action": "Move TFG-specific constants from functions.php to wp-config.php",
+    "dependency_notes": "TFG constants should be defined at WordPress bootstrap level"
+  },
+  {
+    "file_path": "All class files",
+    "issue_detected": "Legacy class aliases",
+    "reason": "30+ class_alias declarations for backwards compatibility",
+    "recommended_action": "Remove legacy aliases after confirming no external dependencies",
+    "dependency_notes": "Legacy aliases may be used by MU-plugins and external code"
+  },
+  {
+    "file_path": "Core/Utils.php",
+    "issue_detected": "Recursive logging issue",
+    "reason": "info() method calls itself recursively (line 83)",
+    "recommended_action": "Fix recursive call to prevent infinite loops",
+    "dependency_notes": "Critical bug that will cause PHP fatal errors"
+  },
+  {
+    "file_path": "Core/RestAPI.php",
+    "issue_detected": "Missing permission callback",
+    "reason": "checkTokenPermission method name doesn't match permission_callback reference",
+    "recommended_action": "Fix method name mismatch in permission_callback",
+    "dependency_notes": "REST API endpoints will fail permission checks"
+  }
+]
