@@ -79,6 +79,7 @@ final class MagicLogin
                 <!-- Submit button -->
                 <button type="submit"
                         title="Send magic link"
+                        class="magic-login-button"
                         style="
                            width:3em;
                            font-size:1.2rem;

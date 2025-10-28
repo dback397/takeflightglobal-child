@@ -156,20 +156,18 @@ final class MagicUtilities
             'post_title'  => "MAG: {$seq_code} {$email}",
             'post_status' => 'publish',
             'meta_input'  => [
-                'email'             => $email,
-                'token'             => $token,
-                'token_hash'        => $hash,
-                'sequence_id'       => $seq_id,
-                'sequence_code'     => $seq_code,
-                'verification_code' => $verif_code,
-                'issued_on'         => \gmdate('c', $now),
-                'expires_at'        => $exp,
-                'expires_on'        => \gmdate('c', $exp),
-                'is_used'           => 0,
-                'magic_url'         => $url,
-                'ip_address'        => self::getUserIpAddress(),
-                'signature'         => $sig,
-            ],
+            'email'         => $email,
+            'token_hash'    => \hash('sha256', $token),
+            'sequence_id'   => $seq_id,
+            'sequence_code' => $seq_code,
+            'issued_at'     => $now,
+            'expires_at'    => $exp,
+            'is_used'       => 0,
+            'magic_url'     => $url,
+            'ip_address'    => self::getUserIpAddress(),
+            'signature'     => $sig,
+        ],
+
         ], true);
 
         if (\is_wp_error($post_id)) {

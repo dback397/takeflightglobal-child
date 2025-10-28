@@ -124,6 +124,33 @@ final class Cookies
         return true; // assume subscribed for limited contexts like front-end display
     }
 
+    // -----------------------------------------------------------------------------
+    // 🔐 Member Identity Helpers
+    // -----------------------------------------------------------------------------
+
+    /**
+     * Verify that the member_id and email from cookies match
+     * the authenticated HMAC signature.
+     */
+    public static function verifyMember(string $memberId, string $email): bool
+    {
+        if (empty($memberId) || empty($email)) {
+            return false;
+        }
+
+        // If you already store an HMAC (e.g., 'member_ok'), verify it
+        if (isset($_COOKIE['member_ok'])) {
+            $signature = $_COOKIE['member_ok'];
+            $expected  = hash_hmac('sha256', $memberId . '|' . $email, SECURE_AUTH_KEY);
+            return hash_equals($expected, $signature);
+        }
+
+        // Otherwise fall back to a simple cookie check (less secure)
+        return (
+            isset($_COOKIE['member_id']) && $_COOKIE['member_id'] === $memberId && isset($_COOKIE['member_email']) && $_COOKIE['member_email'] === $email
+        );
+    }
+
     // =======================
     // Member cookie interface
     // =======================
@@ -207,6 +234,8 @@ final class Cookies
         \TFG\Core\Utils::info('[TFG Cookies] Member cookie exists but no member_id provided for validation');
         return false;
     }
+
+
 
     // ==========================
     // Internals
@@ -353,4 +382,34 @@ final class Cookies
         $val = Utils::normalizeMemberId($raw);
         return $val !== '' ? $val : null;
     }
+
+    // ============================
+    // Compatibility Wrappers
+    // ============================
+
+    /**
+     * Clear all member-related cookies (UI + HttpOnly).
+     * Used by legacy MemberDeletion and logout flows.
+     */
+    public static function clearMemberCookies(): void
+    {
+        if (\TFG\Core\Utils::isSystemRequest()) {
+            \TFG\Core\Utils::info('[TFG SystemGuard] Skipped clearMemberCookies due to REST/CRON/CLI/AJAX context');
+            return;
+        }
+
+        if (!self::guardHeaders('clear member cookies')) {
+            return;
+        }
+
+        self::deleteCookie(self::MEM_UI);
+        self::deleteCookie(self::MEM_OK);
+        self::deleteUiCookie('member_email');
+        self::deleteUiCookie('member_id');
+        self::deleteUiCookie('member_role');
+
+        \TFG\Core\Utils::info('[TFG Cookies] ✅ Cleared all member cookies');
+    }
+
+
 }

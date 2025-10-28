@@ -51,6 +51,17 @@ final class Assets
         self::enqueueStyle('tfg-fonts', '/css/tfg-fonts.css');
         self::enqueueStyle('tfg-forms', '/css/tfg-forms.css');
 
+        // ✅ Magic login wand UI updater
+        \wp_register_script(
+            'tfg-login',
+            self::uri('/js/tfg-login.js'),
+            [],
+            self::ver('/js/tfg-login.js'),
+            true
+        );
+        \wp_enqueue_script('tfg-login');
+        \wp_script_add_data('tfg-login', 'defer', true);
+
         // Error modal (JS + CSS) + localized messages
         \wp_register_script(
             'tfg-error-modal',

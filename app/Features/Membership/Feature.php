@@ -11,10 +11,9 @@ final class Feature
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberFormHandlers::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberFormUtilities::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberGdprConsent::class);
-        \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberHelper::class);
+        \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberDeletion::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberIDGenerator::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberLogin::class);
-        \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberProfileCreation::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberProfileDisplay::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\Membership::class);
         \TFG\Core\Bootstrap::tryInit(\TFG\Features\Membership\MemberStubAccess::class);

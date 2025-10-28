@@ -363,13 +363,17 @@ final class NewsletterSubscription
             return [];
         }
 
-        \update_post_meta($post_id, 'token', $token);
+        // 🔒 Generate and store a secure, hashed token
+        $tokenHash = \hash('sha256', $token);
+
+        \update_post_meta($post_id, 'token_hash', $tokenHash);           // ✅ hashed version for validation
         \update_post_meta($post_id, 'email', \sanitize_email($email));
         \update_post_meta($post_id, 'verification_id', (int) $verif_id);
         \update_post_meta($post_id, 'sequence_id', (int) $seq_id);
         \update_post_meta($post_id, 'sequence_code', (string) $seq_code);
-        \update_post_meta($post_id, 'expires_at', (int) $expires_at);
-        \update_post_meta($post_id, 'used_on', '');
+        \update_post_meta($post_id, 'issued_at', \time());
+        \update_post_meta($post_id, 'expires_at', (int) $expires_at);    // ✅ integer timestamp (UTC)
+        \update_post_meta($post_id, 'is_used', 0);                       // ✅ numeric flag instead of used_on
 
         $url = \add_query_arg('tfg_magic', \rawurlencode($token), \site_url('/'));
 
