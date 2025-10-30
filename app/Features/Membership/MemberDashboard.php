@@ -155,11 +155,12 @@ final class MemberDashboard
         }
         echo '</div>';
 
-        echo "<div style='margin-top:1.5em; display:flex; flex-wrap:wrap; gap:1em;'>";
-        echo '<a href="' . \esc_url($edit_url)   . '" class="tfg-button">Edit / Expand Your Profile</a>';
-        echo '<a href="' . \esc_url($reset_url)  . '" class="tfg-button">Reset Your Password</a>';
-        echo '<a href="' . \esc_url($deact_url)  . '" class="tfg-button">Deactivate Your Profile</a>';
-        echo '<a href="' . \esc_url($logout_url) . '" class="tfg-button">Logout</a>';
+        echo '<hr style="margin:2em 0 0.3em 0; border:none; border-top:1px solid #ccc;">';
+        echo '<div class="tfg-member-menu-row" style="display:flex; gap:1em; justify-content:space-between; flex-wrap:wrap;">';
+        echo '<a class="tfg-button" href="' . \esc_url($edit_url)   . '" style="flex:1; text-align:center;">Edit Your Profile</a>';
+        echo '<a class="tfg-button" href="' . \esc_url($reset_url)  . '" style="flex:1; text-align:center;">Change Your Password</a>';
+        echo '<a class="tfg-button" href="' . \esc_url($deact_url)  . '" style="flex:1; text-align:center;">Deactivate Your Profile</a>';
+        echo '<a class="tfg-button" href="' . \esc_url($logout_url) . '" style="flex:1; text-align:center;">Logout</a>';
         echo '</div>';
 
         echo '<div class="tfg-section-divider"></div>';
@@ -172,7 +173,7 @@ final class MemberDashboard
                 echo '<h3>Edit / Expand Your Profile</h3>';
                 echo \do_shortcode('[tfg_edit_member_profile post_id="' . $post_id . '"]');
             } elseif ($action === 'reset') {
-                echo '<h3>Reset Your Password</h3>' . \do_shortcode('[tfg_member_reset_form]');
+                echo '<h3>Change Your Password</h3>' . \do_shortcode('[tfg_member_reset_form]');
             } elseif ($action === 'deactivate') {
                 echo '<h3>Deactivate Your Profile</h3><p>Use the Deactivate button above.</p>';
             }

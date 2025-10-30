@@ -110,7 +110,7 @@ final class MemberProfileEditor
                 background:transparent;
                 border:none;
                 color:#2e7d32;
-                font-size:0.63em;
+                font-size:18px;
                 text-align:center;
                 max-width:100%;
             ">';
@@ -128,7 +128,7 @@ final class MemberProfileEditor
                 background:transparent;
                 border:none;
                 color:#b71c1c;
-                font-size:0.63em;
+                font-size:18px;
                 text-align:center;
                 max-width:100%;
             ">';

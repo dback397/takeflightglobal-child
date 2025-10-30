@@ -90,6 +90,25 @@ final class MemberLogin
         $status_color = $is_member_ui ? 'green' : 'red';
 
         \ob_start();
+
+        // Display success message (e.g., after password reset)
+        if (!empty($_SESSION['tfg_login_success'])) {
+            echo '<div class="tfg-success" style="
+                display:block;
+                margin:0.5em auto 1.2em;
+                padding:0;
+                background:transparent;
+                border:none;
+                color:#2e7d32;
+                font-size:14px;
+                text-align:center;
+                max-width:100%;
+            ">';
+            echo '<strong>*** Success:</strong> ' . \esc_html($_SESSION['tfg_login_success']) . ' ***';
+            echo '</div>';
+            unset($_SESSION['tfg_login_success']);
+        }
+
         ?>
         <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
             <strong>Member Login</strong>
@@ -134,14 +153,14 @@ final class MemberLogin
         <hr style="margin:2em 0 0.3em 0; border:none; border-top:1px solid #ccc;">
 
         <div class="tfg-member-menu-row" style="display:flex; gap:1em; justify-content:space-between; flex-wrap:wrap;">
-            <a class="tfg-button" href="<?php echo \esc_url(\site_url('/reset-password')); ?>" style="flex:1; text-align:center;">Reset Your Password</a>
+            <a class="tfg-button" href="<?php echo \esc_url(\site_url('/request-password-reset')); ?>" style="flex:1; text-align:center;">Reset Your Password</a>
             <a class="tfg-button" href="<?php echo \esc_url(\site_url('/forgot-member-id')); ?>" style="flex:1; text-align:center;">Forgot Member ID?</a>
             <a class="tfg-button" href="<?php echo \esc_url(\site_url('/stub-access')); ?>" style="flex:1; text-align:center;">Register as a New Member</a>
         </div>
 
 
         <div style="margin-top:0.5em; text-align:center;">
-  <p style="margin-bottom:1em; font-weight:bold; font-size:0.63em; color:<?php echo esc_attr($status_color); ?>;">
+  <p style="margin-bottom:1em; font-weight:bold; font-size:18px; color:<?php echo esc_attr($status_color); ?>;">
     Current Login Status: <?php echo esc_html($status_text); ?>
   </p>
 </div>
@@ -342,7 +361,7 @@ final class MemberLogin
                 background:transparent;
                 border:none;
                 color:#b71c1c;
-                font-size:0.63em;
+                font-size:14px;
                 text-align:center;
                 max-width:100%;
             ">';
@@ -527,7 +546,7 @@ final class MemberLogin
                 background:transparent;
                 border:none;
                 color:#2e7d32;
-                font-size:0.63em;
+                font-size:14px;
                 text-align:center;
                 max-width:100%;
             ">';
@@ -545,7 +564,7 @@ final class MemberLogin
                 background:transparent;
                 border:none;
                 color:#b71c1c;
-                font-size:0.63em;
+                font-size:14px;
                 text-align:center;
                 max-width:100%;
             ">';

@@ -112,7 +112,7 @@ final class MemberStubManager
               background:transparent;
               border:none;
               color:#b71c1c;
-              font-size:0.63em;
+              font-size:14px;
               text-align:center;
               max-width:100%;
           ">';

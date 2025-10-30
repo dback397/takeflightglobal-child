@@ -89,7 +89,7 @@ final class Assets
         self::enqueueStyle('tfg-error-modal', '/css/tfg-error-modal.css');
 
         // Member login assets (login, reset, GDPR password pages)
-        if (\is_page(['login', 'member-login', 'member-gdpr', 'reset-password', 'member-dashboard', 'gdpr-consent', 'stub-access'])) {
+        if (\is_page(['login', 'member-login', 'member-gdpr', 'reset-password', 'member-dashboard', 'gdpr-consent', 'stub-access', 'request-password-reset', 'password-reset-confirm', 'forgot-member-id', 'edit-profile', 'deactivate-profile'])) {
             \wp_register_script(
                 'tfg-member-login',
                 self::uri('/js/tfg-member-login.js'),
