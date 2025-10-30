@@ -17,6 +17,11 @@ final class MemberLogin
 {
     public static function init(): void
     {
+        // Start session for error messages
+        if (!session_id()) {
+            session_start();
+        }
+
         // Shortcodes
         \add_shortcode('tfg_member_login_form', [self::class, 'renderLoginForm']);
         \add_shortcode('tfg_member_reset_request', [self::class, 'renderResetRequestForm']); // identity check
@@ -84,10 +89,14 @@ final class MemberLogin
         $status_text  = $is_member_ui ? 'Logged in' : 'Not logged in';
         $status_color = $is_member_ui ? 'green' : 'red';
 
-        \ob_start(); ?>
-
-        <center><H2 style="margin-bottom:1em;"><strong>Member Login</strong></H2></center>
-        <!-- Status message at top -->
+        \ob_start();
+        ?>
+        <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
+            <strong>Member Login</strong>
+        </h2>
+        <?php
+        // Status message at top
+        ?>
         <form method="POST" class="tfg-member-login-form" style="margin-top:1em;">
             <?php \wp_nonce_field('tfg_member_login', '_tfg_nonce'); ?>
             <input type="hidden" name="handler_id" value="member_login">
@@ -132,7 +141,7 @@ final class MemberLogin
 
 
         <div style="margin-top:0.5em; text-align:center;">
-  <p style="margin-bottom:1em; font-weight:bold; color:<?php echo esc_attr($status_color); ?>;">
+  <p style="margin-bottom:1em; font-weight:bold; font-size:0.63em; color:<?php echo esc_attr($status_color); ?>;">
     Current Login Status: <?php echo esc_html($status_text); ?>
   </p>
 </div>
@@ -205,6 +214,7 @@ final class MemberLogin
             : Utils::normalizeEmail(\get_post_meta($profile_id, 'contact_email', true));
 
         Cookies::setMemberCookie($member_id, $email);
+        Cookies::setSubscriberCookie($email); // Set subscriber cookie on successful login
 
         echo '<p class="tfg-success">Login successful. Redirecting...</p>';
         if (!\headers_sent()) {
@@ -297,7 +307,19 @@ final class MemberLogin
         $member_id = Cookies::getMemberId();
         if (!$member_id) {
             \ob_start(); ?>
-            <p class="tfg-error">You must be logged in to change your password.</p>
+            <div class="tfg-error" style="
+                display:block;
+                margin:0.5em auto 1.2em;
+                padding:0;
+                background:transparent;
+                border:none;
+                color:#b71c1c;
+                font-size:0.63em;
+                text-align:center;
+                max-width:100%;
+            ">
+                <strong>*** Error:</strong> You must be logged in to change your password. ***
+            </div>
             <div class="tfg-return-button-wrapper">
                 <a href="<?php echo \esc_url(\site_url('/member-login/')); ?>" class="tfg-return-button">
                     ← Return to Login
@@ -309,8 +331,30 @@ final class MemberLogin
 
         $return_to = \esc_url_raw($_GET['return_to'] ?? \site_url('/member-login/'));
 
-        \ob_start(); ?>
-        <p><strong>Reset your site password:</strong> <?php echo \esc_html($member_id); ?></p>
+        \ob_start();
+
+        // Display error message if validation failed
+        if (!empty($_SESSION['tfg_reset_error'])) {
+            echo '<div class="tfg-error" style="
+                display:block;
+                margin:0.5em auto 1.2em;
+                padding:0;
+                background:transparent;
+                border:none;
+                color:#b71c1c;
+                font-size:0.63em;
+                text-align:center;
+                max-width:100%;
+            ">';
+            echo '<strong>*** Error:</strong> ' . \esc_html($_SESSION['tfg_reset_error']) . ' ***';
+            echo '</div>';
+            unset($_SESSION['tfg_reset_error']); // Clear after displaying
+        }
+        ?>
+        <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
+            <strong>Reset Password</strong>
+        </h2>
+        <p style="margin-bottom:1em;"><strong>Member ID:</strong> <?php echo \esc_html($member_id); ?></p>
 
         <form method="POST" class="tfg-member-login-form" autocomplete="off">
             <?php \wp_nonce_field('tfg_member_password_reset', '_tfg_nonce'); ?>
@@ -320,7 +364,7 @@ final class MemberLogin
             <!-- Password fields row -->
             <div class="tfg-login-row">
                 <div class="child-1">
-                    <div class="tfg-password-wrapper">
+                    <div class="tfg-password-combo">
                         <input type="password" name="new_password" id="new_password" tabindex="1"
                                class="tfg-password-input tfg-font-base" placeholder="Enter Password"
                                autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
@@ -330,7 +374,7 @@ final class MemberLogin
                 </div>
 
                 <div class="child-2">
-                    <div class="tfg-password-wrapper">
+                    <div class="tfg-password-combo">
                         <input type="password" name="confirm_password" id="confirm_password" tabindex="2"
                                class="tfg-password-input tfg-font-base" placeholder="Confirm Password"
                                autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
@@ -341,7 +385,7 @@ final class MemberLogin
             </div>
 
             <!-- Button row -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3em; gap:1em;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5em; gap:1em;">
                 <div style="flex:1;">
                     <a href="<?php echo \esc_url($return_to); ?>" class="tfg-return-button">
                         ← Return to Dashboard
@@ -371,16 +415,13 @@ final class MemberLogin
             return;
         }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_password_reset')) {
-            echo '<p class="tfg-error">Security check failed. Please refresh and try again.</p>';
+            $_SESSION['tfg_reset_error'] = 'Security check failed. Please refresh and try again.';
             return;
         }
 
         $member_id = Cookies::getMemberId();
         if (!$member_id) {
-            echo '<p class="tfg-error">You must be logged in to change your password.</p>';
-            echo '<div class="tfg-return-button-wrapper">';
-            echo '<a href="' . \esc_url(\site_url('/member-login/')) . '" class="tfg-return-button">← Return to Login</a>';
-            echo '</div>';
+            $_SESSION['tfg_reset_error'] = 'You must be logged in to change your password.';
             return;
         }
 
@@ -388,19 +429,25 @@ final class MemberLogin
         $confirm      = (string) \wp_unslash($_POST['confirm_password'] ?? '');
 
         if ($new_password === '' || $confirm === '') {
-            echo '<p class="tfg-error">Please enter and confirm your new password.</p>';
+            $_SESSION['tfg_reset_error'] = 'Please enter and confirm your new password.';
             return;
         }
         if ($new_password !== $confirm) {
-            echo '<p class="tfg-error">Passwords do not match.</p>';
-            return;
-        }
-        if (\strlen($new_password) < 6) {
-            echo '<p class="tfg-error">Password must be at least 6 characters.</p>';
+            $_SESSION['tfg_reset_error'] = 'Passwords do not match. Please try again.';
             return;
         }
 
-        $hash = \password_hash($new_password, MEMBER_PASSWORD_DEFAULT);
+        // Use the same minimum length as registration (10 characters)
+        $min_len = \defined('TFG_MIN_PASSWORD_LENGTH') ? (int) TFG_MIN_PASSWORD_LENGTH : 8;
+        if (\strlen($new_password) < $min_len) {
+            $_SESSION['tfg_reset_error'] = "Password must be at least {$min_len} characters.";
+            return;
+        }
+
+        // Clear any previous errors
+        unset($_SESSION['tfg_reset_error']);
+
+        $hash = \password_hash($new_password, \PASSWORD_DEFAULT);
 
         $updated_any = false;
 
@@ -469,14 +516,75 @@ final class MemberLogin
 
     public static function renderForgotMemberIdForm(): string
     {
-        \ob_start(); ?>
-        <form method="POST" class="tfg-forgot-id-form">
-            <?php \wp_nonce_field('tfg_member_forgot_id', '_tfg_nonce'); ?>
-            <input type="hidden" name="handler_id" value="forgot_member_id">
-            <label for="reset_email">Enter your contact email:</label>
-            <input type="email" name="reset_email" required>
-            <button type="submit" name="tfg_member_id_lookup_submit" value="1">Send My Member ID</button>
-        </form>
+        \ob_start();
+
+        // Display success message
+        if (!empty($_SESSION['tfg_forgot_id_success'])) {
+            echo '<div class="tfg-success" style="
+                display:block;
+                margin:0.5em auto 1.2em;
+                padding:0;
+                background:transparent;
+                border:none;
+                color:#2e7d32;
+                font-size:0.63em;
+                text-align:center;
+                max-width:100%;
+            ">';
+            echo '<strong>*** Success:</strong> ' . \esc_html($_SESSION['tfg_forgot_id_success']) . ' ***';
+            echo '</div>';
+            unset($_SESSION['tfg_forgot_id_success']);
+        }
+
+        // Display error message
+        if (!empty($_SESSION['tfg_forgot_id_error'])) {
+            echo '<div class="tfg-error" style="
+                display:block;
+                margin:0.5em auto 1.2em;
+                padding:0;
+                background:transparent;
+                border:none;
+                color:#b71c1c;
+                font-size:0.63em;
+                text-align:center;
+                max-width:100%;
+            ">';
+            echo '<strong>*** Error:</strong> ' . \esc_html($_SESSION['tfg_forgot_id_error']) . ' ***';
+            echo '</div>';
+            unset($_SESSION['tfg_forgot_id_error']);
+        }
+
+        ?>
+        <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
+            <strong>Retrieve Member ID</strong>
+        </h2>
+
+        <div class="tfg-form-wrapper-wide">
+            <form method="POST" class="tfg-form">
+                <?php \wp_nonce_field('tfg_member_forgot_id', '_tfg_nonce'); ?>
+                <input type="hidden" name="handler_id" value="forgot_member_id">
+
+                <!-- Email field inline with label -->
+                <div style="display:flex; align-items:center; gap:1em; margin-bottom:2em;">
+                    <label for="reset_email" style="font-size:1.2em; white-space:nowrap;">Enter your contact email:</label>
+                    <input type="email" name="reset_email" id="reset_email" required class="tfg-input" style="flex:1;">
+                </div>
+
+                <!-- Buttons -->
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:1em;">
+                    <div style="flex:1;">
+                        <a href="<?php echo \esc_url(\site_url('/member-login/')); ?>" class="tfg-return-button">
+                            ← Return to Login
+                        </a>
+                    </div>
+                    <div style="flex:1; text-align:right;">
+                        <button type="submit" name="tfg_member_id_lookup_submit" value="1" class="tfg-button tfg-font-base">
+                            Send My Member ID
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
         <?php
         return (string) \ob_get_clean();
     }
@@ -495,16 +603,17 @@ final class MemberLogin
             return;
         }
         if (empty($_POST['_tfg_nonce']) || !\wp_verify_nonce($_POST['_tfg_nonce'], 'tfg_member_forgot_id')) {
-            echo "<p class='tfg-error'>Security check failed. Please refresh and try again.</p>";
+            $_SESSION['tfg_forgot_id_error'] = 'Security check failed. Please refresh and try again.';
             return;
         }
 
         $email = Utils::normalizeEmail(\wp_unslash($_POST['reset_email'] ?? ''));
         if (!$email) {
-            echo "<p class='tfg-error'>Please provide a valid email.</p>";
+            $_SESSION['tfg_forgot_id_error'] = 'Please provide a valid email.';
             return;
         }
 
+        // Match email to contact_email in member_profile database
         $member = \get_posts([
             'post_type'        => 'member_profile',
             'post_status'      => 'any',
@@ -515,8 +624,10 @@ final class MemberLogin
             'suppress_filters' => true,
             'no_found_rows'    => true,
         ]);
+
         if (!$member) {
-            echo "<p class='tfg-error'>We couldn't find a member with that email.</p>";
+            $_SESSION['tfg_forgot_id_error'] = 'Contact email not found.';
+            Utils::info("[TFG Forgot ID] ❌ No member found for email: {$email}");
             return;
         }
 
@@ -525,19 +636,23 @@ final class MemberLogin
         $member_id = \is_string($member_id) ? $member_id : '';
 
         if ($member_id === '') {
-            echo "<p class='tfg-error'>No Member ID is associated with that email.</p>";
+            $_SESSION['tfg_forgot_id_error'] = 'Contact email not found.';
+            Utils::info("[TFG Forgot ID] ❌ No member_id found for email: {$email}");
             return;
         }
 
-        // Example: send via mailer instead of displaying
-        // Mailer::send($email, 'Your Member ID', 'member_id_reminder', ['member_id' => $member_id]);
+        // Send email with member_id
+        $subject = 'Your Member ID - Take Flight Global';
+        $message = sprintf("Your Member ID is: %s\n\nIf you did not request this, please contact support.", $member_id);
+        $sent    = \wp_mail($email, $subject, $message);
 
-        $masked = (\strlen($member_id) > 4)
-            ? \substr($member_id, 0, 2) . \str_repeat('•', max(1, \strlen($member_id) - 4)) . \substr($member_id, -2)
-            : $member_id;
-
-        echo "<p class='tfg-success'>If this email is in our system, we’ve sent your Member ID. For reference: <strong>{$masked}</strong></p>";
-        echo "<p><a href='" . \esc_url(\site_url('/reset-password')) . "'>Reset your password</a> or <a href='" . \esc_url(\site_url('/member-login')) . "'>Log in now</a>.</p>";
+        if ($sent) {
+            $_SESSION['tfg_forgot_id_success'] = "Member ID reminder sent to {$email}.";
+            Utils::info("[TFG Forgot ID] ✅ Sent member ID {$member_id} to {$email}");
+        } else {
+            $_SESSION['tfg_forgot_id_error'] = 'Failed to send email. Please try again or contact support.';
+            Utils::info("[TFG Forgot ID] ❌ Failed to send email to {$email}");
+        }
     }
 }
 

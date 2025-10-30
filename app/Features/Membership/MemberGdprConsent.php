@@ -49,7 +49,7 @@ final class MemberGdprConsent
                 <!-- Password fields row -->
                 <div class="tfg-login-row">
                     <div class="child-1">
-                        <div class="tfg-password-wrapper">
+                        <div class="tfg-password-combo">
                             <input type="password" name="new_password" id="new_password" tabindex="1"
                                    class="tfg-password-input tfg-font-base" placeholder="Enter Password"
                                    autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
@@ -58,7 +58,7 @@ final class MemberGdprConsent
                     </div>
 
                     <div class="child-2">
-                        <div class="tfg-password-wrapper">
+                        <div class="tfg-password-combo">
                             <input type="password" name="confirm_password" id="confirm_password" tabindex="2"
                                    class="tfg-password-input tfg-font-base" placeholder="Confirm Password"
                                    autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>

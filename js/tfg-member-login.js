@@ -3,11 +3,11 @@ function tfgTogglePassword(buttonElement) {
     // If called without parameter, find the button from event context
     const button = buttonElement || event.target;
 
-    // Find the parent wrapper and then the input field
-    const wrapper = button.closest('.tfg-password-wrapper');
-    if (!wrapper) return;
+    // Find the parent combo container and then the input field
+    const combo = button.closest('.tfg-password-combo');
+    if (!combo) return;
 
-    const input = wrapper.querySelector('input[type="password"], input[type="text"]');
+    const input = combo.querySelector('input[type="password"], input[type="text"]');
     if (!input) return;
 
     // Toggle visibility

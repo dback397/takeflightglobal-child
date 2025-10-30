@@ -105,14 +105,27 @@ final class MemberStubManager
 
         // Display error message if validation failed
         if (!empty($_SESSION['tfg_form_error'])) {
-            echo '<div class="tfg-error" style="padding:1em; margin-bottom:1em; background:#ffebee; border:1px solid #f44336; border-radius:8px; color:#c62828;">';
-            echo '<strong>Error:</strong> ' . \esc_html($_SESSION['tfg_form_error']);
+            echo '<div class="tfg-error" style="
+              display:block;
+              margin:0.5em auto 1.2em;
+              padding:0;
+              background:transparent;
+              border:none;
+              color:#b71c1c;
+              font-size:0.63em;
+              text-align:center;
+              max-width:100%;
+          ">';
+            echo '<strong>*** Error:</strong> ' . esc_html($_SESSION['tfg_form_error']) . ' ***';
             echo '</div>';
-            unset($_SESSION['tfg_form_error']); // Clear after displaying
+            unset($_SESSION['tfg_form_error']);
         }
-
         ?>
-        <center><H2 style="margin-bottom:1em;"><strong>Registration</strong></H2></center>
+        <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
+            <strong>Registration</strong>
+        </h2>
+        <?php
+        ?>
         <h3 style="margin-bottom:1em;">1. Enter Organization Details</h3>
         <div class="tfg-form-wrapper-wide">
             <form method="POST" class="tfg-form" action="<?php echo \esc_url($_SERVER['REQUEST_URI']); ?>">
@@ -175,7 +188,7 @@ final class MemberStubManager
                 <h3 style="margin-bottom:1em;">2. Set Your Password</h3>
                 <div class="tfg-login-row">
                     <div class="child-1">
-                        <div class="tfg-password-wrapper">
+                        <div class="tfg-password-combo">
                             <input type="password" name="new_password" id="new_password" tabindex="1"
                                    class="tfg-password-input tfg-font-base" placeholder="Enter Password"
                                    autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
@@ -183,7 +196,7 @@ final class MemberStubManager
                         </div>
                     </div>
                     <div class="child-2">
-                        <div class="tfg-password-wrapper">
+                        <div class="tfg-password-combo">
                             <input type="password" name="confirm_password" id="confirm_password" tabindex="2"
                                    class="tfg-password-input tfg-font-base" placeholder="Confirm Password"
                                    autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>

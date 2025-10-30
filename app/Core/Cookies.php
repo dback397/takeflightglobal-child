@@ -237,8 +237,17 @@ final class Cookies
             return;
         }
 
+        // Clear all member cookies
         self::deleteCookie(self::MEM_UI);
         self::deleteCookie(self::MEM_OK);
+        self::deleteUiCookie('member_email');
+        self::deleteUiCookie('member_id');
+        self::deleteUiCookie('member_role');
+
+        // NOTE: Subscriber cookies (is_subscribed, subscriber_email, subscribed_ok) are NOT cleared
+        // Members who log out remain subscribed to the newsletter
+
+        \TFG\Core\Utils::info('[TFG Cookies] ✅ Cleared member cookies (subscriber cookies preserved)');
     }
 
 
@@ -426,6 +435,7 @@ final class Cookies
     /**
      * Clear all member-related cookies (UI + HttpOnly).
      * Used by legacy MemberDeletion and logout flows.
+     * NOTE: Subscriber cookies are NOT cleared - members who log out remain subscribed.
      */
     public static function clearMemberCookies(): void
     {
@@ -444,7 +454,7 @@ final class Cookies
         self::deleteUiCookie('member_id');
         self::deleteUiCookie('member_role');
 
-        \TFG\Core\Utils::info('[TFG Cookies] ✅ Cleared all member cookies');
+        \TFG\Core\Utils::info('[TFG Cookies] ✅ Cleared member cookies (subscriber cookies preserved)');
     }
 
 

@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginBtn = document.querySelector('.magic-login-button');
     if (loginBtn) {
       loginBtn.style.backgroundColor = 'green';
-      loginBtn.textContent = '✓ Verified';
     }
   }
 });

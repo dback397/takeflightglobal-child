@@ -123,15 +123,18 @@ final class MemberDashboard
         // 5) Action URLs (+ nonces)
         $base       = \remove_query_arg([self::UNSUB_QS, self::NONCE_QS, self::LOGOUT_QS]);
         $nonce      = \wp_create_nonce(self::NONCE_KEY);
-        $edit_url   = \add_query_arg(['tfg_action' => 'edit'], $base);
-        $expand_url = \add_query_arg(['tfg_action' => 'expand'], $base);
+        $edit_url   = \esc_url(\site_url('/edit-profile/')); // Updated to use standalone page
         $reset_url  = \esc_url(\site_url('/reset-password'));
-        $deact_url  = \add_query_arg([self::UNSUB_QS => 'deactivate', self::NONCE_QS => $nonce], $base);
+        $deact_url  = \esc_url(\site_url('/deactivate-profile/')); // Updated to use standalone page
         $logout_url = \add_query_arg([self::LOGOUT_QS => '1',          self::NONCE_QS => $nonce], $base);
 
         \ob_start();
+        ?>
+        <h2 class="member-title" style="text-align:center; margin-top:0.3em; margin-bottom:0.5em;">
+            <strong>Member Dashboard</strong>
+        </h2>
+        <?php
 
-        echo '<h2>Welcome, ' . \esc_html($type_name) . '</h2>';
         echo '<div><strong>Member ID:</strong> ' . \esc_html($member_id) . '</div>';
 
         echo "<div style='margin-top:1em; padding:1em; border:1px solid #ccc; border-radius:8px;'>";
@@ -153,8 +156,7 @@ final class MemberDashboard
         echo '</div>';
 
         echo "<div style='margin-top:1.5em; display:flex; flex-wrap:wrap; gap:1em;'>";
-        echo '<a href="' . \esc_url($edit_url)   . '" class="tfg-button">Edit Your Profile</a>';
-        echo '<a href="' . \esc_url($expand_url) . '" class="tfg-button">Expand Your Profile</a>';
+        echo '<a href="' . \esc_url($edit_url)   . '" class="tfg-button">Edit / Expand Your Profile</a>';
         echo '<a href="' . \esc_url($reset_url)  . '" class="tfg-button">Reset Your Password</a>';
         echo '<a href="' . \esc_url($deact_url)  . '" class="tfg-button">Deactivate Your Profile</a>';
         echo '<a href="' . \esc_url($logout_url) . '" class="tfg-button">Logout</a>';
@@ -167,10 +169,8 @@ final class MemberDashboard
             echo '<hr style="margin:2em 0;">';
 
             if ($action === 'edit') {
-                echo '<h3>Edit Your Profile</h3>';
+                echo '<h3>Edit / Expand Your Profile</h3>';
                 echo \do_shortcode('[tfg_edit_member_profile post_id="' . $post_id . '"]');
-            } elseif ($action === 'expand') {
-                echo '<h3>Expand Your Profile</h3><p>This section is under development.</p>';
             } elseif ($action === 'reset') {
                 echo '<h3>Reset Your Password</h3>' . \do_shortcode('[tfg_member_reset_form]');
             } elseif ($action === 'deactivate') {
