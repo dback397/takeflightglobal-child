@@ -52,6 +52,13 @@ final class Cookies
             'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
         ]);
 
+        // Individual email cookie (legacy compatibility)
+        self::setCookie('subscriber_email', $email, [
+            'httponly' => false,
+            'samesite' => self::SAMESITE_SUB,
+            'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
+        ]);
+
         // HttpOnly trust token
         $h = self::subscriberHmac($email);
         self::setCookie(self::SUB_OK, $h, [
@@ -134,18 +141,20 @@ final class Cookies
      */
     public static function verifyMember(string $memberId, string $email): bool
     {
+        $memberId = Utils::normalizeMemberId($memberId);
+        $email    = $email ? Utils::normalizeEmail($email) : '';
+
         if (empty($memberId) || empty($email)) {
             return false;
         }
 
-        // If you already store an HMAC (e.g., 'member_ok'), verify it
         if (isset($_COOKIE['member_ok'])) {
             $signature = $_COOKIE['member_ok'];
-            $expected  = hash_hmac('sha256', $memberId . '|' . $email, SECURE_AUTH_KEY);
-            return hash_equals($expected, $signature);
+            $expected  = self::memberHmac($memberId, $email);  // ✅ uses same HMAC secret + rotation
+            return \hash_equals($expected, $signature);
         }
 
-        // Otherwise fall back to a simple cookie check (less secure)
+        // Fallback (non-HMAC legacy)
         return (
             isset($_COOKIE['member_id']) && $_COOKIE['member_id'] === $memberId && isset($_COOKIE['member_email']) && $_COOKIE['member_email'] === $email
         );
@@ -156,6 +165,8 @@ final class Cookies
     // =======================
     public static function setMemberCookie(string $member_id, string $email = ''): void
     {
+        \TFG\Core\Utils::info("[TFG Cookies] setMemberCookie called with member_id={$member_id}, email={$email}");
+
         if (\TFG\Core\Utils::isSystemRequest()) {
             \TFG\Core\Utils::info('[TFG SystemGuard] Skipped setMemberCookie due to REST/CRON/CLI/AJAX context');
             return;
@@ -164,12 +175,18 @@ final class Cookies
         $member_id = Utils::normalizeMemberId($member_id);
         $email     = $email ? Utils::normalizeEmail($email) : '';
 
+        \TFG\Core\Utils::info("[TFG Cookies] After normalization: member_id={$member_id}, email={$email}");
+
         if (!$member_id) {
+            \TFG\Core\Utils::info('[TFG Cookies] ❌ Empty member_id after normalization');
             return;
         }
         if (!self::guardHeaders('set member cookies')) {
+            \TFG\Core\Utils::info('[TFG Cookies] ❌ guardHeaders failed');
             return;
         }
+
+        \TFG\Core\Utils::info('[TFG Cookies] Proceeding to set cookies...');
 
         // JS-visible flag
         self::setCookie(self::MEM_UI, '1', [
@@ -178,6 +195,21 @@ final class Cookies
             'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
         ]);
 
+        // Individual cookies for member_id and email (legacy compatibility)
+        self::setCookie('member_id', $member_id, [
+            'httponly' => false,
+            'samesite' => self::SAMESITE_MEM,
+            'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
+        ]);
+
+        if ($email) {
+            self::setCookie('member_email', $email, [
+                'httponly' => false,
+                'samesite' => self::SAMESITE_MEM,
+                'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
+            ]);
+        }
+
         // HttpOnly trust token
         $h = self::memberHmac($member_id, $email);
         self::setCookie(self::MEM_OK, $h, [
@@ -185,6 +217,8 @@ final class Cookies
             'samesite' => self::SAMESITE_MEM,
             'expires'  => time() + self::DAYS * DAY_IN_SECONDS,
         ]);
+
+        \TFG\Core\Utils::info('[TFG Cookies] ✅ All member cookies set successfully');
     }
 
     public static function renewMemberCookie(string $member_id, string $email = ''): void
@@ -207,6 +241,8 @@ final class Cookies
         self::deleteCookie(self::MEM_OK);
     }
 
+
+    // @deprecated Use isMember() — kept for backward compatibility
     public static function isMember(?string $member_id = null, string $email = ''): bool
     {
         $server = $_COOKIE[self::MEM_OK] ?? '';

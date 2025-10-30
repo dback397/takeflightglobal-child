@@ -21,6 +21,7 @@ final class FormRouter
         }
 
         if (!isset($_POST['handler_id'])) {
+            \TFG\Core\Utils::info('[FormRouter] RAW POST: ' . print_r($_POST, true));
             return false;
         }
 

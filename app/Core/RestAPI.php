@@ -24,7 +24,7 @@ final class RestAPI
         // Restore access probe
         register_rest_route(self::NS, '/restore-access', [
             'methods'             => 'POST',
-            'callback'            => [__CLASS__, 'restore_access'],
+            'callback'            => [__CLASS__, 'restoreAccess'],
             'permission_callback' => '__return_true',
             'args'                => [
                 'email' => [
@@ -38,8 +38,8 @@ final class RestAPI
         // Issue a verification code (server-to-server only)
         register_rest_route(self::NS, '/get-verification-code', [
             'methods'             => 'POST',
-            'callback'            => [__CLASS__, 'get_verification_code'],
-            'permission_callback' => [__CLASS__, 'check_token_permission'],
+            'callback'            => [__CLASS__, 'getVerificationCode'],
+            'permission_callback' => [__CLASS__, 'checkTokenPermission'],
             'args'                => [
                 'subscriber_email' => [
                     'required'          => true,

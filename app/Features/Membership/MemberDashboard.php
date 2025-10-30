@@ -85,7 +85,7 @@ final class MemberDashboard
         $email     = Cookies::getMemberEmail() ?: '';
 
         // 2) Verify trusted membership via HttpOnly cookie HMAC
-        $trusted = $member_id ? Cookies::isMember($member_id, $email) : false;
+        $trusted = $member_id ? Cookies::verifyMember($member_id, $email) : false;
         if (!$trusted) {
             return '<p>You must be logged in to view this page.</p>';
         }
@@ -199,7 +199,7 @@ final class MemberDashboard
 
         $member_id = Cookies::getMemberId();
         $email     = Cookies::getMemberEmail();
-        if (!$member_id || !Cookies::isMember($member_id, $email ?? '')) {
+        if (!$member_id || !Cookies::verifyMember($member_id, $email ?? '')) {
             return;
         }
 

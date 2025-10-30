@@ -76,18 +76,25 @@ final class NewsletterSubscription
                        style="margin-bottom:1em;"
                        value="<?php echo \esc_attr($prefill_email); ?>">
 
-                <label for="gdpr_consent" class="tfg-font-base">
-                    <strong>GDPR Agreement <span class="tfg-required">*</span></strong>
-                </label>
-                <div class="tfg-alt-gdpr-box" style="margin-top:10px;">
-                    <label style="margin:0;">
-                        <input type="checkbox" id="gdpr_consent" name="gdpr_consent" value="1" required style="margin-bottom:0;">
-                        By checking this box, you affirm that you have read and agree to our TERMS OF USE regarding storage of the data submitted through this form.
-                    </label>
-                </div>
+                       <label for="gdpr_consent" class="tfg-font-base">
+    <strong>GDPR Agreement <span class="tfg-required">*</span></strong>
+</label>
+<div class="tfg-alt-gdpr-box" style="margin-top:10px;">
+    <label style="margin:0;">
+        <input type="checkbox"
+               id="gdpr_consent_news"
+               name="gdpr_consent"
+               value="1"
+               data-context="newsletter"
+               required
+               style="margin-bottom:0;">
+        By checking this box, you affirm that you have read and agree to our TERMS OF USE regarding storage of the data submitted through this form.
+    </label>
+</div>
 
-                <!-- Filled by your JS that calls the REST endpoint -->
-                <input type="hidden" name="verification_code" id="verification_code_field" value="">
+<!-- Hidden verification code field -->
+<input type="hidden" name="verification_code" id="verification_code_news" value="">
+
 
                 <input type="hidden" name="source" value="newsletter_form">
 

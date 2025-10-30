@@ -29,7 +29,9 @@ final class MemberFormHandlers
             return;
         }
 
-        // --- 4. Subscription validation (failsafe guard inside block)
+        // --- 4. Subscription validation (DISABLED - Allow non-subscribers to register as members)
+        // Uncomment below if you want to require newsletter subscription before member registration
+        /*
         if (!\TFG\Core\Cookies::isSubscribed()) {
 
             // Prevent redirect loops on /subscribe
@@ -49,6 +51,7 @@ final class MemberFormHandlers
             \TFG\Core\RedirectHelper::safeRedirect(\home_url('/subscribe'));
             return;
         }
+        */
 
         // --- 6. Route form types (legitimate POSTs)
         $type = isset($_POST['form_type']) ? \sanitize_key($_POST['form_type']) : '';

@@ -85,42 +85,59 @@ final class MemberLogin
         $status_color = $is_member_ui ? 'green' : 'red';
 
         \ob_start(); ?>
-        <form method="POST" class="tfg-member-login-form">
-            <?php \wp_nonce_field('tfg_member_login', '_tfg_nonce'); ?>
-            <div class="tfg-login-row">
-                <input type="hidden" name="handler_id" value="member_login">
 
+        <center><H2 style="margin-bottom:1em;"><strong>Member Login</strong></H2></center>
+        <!-- Status message at top -->
+        <form method="POST" class="tfg-member-login-form" style="margin-top:1em;">
+            <?php \wp_nonce_field('tfg_member_login', '_tfg_nonce'); ?>
+            <input type="hidden" name="handler_id" value="member_login">
+
+            <!-- Input fields row -->
+            <div class="tfg-login-row">
                 <div class="child-1">
-                    <input type="text" name="member_id" placeholder="Member ID"
+                    <input type="text" name="member_id" placeholder="Member ID" tabindex="1"
                            class="tfg-id-input tfg-font-base" autocomplete="off" required>
                 </div>
 
                 <div class="child-2">
                     <div class="tfg-password-wrapper">
-                        <input type="password" name="member_password" id="tfg_member_password"
+                        <input type="password" name="member_password" id="tfg_member_password" tabindex="2"
                                class="tfg-password-input tfg-font-base" placeholder="Password"
-                               autocomplete="current-password" required>
+                               autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
                     </div>
                 </div>
+            </div>
 
-                <div class="child-3">
+            <!-- Button row -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3em; gap:1em;">
+                <div style="flex:1;">
+                    <a href="<?php echo \esc_url(\home_url('/')); ?>" class="tfg-return-button">
+                        ← Return to Home
+                    </a>
+                </div>
+                <div style="flex:1; text-align:right;">
                     <button type="submit" name="tfg_member_login_submit" value="1"
-                            class="tfg-login-button tfg-font-base">Login</button>
+                            class="tfg-button tfg-font-base">Login</button>
                 </div>
             </div>
         </form>
 
-        <p style="margin-top:1em; font-weight:bold; color:<?php echo \esc_attr($status_color); ?>">
-            Current Login Status: <?php echo \esc_html($status_text); ?>
-        </p>
-
-        <hr style="margin:2em 0; border:none; border-top:1px solid #ccc;">
+        <hr style="margin:2em 0 0.3em 0; border:none; border-top:1px solid #ccc;">
 
         <div class="tfg-member-menu-row" style="display:flex; gap:1em; justify-content:space-between; flex-wrap:wrap;">
             <a class="tfg-button" href="<?php echo \esc_url(\site_url('/reset-password')); ?>" style="flex:1; text-align:center;">Reset Your Password</a>
             <a class="tfg-button" href="<?php echo \esc_url(\site_url('/forgot-member-id')); ?>" style="flex:1; text-align:center;">Forgot Member ID?</a>
             <a class="tfg-button" href="<?php echo \esc_url(\site_url('/stub-access')); ?>" style="flex:1; text-align:center;">Register as a New Member</a>
         </div>
+
+
+        <div style="margin-top:0.5em; text-align:center;">
+  <p style="margin-bottom:1em; font-weight:bold; color:<?php echo esc_attr($status_color); ?>;">
+    Current Login Status: <?php echo esc_html($status_text); ?>
+  </p>
+</div>
+
+
         <?php
         return (string) \ob_get_clean();
     }
@@ -279,7 +296,15 @@ final class MemberLogin
     {
         $member_id = Cookies::getMemberId();
         if (!$member_id) {
-            return '<p class="tfg-error">You must be logged in to change your password.</p>';
+            \ob_start(); ?>
+            <p class="tfg-error">You must be logged in to change your password.</p>
+            <div class="tfg-return-button-wrapper">
+                <a href="<?php echo \esc_url(\site_url('/member-login/')); ?>" class="tfg-return-button">
+                    ← Return to Login
+                </a>
+            </div>
+            <?php
+            return (string) \ob_get_clean();
         }
 
         $return_to = \esc_url_raw($_GET['return_to'] ?? \site_url('/member-login/'));
@@ -287,35 +312,44 @@ final class MemberLogin
         \ob_start(); ?>
         <p><strong>Reset your site password:</strong> <?php echo \esc_html($member_id); ?></p>
 
-        <form method="POST" class="tfg-member-login-form">
+        <form method="POST" class="tfg-member-login-form" autocomplete="off">
             <?php \wp_nonce_field('tfg_member_password_reset', '_tfg_nonce'); ?>
-            <div class="tfg-login-row">
-                <input type="hidden" name="handler_id" value="password_reset">
-                <input type="hidden" name="return_to"  value="<?php echo \esc_attr($return_to); ?>">
+            <input type="hidden" name="handler_id" value="password_reset">
+            <input type="hidden" name="return_to"  value="<?php echo \esc_attr($return_to); ?>">
 
+            <!-- Password fields row -->
+            <div class="tfg-login-row">
                 <div class="child-1">
                     <div class="tfg-password-wrapper">
-                        <input type="password" name="new_password" id="new_password"
+                        <input type="password" name="new_password" id="new_password" tabindex="1"
                                class="tfg-password-input tfg-font-base" placeholder="Enter Password"
-                               autocomplete="new-password" required>
-                        <button type="button" class="tfg-toggle-password"
-                                onclick="tfgTogglePassword()" aria-label="Show password">👁️</button>
+                               autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
+                        <button type="button" class="tfg-toggle-password" tabindex="-1"
+                                onclick="tfgTogglePassword(this)" aria-label="Show password" title="Show password"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                     </div>
                 </div>
 
                 <div class="child-2">
                     <div class="tfg-password-wrapper">
-                        <input type="password" name="confirm_password" id="confirm_password"
+                        <input type="password" name="confirm_password" id="confirm_password" tabindex="2"
                                class="tfg-password-input tfg-font-base" placeholder="Confirm Password"
-                               autocomplete="new-password" required>
-                        <button type="button" class="tfg-toggle-password"
-                                onclick="tfgTogglePassword()" aria-label="Show password">👁️</button>
+                               autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
+                        <button type="button" class="tfg-toggle-password" tabindex="-1"
+                                onclick="tfgTogglePassword(this)" aria-label="Show password" title="Show password"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                     </div>
                 </div>
+            </div>
 
-                <div class="child-3">
+            <!-- Button row -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3em; gap:1em;">
+                <div style="flex:1;">
+                    <a href="<?php echo \esc_url($return_to); ?>" class="tfg-return-button">
+                        ← Return to Dashboard
+                    </a>
+                </div>
+                <div style="flex:1; text-align:right;">
                     <button type="submit" name="tfg_submit_password" value="1"
-                            class="tfg-login-button tfg-font-base">Save</button>
+                            class="tfg-button tfg-font-base">Save Password</button>
                 </div>
             </div>
         </form>
@@ -344,6 +378,9 @@ final class MemberLogin
         $member_id = Cookies::getMemberId();
         if (!$member_id) {
             echo '<p class="tfg-error">You must be logged in to change your password.</p>';
+            echo '<div class="tfg-return-button-wrapper">';
+            echo '<a href="' . \esc_url(\site_url('/member-login/')) . '" class="tfg-return-button">← Return to Login</a>';
+            echo '</div>';
             return;
         }
 
@@ -415,8 +452,14 @@ final class MemberLogin
                 exit;
             }
             echo '<p class="tfg-success">Password updated. Please log in again.</p>';
+            echo '<div class="tfg-return-button-wrapper">';
+            echo '<a href="' . \esc_url(\site_url('/member-login/')) . '" class="tfg-return-button">← Return to Login</a>';
+            echo '</div>';
         } else {
             echo '<p class="tfg-error">Password update failed. Please try again or contact support.</p>';
+            echo '<div class="tfg-return-button-wrapper">';
+            echo '<a href="' . \esc_url(\site_url('/member-dashboard/')) . '" class="tfg-return-button">← Return to Dashboard</a>';
+            echo '</div>';
         }
     }
 

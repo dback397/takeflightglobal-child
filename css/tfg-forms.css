@@ -107,9 +107,9 @@
     padding: 16px;
     margin: 20px auto;
     max-width: 600px;
-    
+
     /*display: block;*/
-    
+
 }
 
 .tfg-info-box p {
@@ -122,6 +122,44 @@
     justify-content: center;
     margin: 20px 0;
 }
+
+/* === GDPR Agreement Box === */
+.tfg-gdpr-reg-box {
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-left: 4px solid #2563eb; /* Blue highlight */
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+}
+
+.tfg-gdpr-reg-box label {
+  display: flex;
+  align-items: flex-start;
+  font-weight: 600;
+  color: #111827;
+  font-size: 15px;
+}
+
+.tfg-gdpr-reg-box input[type="checkbox"] {
+  margin-right: 10px;
+  margin-top: 4px;
+}
+
+.tfg-gdpr-reg-box .tfg-note {
+  font-size: 0.85em;
+  margin-top: 8px;
+  color: #1C0D5A;
+  line-height: 1.4;
+}
+
+
+
+
+
+
+
 
 /* === GDPR Agreement Box === */
 .tfg-gdpr-box {
@@ -205,7 +243,7 @@
 .tfg-gdpr-consent-box:hover {
     background-color: #1c86ee; /* hover color */
     cursor: pointer;
-}    
+}
 
 .tfg-gdpr-consent-box {
     background-color: #f0f4ff;

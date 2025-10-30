@@ -4,7 +4,7 @@ namespace TFG\Features\MagicLogin;
 
 use WP_REST_Request;
 use WP_REST_Response;
-use wp_Error;
+use WP_Error;
 use TFG\Admin\Sequence;
 use TFG\Core\Utils;
 
@@ -42,17 +42,24 @@ final class VerificationToken
 
     public static function registerRestRoutes(): void
     {
+        \TFG\Core\Utils::info('[TFG REST] 🚀 Entering VerificationToken::registerRestRoutes()');
+
         if (self::$rest_registered) {
+            \TFG\Core\Utils::info('[TFG REST] ⚠️ Skipped duplicate registration for VerificationToken');
             return;
         }
+
         self::$rest_registered = true;
 
         \register_rest_route('custom-api/v1', '/create-verification-token', [
             'methods'             => 'POST',
-            'callback'            => [self::class, 'tfg_create_verification_token'],
+            'callback'            => [self::class, 'tfgCreateVerificationToken'],
             'permission_callback' => '__return_true',
         ]);
+
+        \TFG\Core\Utils::info('[TFG REST] ✅ Registered: /create-verification-token');
     }
+
 
     public static function tfgCreateVerificationToken(WP_REST_Request $request)
     {
@@ -159,6 +166,47 @@ final class VerificationToken
             'sequence_code' => (string) $sequence_code,
             'expires_at'    => $expires_at,
         ];
+    }
+
+    /**
+     * Lightweight GET endpoint used by GDPR checkbox to pre-generate a token.
+     * Returns a random code and post ID, no email required.
+     */
+    public static function handleSimpleGetToken(\WP_REST_Request $request): \WP_REST_Response
+    {
+        // Optional header verification
+        $header_token = $request->get_header('X-TFG-Token');
+        $valid_token  = \defined('TFG_VERIFICATION_API_TOKEN') ? \TFG_VERIFICATION_API_TOKEN : 'dback-9a4t2g1e5z';
+        if ($header_token !== $valid_token) {
+            return new \WP_REST_Response(['error' => 'unauthorized', 'message' => 'Invalid X-TFG-Token header'], 401);
+        }
+
+        // Generate random 8-character alphanumeric code
+        $code = strtoupper(\wp_generate_password(8, false, false));
+
+        // Create minimal CPT entry
+        $post_id = \wp_insert_post([
+            'post_type'   => 'verification_tokens',
+            'post_status' => 'publish',
+            'post_title'  => "AUTO TOKEN {$code}",
+        ], true);
+
+        if (\is_wp_error($post_id)) {
+            return new \WP_REST_Response(['error' => 'post_create_failed'], 500);
+        }
+
+        // Basic metadata
+        \update_post_meta($post_id, 'verification_code', $code);
+        \update_post_meta($post_id, 'is_used', 0);
+        \update_post_meta($post_id, 'request_ip', $_SERVER['REMOTE_ADDR'] ?? '');
+        \update_post_meta($post_id, 'requested_on', gmdate('c'));
+        \update_post_meta($post_id, 'source', 'gdpr_autogen');
+
+        return new \WP_REST_Response([
+            'code'    => $code,
+            'post_id' => (int) $post_id,
+            'source'  => 'gdpr_autogen',
+        ], 200);
     }
 
     /**

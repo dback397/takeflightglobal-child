@@ -1,6 +1,6 @@
 /* === TFG Button Styles === */
 
-/* 
+/*
 Buttons
 Example use:  <button class="tfg-button">Subscribe</button>
 */
@@ -20,6 +20,8 @@ Example use:  <button class="tfg-button">Subscribe</button>
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+  min-height: 38px;  /* Consistent button height */
+  line-height: 24px;  /* Vertical centering */
 }
 
 .tfg-button:hover {
@@ -68,7 +70,7 @@ Use: <button class="tfg-button tfg-button--disabled">Disabled</button>
 /*
 Focused Version
 Use: <button class="tfg-button tfg-button--disabled">Disabled</button>
-Stays consistent with your design but adds a visible indicator when the 
+Stays consistent with your design but adds a visible indicator when the
 button is focused (e.g. tabbed to with a keyboard)
 
 Safari doesn’t support :focus-visible well yet, so include :focus as a fallback.
@@ -87,7 +89,7 @@ Focused (Safari fallback)
 
 
 
-/* 
+/*
 Why Use an Outline Button?
 To indicate a secondary or less prominent action
 To offer visual contrast against a solid primary button
@@ -118,5 +120,41 @@ Use:  <button class="tfg-button--outline">Learn More</button>
   background-color: #295CFF;
   border-color: #295CFF;
   color: #ffffff;
+}
+
+/*
+Return/Back Button
+Matches tfg-button default style for consistent appearance
+Use: <a href="#" class="tfg-return-button">← Return to Dashboard</a>
+*/
+.tfg-return-button {
+  display: inline-block;
+  font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 7px 10px;
+  color: #ffffff;
+  background-color: #0E94FF;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+  min-height: 38px;  /* Match button height */
+  line-height: 24px;  /* Vertical centering */
+}
+
+.tfg-return-button:hover {
+  background-color: #295CFF;  /* Same darker blue as tfg-button */
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Wrapper for right-aligned return buttons */
+.tfg-return-button-wrapper {
+  margin-top: 1em;
+  text-align: right;
 }
 

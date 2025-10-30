@@ -88,8 +88,8 @@ final class Assets
         \wp_script_add_data('tfg-error-modal', 'defer', true);
         self::enqueueStyle('tfg-error-modal', '/css/tfg-error-modal.css');
 
-        // Member login assets (only if needed; adjust condition as appropriate)
-        if (\is_page(['login', 'member-login'])) {
+        // Member login assets (login, reset, GDPR password pages)
+        if (\is_page(['login', 'member-login', 'member-gdpr', 'reset-password', 'member-dashboard', 'gdpr-consent', 'stub-access'])) {
             \wp_register_script(
                 'tfg-member-login',
                 self::uri('/js/tfg-member-login.js'),
@@ -132,6 +132,32 @@ final class Assets
                 true
             );
         }
+
+        /**
+         * -------------------------------------------------------------------------
+         * ✅ Always load GDPR / Newsletter verification handler
+         * -------------------------------------------------------------------------
+         * Needed because newsletter + magic login forms appear on non-subscribe pages
+         */
+        \wp_register_script(
+            'tfg-gdpr-consent',
+            self::uri('/js/tfg-gdpr-consent.js'),
+            [],
+            self::ver('/js/tfg-gdpr-consent.js'),
+            true
+        );
+
+        // Optional: localize REST URL and token so JS doesn’t hard-code them
+        $rest_nonce = \wp_create_nonce('wp_rest');
+        \wp_localize_script('tfg-gdpr-consent', 'tfgGDPRConfig', [
+            'restUrl' => \rest_url('custom-api/v1/get-verification-code'),
+            'nonce'   => $rest_nonce,
+            'token'   => \defined('TFG_VERIFICATION_API_TOKEN') ? \TFG_VERIFICATION_API_TOKEN : 'dback-9a4t2g1e5z',
+        ]);
+
+        \wp_enqueue_script('tfg-gdpr-consent');
+        \wp_script_add_data('tfg-gdpr-consent', 'defer', true);
+
     }
 
     /* --------------------------- Admin --------------------------- */

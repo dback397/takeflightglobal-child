@@ -11,58 +11,111 @@
     line-height: 1.5;
 }
 
+
+
+
+
+
+
 /* Flex container for inline layout */
         .tfg-login-row {
             display: flex;
             align-items: flex-end; /* ⬅️ Aligns all children to bottom */
             flex-wrap: nowrap;
-            gap: 8px;
+            gap: 12px;
             width: 100%;
             }
 
-        .child-1 { flex: 0 0 40%; }
-        .child-2 { flex: 0 0 40%; }
-        .child-3 { flex: 0 0 20%; }
+        /* Two-column layout (for login page with 2 inputs) */
+        .tfg-login-row .child-1 { flex: 0 0 48%; }
+        .tfg-login-row .child-2 { flex: 0 0 48%; }
+        .tfg-login-row .child-3 { flex: 0 0 auto; }
 
-        /* Input styles */
+        /* Three-column layout override when button is in row */
+        .tfg-login-row.has-button .child-1 { flex: 0 0 40%; }
+        .tfg-login-row.has-button .child-2 { flex: 0 0 40%; }
+        .tfg-login-row.has-button .child-3 { flex: 0 0 20%; }
+
+        /* Input styles - 20% larger */
         .tfg-id-input,
         .tfg-password-input {
             width: 100%;
-            padding: 1em 1em;
-            font-size: 1em;
+            padding: 1.2em 2.8em 1.2em 1.2em; /* Extra right padding for eye icon */
+            font-size: 1.2em; /* 20% larger */
             border-radius: 25px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
         }
 
         .tfg-id-input,
         .tfg-password-input,
         .tfg-login-button {
-            height: 40px;
+            height: 48px; /* 20% larger than 40px */
             box-sizing: border-box;
         }
 
-        /* Password field wrapper */
+        /* Password field wrapper - proper positioning for eye icon */
         .tfg-password-wrapper {
             position: relative;
-            display: flex;
-            }
+            display: block;
+            width: 100%;
+        }
 
         .tfg-toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
-            margin-left: -30px;
-            padding: 0;
+            padding: 6px;
+            z-index: 10;
+            line-height: 1;
+            color: #333;  /* Dark gray/black for SVG stroke */
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tfg-toggle-password svg {
+            width: 24px;
+            height: 24px;
+            stroke: #333;  /* Dark gray stroke */
+            stroke-width: 2;
+        }
+
+        .tfg-toggle-password:hover {
+            color: #000;  /* Pure black on hover */
+        }
+
+        .tfg-toggle-password:hover svg {
+            stroke: #000;  /* Black stroke on hover */
+        }
+
+        .tfg-toggle-password:focus {
+            outline: 2px solid #0E94FF;
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
         /* Button styling */
         .tfg-login-button {
-            width: 55%;
-            border-radius: 25px;
+            padding: 7px 20px;
+            border-radius: 20px;
             background-color: #0E94FF;
             color: #fff;
-            border: none;
+            border: 1px solid #ffffff;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .tfg-login-button:hover {
+            background-color: #295CFF;
         }
 
         /* Mobile responsiveness */

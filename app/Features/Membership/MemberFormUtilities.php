@@ -25,7 +25,7 @@ final class MemberFormUtilities
 
     public static function submitButton(string $label = 'Submit'): string
     {
-        return '<div class="tfg-field"><button type="submit" class="tfg-submit">' . \esc_html($label) . '</button></div>';
+        return '<div class="tfg-field"><button type="submit" class="tfg-button tfg-font-base">' . \esc_html($label) . '</button></div>';
     }
 
     /** Fetch a member_profile post ID by user id (if you use that mapping). */

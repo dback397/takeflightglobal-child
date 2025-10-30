@@ -14,14 +14,20 @@ final class MemberProfileDisplay
         'member_type',
     ];
 
-    /* -------- Shortcodes (optional) --------
-     * If you want: \add_shortcode('tfg_profile_summary', fn($a)=>self::renderProfileSummary((int)($a['id']??0)));
-     *              \add_shortcode('tfg_profile_columns', fn($a)=>self::renderProfileColumns((int)($a['id']??0)));
+    /* -------- Shortcodes --------
+     * Use: [tfg_profile_summary id=123] or [tfg_profile_columns id=123]
+     * If no ID passed, checks for ?post_id= in URL
      */
     public static function init(): void
     {
-        // \add_shortcode('tfg_profile_summary', fn($atts) => self::renderProfileSummary((int)\shortcode_atts(['id'=>0], $atts)['id']));
-        // \add_shortcode('tfg_profile_columns', fn($atts) => self::renderProfileColumns((int)\shortcode_atts(['id'=>0], $atts)['id']));
+        \add_shortcode('tfg_profile_summary', function ($atts) {
+            $id = (int)(\shortcode_atts(['id' => $_GET['post_id'] ?? 0], $atts)['id']);
+            return self::renderProfileSummary($id);
+        });
+        \add_shortcode('tfg_profile_columns', function ($atts) {
+            $id = (int)(\shortcode_atts(['id' => $_GET['post_id'] ?? 0], $atts)['id']);
+            return self::renderProfileColumns($id);
+        });
     }
 
     public static function renderProfileSummary(int $post_id): string
@@ -172,6 +178,3 @@ final class MemberProfileDisplay
         return self::renderProfileColumns($id);
     }
 }
-
-/* ---- Legacy class alias for transition ---- */
-\class_alias(\TFG\Features\Membership\MemberProfileDisplay::class, 'TFG_Member_Profile_Display');
