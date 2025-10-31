@@ -306,7 +306,7 @@ final class NewsletterSubscription
 
         $magic_url     = \is_array($magic) ? (string)($magic['url'] ?? '') : '';
         $magic_post_id = \is_array($magic) ? (int)   ($magic['post_id'] ?? 0) : 0;
-        $magic_expires = \is_array($magic) ? (int)   ($magic['expires'] ?? 0) : 0;
+        $magic_expires = \is_array($magic) ? (int)   ($magic['expires_at'] ?? 0) : 0;
 
         if ($magic_url === '' || $magic_post_id === 0) {
             self::redirectWithError('Could not create confirmation link.');
@@ -320,7 +320,7 @@ final class NewsletterSubscription
         }
         $set('last_magic_url', $magic_url);
 
-        $sent = (bool) MagicUtilities::sendMagicLink($email, $magic_url);
+        $sent = (bool) MagicUtilities::sendMagicLink($magic_url, $email);
         if ($sent) {
             // Optional breadcrumbs
             \update_post_meta($magic_post_id, 'sent_on', \current_time('mysql'));

@@ -56,8 +56,17 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!hiddenField) return console.warn('[TFG] Missing hidden verification_code_news field');
 
       const response = await fetch('/wp-json/custom-api/v1/get-verification-code', {
-          method: 'GET',
-          headers: { 'X-TFG-Token': 'dback-9a4t2g1e5z' }
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-TFG-Token': 'dback-9a4t2g1e5z'
+          },
+          body: JSON.stringify({
+              subscriber_email: '',
+              subscriber_name: '',
+              gdpr_consent: true,
+              source: 'newsletter_form'
+          })
       });
       const data = await response.json();
 

@@ -15,12 +15,14 @@ final class VerificationController
     public function __construct()
     {
         \add_action('rest_api_init', function () {
-            register_rest_route('custom-api/v1', '/get-verification-code', [
-            'methods'             => 'POST',
-            'callback'            => [$this, 'create'],
-            'permission_callback' => '__return_true', // TODO: replace with header token check
-            ]);
-
+            // NOTE: Duplicate route removed - this endpoint is now registered in RestAPI.php
+            // with proper permission_callback (checkTokenPermission)
+            
+            // register_rest_route('custom-api/v1', '/get-verification-code', [
+            //     'methods'             => 'POST',
+            //     'callback'            => [$this, 'create'],
+            //     'permission_callback' => '__return_true',
+            // ]);
 
             register_rest_route('custom-api/v1', '/mark-verification-used', [
             'methods'             => 'POST',
